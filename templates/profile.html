@@ -1,15 +1,97 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+<link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@600&display=swap" rel="stylesheet">
+
+
+
 <title>Profile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
 
+    .bluebg {
+        background-color: #6C64FF;
+        height: 350px;
+        width: 100%;
+        position: relative;
+    }
+
+    .backbutton {
+        position: absolute;
+        top: 49px;      
+        left: 20px;     
+        display: flex;             
+        align-items: center;       
+        gap: 49px;                 
+    }
+
+    .backbutton img {
+        width: 100%; 
+        height: 100%;
+        object-fit: contain; 
+        display: flaot;
+    }
+
+    .settings-button {
+        position: absolute;
+        right: 7px;
+        top: 5px;
+    }
+    .whitebg {
+    position: absolute;   
+    top: 200px;           
+    left: 22px;
+    margin-bottom: 4000px;
+    width: 390px; 
+    height: 700px;        
+    background-color: white;
+    border-radius: 44px;
+    box-shadow: 0px 4px 13.5px rgba(0,0,0,0.25);
+
+  
+    
+}
+.username {
+    font
+}
 </style>
-</head>
 
+</head>
 <body>
 
+<div class="bluebg">
+    <div class="backbutton">
+        <img src="static/Assets/images/back-button.png" alt="Back">
+        <p style="font-size: 20px; font-family: 'Hind Guntur', sans-serif; font-weight: 600; color: white;">Profile</p>
 
+    </div>
+    
+    <div class="settings-button">
+        <img src="static/Assets/images/settings-button.png">
+        
+    </div>
+
+
+
+    <div class="whitebg">
+        <img src="static/Assets/images/pfp.png" style="display:block; margin:0 auto;">
+        <div style="text-align:center;">
+             <p style="font-size: 20px; font-family: 'Hind Guntur', sans-serif; font-weight: 600; color: #636363; margin: 0;">Sarvesh Navale</p>
+        </div>
+        
+    </div>
+   
+
+
+
+    
+</div>
 
 </body>
 </html>
