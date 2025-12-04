@@ -22,67 +22,135 @@
                 <p class="mb-0 mx-auto" style="max-width: 700px; position: relative; z-index: 2; font-size: 1.1rem;">
                     Register for real-time bus tracking, digital ticketing, and seamless city travel
                 </p>
-                
-                <div class="stats">
-                    <div class="stat-item">
-                        <span class="stat-number">24/7</span>
-                        <span class="stat-label">Live Tracking</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">20+</span>
-                        <span class="stat-label">Bus Routes</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">5K+</span>
-                        <span class="stat-label">Happy Users</span>
-                    </div>
-                </div>
             </header>
             <div class="row g-0">
-                <!-- Left Panel - Registration -->
-                <div class="col-lg-6 p-4 p-lg-5" style="background-color: #f0f2f5;">
-                    <h2 class="section-title">Registration</h2>
-                    <p class="mb-4">
-                        Create your account to access real-time bus tracking, purchase tickets, and manage your travel history.
-                    </p>
-                    <form id="registrationForm">
-                        <!-- Name Field -->
+                <div class="container py-4">
+                    <!-- Registration Form Panel -->
+                    <div class="registration-panel bg-white p-4 p-lg-5 mb-4">
+                        <h2 class="section-title mb-4">Create Account</h2>
+                        <form id="registrationForm">
+                            <!-- Name Field -->
+                            <div class="mb-4">
+                                <label for="name" class="form-label fw-semibold">Full Name</label>
+                                <input type="text" class="form-control" id="name" placeholder="Enter your full name" required>
+                            </div>
+                            <!-- Mobile Number Field -->
+                            <div class="mb-4">
+                                <label for="mobile" class="form-label fw-semibold">Mobile Number</label>
+                                <input type="tel" class="form-control" id="mobile" placeholder="Enter your mobile number" required>
+                            </div>
+                            <!-- Age Field -->
+                            <div class="mb-4">
+                                <label for="age" class="form-label fw-semibold">Age</label>
+                                <input type="number" class="form-control" id="age" placeholder="Enter your age" min="12" max="100" required>
+                            </div>
+                            <!-- Email Field -->
+                            <div class="mb-4">
+                                <label for="email" class="form-label fw-semibold">Email Address</label>
+                                <input type="email" class="form-control" id="email" placeholder="Enter your email address" required>
+                            </div>
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary-custom w-100 mb-3">Create Account</button>
+                            <!-- Divider -->
+                            <div class="divider">
+                                <span>or</span>
+                            </div>
+                            <!-- Continue with Google Button -->
+                            <button type="button" class="btn btn-google mb-4 w-100">
+                                <i class="fab fa-google me-2" style="color: #4285F4;"></i> Continue with Google
+                            </button>
+                            <!-- Login Link -->
+                            <div class="login-link">
+                                Already a user? <a href="#loginLink" >Log In</a>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Login Panel -->
+                    <div class="login-panel bg-white p-4 p-lg-5 mb-4" id="loginLink">
+                        <h2 class="section-title mb-4">Log In</h2>
+                        <!-- Login Method Selection -->
                         <div class="mb-4">
-                            <label for="name" class="form-label fw-semibold">Full Name</label>
-                            <input type="text" class="form-control" id="name" placeholder="Enter your full name" required>
+                            <label class="form-label fw-semibold">Select Login Method</label>
+                            <div class="login-type-selector d-flex">
+                                <div class="form-check me-4">
+                                    <input class="form-check-input" type="radio" name="loginMethod" id="mobileLogin" checked>
+                                    <label class="form-check-label" for="mobileLogin">
+                                        Mobile Number
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="loginMethod" id="emailLogin">
+                                    <label class="form-check-label" for="emailLogin">
+                                        Email
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <!-- Mobile Number Field -->
+                        <!-- Mobile Login Field -->
+                        <div class="mb-4" id="mobileLoginSection">
+                            <label for="loginMobile" class="form-label fw-semibold">Mobile Number</label>
+                            <input type="tel" class="form-control" id="loginMobile" placeholder="Enter your registered mobile number">
+                        </div>
+                        <!-- Email Login Field (Initially Hidden) -->
+                        <div class="mb-4 d-none" id="emailLoginSection">
+                            <label for="loginEmail" class="form-label fw-semibold">Email Address</label>
+                            <input type="email" class="form-control" id="loginEmail" placeholder="Enter your registered email address">
+                        </div>
+                        <!-- Password Field -->
                         <div class="mb-4">
-                            <label for="mobile" class="form-label fw-semibold">Mobile Number</label>
-                            <input type="tel" class="form-control" id="mobile" placeholder="Enter your mobile number" required>
+                            <label for="loginPassword" class="form-label fw-semibold">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password">
                         </div>
-                        <!-- Age Field -->
-                        <div class="mb-4">
-                            <label for="age" class="form-label fw-semibold">Age</label>
-                            <input type="number" class="form-control" id="age" placeholder="Enter your age" min="12" max="100" required>
+                        <!-- Login Button -->
+                        <button class="btn btn-primary-custom w-100 mb-4" id="loginBtn">Log In</button>
+                    </div> 
+                    <!-- Features Panel -->
+                    <div class="features-panel bg-white p-4 p-lg-5">
+                        <h2 class="section-title mb-4">Why Register with Rotary Bus?</h2>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="feature-item p-3 h-100">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-map-marker-alt feature-icon me-3"></i>
+                                        <h5 class="mb-0">Real-time bus tracking</h5>
+                                    </div>
+                                    <p class="text-muted mb-0">Track buses in real-time with live GPS updates and accurate arrival predictions.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="feature-item p-3 h-100">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-route feature-icon me-3"></i>
+                                        <h5 class="mb-0">Optimized route planning</h5>
+                                    </div>
+                                    <p class="text-muted mb-0">Get the fastest routes with real-time traffic updates and alternative suggestions.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="feature-item p-3 h-100">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-ticket-alt feature-icon me-3"></i>
+                                        <h5 class="mb-0">Easy digital ticketing</h5>
+                                    </div>
+                                    <p class="text-muted mb-0">Purchase and store digital tickets, QR codes, and mobile passes securely.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="feature-item p-3 h-100">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-bell feature-icon me-3"></i>
+                                        <h5 class="mb-0">Arrival time notifications</h5>
+                                    </div>
+                                    <p class="text-muted mb-0">Get personalized alerts for bus arrivals, delays, and important updates.</p>
+                                </div>
+                            </div>
                         </div>
-                        <!-- Email Field -->
-                        <div class="mb-4">
-                            <label for="email" class="form-label fw-semibold">Email Address</label>
-                            <input type="email" class="form-control" id="email" placeholder="Enter your email address" required>
-                        </div>
-                        <!-- Continue with Google Button -->
-                        <button type="button" class="btn btn-google mb-4">
-                            <i class="fab fa-google me-2" style="color: #4285F4;"></i> Continue with Google
-                        </button>
-                        <!-- Divider -->
-                        <div class="divider">
-                            <span>or</span>
-                        </div>
-                        <!-- Submit Button -->
-                        <button type="submit" class="btn btn-primary-custom w-100 mb-3">Create Account</button>       
-                        <!-- Login Link -->
-                        <div class="login-link">
-                            Already a user? <a href="#" id="loginLink">Log In</a>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- custom JS file -->
+    <script src="static/js/script.js"></script>
 </body>
+</html>
