@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Hind Guntur", sans-serif;
+    
+    background: linear-gradient(to bottom, #6C64FF 37%, #ffffff 20%);
+    min-height: 100vh; 
+}
+
+
+
+.top-area {
+    height: 220px;
+    width: 100%;
+    position: relative;
+}
+
+.top-content {
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.profile-row img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    
+}
+
+.bell {
+   
+    position: absolute;
+    right: 0px;
+    top: 5px;
+
+    
+}
+
+
+.white-card {
+    width: 88%;
+    background: #EEEEEE;
+    border-radius: 44px;
+    height: 650px;
+    margin: -55px auto 140px auto;
+    padding: 20px 15px 120px 15px;
+    box-shadow: 0px 4px 13px rgba(0,0,0,0.25);
+}
+
+
+.text {
+    font-size: 3px;
+    font-family: 'Hind Guntur', sans-serif;
+    font-weight: 600;
+    color: #636263; 
+    margin: 0;
+}
+
+
+.search-container {
+    position: relative;
+    width: 320px;
+}
+
+.search-box {
+    width: 100%;
+    height: 80px;
+    background: #F4F4F4;
+    padding: 0 13px 0 45px; 
+    border-radius: 84px;
+    font-size: 21px;
+    color: #636363;
+    border: 0;
+    box-shadow: 0px 3px 16.2px rgba(0, 0, 0, 0.25); 
+    margin-bottom: 18px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px; 
+    top: 50%;
+    transform: translateY(-50%);
+    height: 34px; 
+    width: auto;
+    pointer-events: none; 
+}
+
+
+.btn-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 10px;
+}
+
+.card-btn {
+    width: 46%;
+    height: 195px; 
+    background: #FFFFFF;
+    border-radius: 44px;
+    box-shadow: 0px 4px 8.3px rgba(0,0,0,0.25);
+    text-align: center;
+    padding-top: 10px;
+    margin-bottom: 15px;
+    color: #636263;
+    font-size: 1px;
+    font-weight: 600;
+}
+
+
+.card-btn span {
+    display: block;
+    font-size: 25px;
+    margin-bottom: 8px;
+    margin-left: 12px;
+    text-align: left;
+}
+
+
+.full-btn {
+    width: 100%;
+    
+}
+
+
+.navwrap {
+    width: 92%;
+    height: 80px;
+    background: #6C64FF;
+    position: fixed;
+    bottom: 15px;
+    left: 4%;
+    border-radius: 33px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0px -2px 12px rgba(0,0,0,0.25);
+}
+
+.navitem {
+    text-align: center;
+    font-size: 13px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.navitem img {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 4px;
+    margin-top: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="top-area">
+    <div class="top-content">
+
+        <div class="profile-row">
+            <img src="static/Assets/images/homepfp.png">
+            <span style="font-size: 18px; font-family: 'poppins', sans-serif; color: rgba(255,255,255,0.9);">
+                Sarvesh Navale
+            </span>
+
+    
+        </div>
+
+        <img src="static/Assets/images/Bell-icon.png" class="bell">
+
+    </div>
+</div>
+
+<div class="white-card">
+
+    <div class="search-container">
+        <img src="static/Assets/images/search.png" alt="search logo" class="search-icon">
+        <input class="search-box" type="text" placeholder="  Choose your destination">
+    </div>
+
+
+
+    <div class="btn-grid">
+
+        <div class="card-btn">
+            <img src="static/Assets/images/view-ticket.png" style="margin-bottom: 1px;">
+            <p style="font-size:20px; margin-top: 0px;">View Ticket</p>
+        </div>
+
+        <div class="card-btn">
+            <img src="static/Assets/images/view-pass.png" style="margin-bottom: 1px;">
+            <p style="font-size:20px; margin-top: 5px;">View Pass</p>
+        </div>
+
+        <div class="card-btn">
+            <img src="static/Assets/images/route-timetable.png" style="margin-bottom: 1px;">
+            <p style="font-size:20px; margin-top: 4px;">Route<br>Timetables</p>
+        </div>
+
+        <div class="card-btn">
+            <img src="static/Assets/images/view-pass.png" style="margin-bottom: 1px;">
+            <p style="font-size:20px; margin-top: 5px;">Buy Pass</p>
+        </div>
+
+        <div class="card-btn full-btn">
+            <span style="color: rgb(247, 149, 149); font-size: 20px;">NEW!</span>
+            <img src="static/Assets/images/robo.png" style="margin-bottom: 1px; margin-top: 0px;">
+            <p class="text" style="font-size:22px;">Chat With Tiko</p>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="navwrap">
+
+    <div class="navitem">
+        <img src="static/Assets/images/home-logo.png" alt="home">
+        <div>Home</div>
+    </div>
+
+    <div class="navitem">
+        <img src="static/Assets/images/loc-logo.png" alt="loc">
+        <div>Near me</div>
+    </div>
+
+    <div class="navitem">
+        <img src="static/Assets/images/games-logo.png" alt="play">
+        <div>Play</div>
+    </div>
+
+    <div class="navitem">
+        <img src="static/Assets/images/FAQs-logo.png" alt="faqs">
+        <div>FAQs</div>
+    </div>
+
+</div>
+
+</body>
+</html>
