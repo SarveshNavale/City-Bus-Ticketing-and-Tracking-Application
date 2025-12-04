@@ -13,7 +13,7 @@ db = mysql.connector.connect(
 @app.route('/')
 def home():
     
-    return render_template("profile.html") # replace name of page here tht you are currently editing
+    return render_template("play.html") # replace name of page here tht you are currently editing
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
