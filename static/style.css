@@ -26,28 +26,6 @@ body {
     position: relative;
     overflow: hidden;
 }
-.header-gradient::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 200px;
-    height: 200px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 50%;
-    transform: translate(30%, -30%);
-}
-.header-gradient::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 150px;
-    height: 150px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 50%;
-    transform: translate(-30%, 30%);
-}
 .bus-animation {
     font-size: 3rem;
     margin-bottom: 1rem;
@@ -210,4 +188,19 @@ body {
 .feature-icon {
     color: var(--primary-blue);
     font-size: 1.5rem;
+}
+.header-corner-img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 180px;    
+    opacity: 0.35;
+    pointer-events: none;
+}
+/* Smaller on tablets/phones */
+@media (max-width: 768px) {
+.header-corner-img {
+    width: 120px;
+    opacity: 0.25;
+}
 }
