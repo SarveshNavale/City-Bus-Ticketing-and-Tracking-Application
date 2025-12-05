@@ -27,7 +27,7 @@
             <div class="row g-0">
                 <div class="container py-4">
                     <!-- Registration Form Panel -->
-                    <div class="registration-panel bg-white p-4 p-lg-5 mb-4">
+                    <div class="registration-panel bg-white p-4 p-lg-5 mb-4" id="registrationPanel">
                         <h2 class="section-title mb-4">Create Account</h2>
                         <form id="registrationForm">
                             <!-- Name Field -->
@@ -62,7 +62,7 @@
                             </button>
                             <!-- Login Link -->
                             <div class="login-link">
-                                Already a user? <a href="#loginLink" >Log In</a>
+                                Already a user? <a href="#loginLink"  id="showLogin">Log In</a>
                             </div>
                         </form>
                     </div>
@@ -104,6 +104,11 @@
                         </div>
                         <!-- Login Button -->
                         <button class="btn btn-primary-custom w-100 mb-4" id="loginBtn">Log In</button>
+                        <div class="divider">
+                            <span>or</span>
+                        </div>
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary-custom w-100 mb-3" id="showRegister">Create Account</button>
                     </div> 
                     <!-- Features Panel -->
                     <div class="features-panel bg-white p-4 p-lg-5">

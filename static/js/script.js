@@ -107,3 +107,30 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+// Toggle between registration and login sections
+const registrationPanel = document.getElementById('registrationPanel');
+const loginPanel        = document.getElementById('loginLink');  
+const showLoginLink     = document.getElementById('showLogin');
+const showRegisterLink  = document.getElementById('showRegister');
+
+console.log({ registrationPanel, loginPanel, showLoginLink, showRegisterLink });
+
+if (registrationPanel && loginPanel && showLoginLink && showRegisterLink) {
+
+registrationPanel.classList.remove('d-none');
+loginPanel.classList.add('d-none');
+
+showLoginLink.addEventListener('click', function (e) {
+    e.preventDefault();
+    registrationPanel.classList.add('d-none');
+    loginPanel.classList.remove('d-none');
+});
+
+showRegisterLink.addEventListener('click', function (e) {
+    e.preventDefault();
+    loginPanel.classList.add('d-none');
+    registrationPanel.classList.remove('d-none');
+});
+} else {
+    console.error('Toggle elements missing');
+}
