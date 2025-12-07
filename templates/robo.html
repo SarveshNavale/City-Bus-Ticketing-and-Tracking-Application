@@ -132,7 +132,7 @@ input {
 </div>
 
 <!-- Chat sectionn-->
-<div id="chatbox"></div>
+<div id="chatbox"></div> <!-- Messages tht the user will send adn the ai should repond will appear in this section-->
 
 <!-- input area -->
 <div class="inputarea">
@@ -158,9 +158,14 @@ function sendMsg() {
     box.scrollTop = box.scrollHeight;
 
    
+
+
+
+
+
     let ai = document.createElement("div");
     ai.className = "recmsg";
-    ai.innerText = ""; 
+    ai.innerText = "";                           //ai cha reply hite assign karaycha ahe
     box.appendChild(ai);
 }
 </script>
