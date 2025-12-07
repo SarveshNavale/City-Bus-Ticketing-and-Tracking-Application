@@ -6,13 +6,13 @@ app = Flask(__name__)
 db = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="#SAR1807",
+    password="hrishi@123",
     database="RotaryClub_Database"
 )
 
 @app.route('/')
 def home():
-    return render_template("play.html")
+    return render_template("buyPass.html")
 
 @app.route('/dino')
 def dino():

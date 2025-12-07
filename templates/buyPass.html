@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotary Bus - Buy Pass</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="static/css/buyPass.css">
+</head>
+<body>
+    <div class="container-fluid p-0">
+        <div class="main-container">
+            <!-- Header -->
+            <header class="header-gradient text-center">
+                <img src="static/Assets/images/Just-circles.png" class="header-corner-img">
+                <h1 class="display-5 fw-bold mb-3">Buy Pass</h1>
+            </header>
+            <!-- Main Content -->
+            <div class="container py-4">
+                <!-- Pass Selection Card -->
+                <div class="pass-card">
+                    <div class="pass-header">
+                        <div class="d-flex align-items-center">
+                            <div class="pass-icon me-3">
+                                <i class="fas fa-ticket-alt"></i>
+                            </div>
+                            <div>
+                                <h3 class="mb-1">Buy One Day Pass</h3>
+                                <p class="text-muted mb-0">Unlimited travel for 24 hours</p>
+                                <p class="text-muted mb-0">(Most Popular)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fare Display -->
+                    <div class="fare-display">
+                        <div class="fare-amount">₹30.00</div>
+                        <div class="fare-label">Pass Fare: maximum of any stop</div>
+                        <p class="text-muted mt-2 mb-0">Valid for unlimited rides across all city routes for 24 hours</p>
+                    </div>
+                    <!-- Quantity Selector -->
+                    <div class="text-center mb-4">
+                        <h4 class="mb-3">Total Passes</h4>
+                        <div class="quantity-selector">
+                            <button class="quantity-btn" id="decreaseQty">-</button>
+                            <div class="quantity-display" id="quantityDisplay">1</div>
+                            <button class="quantity-btn" id="increaseQty">+</button>
+                        </div>
+                        <p class="text-muted mt-2">Select number of passes to purchase</p>
+                    </div>
+                    <!-- Payment Options -->
+                    <h4 class="mb-3">Pay Using</h4>
+                    <div class="payment-option selected" data-payment="gpay">
+                        <div class="d-flex align-items-center">
+                            <div class="payment-icon">
+                                <i class="fab fa-google-pay"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Google Pay</h5>
+                                <p class="text-muted mb-0">Fast and secure payment</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="static/js/buyPass.js"></script>
+</body>
+</html>
