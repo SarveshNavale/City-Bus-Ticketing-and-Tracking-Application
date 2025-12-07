@@ -8,13 +8,15 @@ body {
     color: var(--text-color);
     font-family: 'Hind Guntur', sans-serif;
     margin: 0;
-    padding: 0;
+    padding: 0; 
 }
 .main-container {
     max-width: 1080px;
-    min-height: 2400px;
+    min-height: 100vh;
     background-color: white;
+    border-radius: 0px;
     overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
 }
 /* Header */
