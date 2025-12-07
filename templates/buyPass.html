@@ -63,6 +63,47 @@
                             </div>
                         </div>
                     </div>
+                    <div class="payment-option" data-payment="card">
+                        <div class="d-flex align-items-center">
+                            <div class="payment-icon">
+                                <i class="far fa-credit-card"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Credit/Debit Card</h5>
+                                <p class="text-muted mb-0">Visa, Mastercard, RuPay</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="payment-option" data-payment="wallet">
+                        <div class="d-flex align-items-center">
+                            <div class="payment-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Digital Wallet</h5>
+                                <p class="text-muted mb-0">Paytm, PhonePe, and more</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Total Calculation -->
+                    <div class="total-display">
+                        <div class="total-row">
+                            <span>Pass Price (x<span id="totalQuantity">1</span>)</span>
+                            <span>₹<span id="subtotal">30.00</span></span>
+                        </div>
+                        <div class="total-row">
+                            <span>Service Fee</span>
+                            <span>₹<span id="serviceFee">0.50</span></span>
+                        </div>
+                        <div class="total-row" style="border-bottom: none; padding-bottom: 0;">
+                            <span><strong>Total Amount</strong></span>
+                            <span class="total-amount">₹<span id="totalAmount">30.50</span></span>
+                        </div>
+                    </div>
+                    <!-- Pay Button -->
+                    <button class="btn btn-primary-custom" id="payButton">
+                        <i class="fas fa-lock me-2"></i>Pay Now - ₹<span id="payAmount">30.50</span>
+                    </button>
                 </div>
             </div>
         </div>

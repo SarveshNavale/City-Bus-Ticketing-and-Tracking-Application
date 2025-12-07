@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const serviceFee = document.getElementById('serviceFee');
     
     let quantity = 1;
-    const passPrice = 5.00;
+    const passPrice = 30.00;
     const feePerPass = 0.50;
     
     function updateTotals() {
@@ -49,6 +49,23 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add('selected');
         });
     });
+     // Pay Button Functionality
+    const payButton = document.getElementById('payButton');
+    payButton.addEventListener('click', function() {
+        const selectedPayment = document.querySelector('.payment-option.selected').dataset.payment;
+        const totalPrice = parseFloat(totalAmount.textContent);
+        
+        alert(`Processing payment of ₹${totalPrice.toFixed(2)} via ${getPaymentMethodName(selectedPayment)}...\n\nYour pass will be activated immediately after successful payment.`);
+    });
+            
+    function getPaymentMethodName(method) {
+        switch(method) {
+            case 'gpay': return 'Google Pay';
+            case 'card': return 'Credit/Debit Card';
+            case 'wallet': return 'Digital Wallet';
+            default: return 'Selected Payment Method';
+        }
+    }
     // Initialize totals
     updateTotals();
 });

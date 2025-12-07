@@ -143,3 +143,24 @@ body {
     opacity: 0.35;
     pointer-events: none;
 }
+.total-display {
+    background: #f8f9ff;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border: 2px solid var(--primary-blue);
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.total-amount {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-blue);
+}
