@@ -26,6 +26,7 @@ body {
     padding: 2.5rem 2rem;
     position: relative;
     overflow: hidden;
+    font-size: 20px;
 }
 @keyframes float {
     0%, 100% { transform: translateY(0); }
@@ -65,14 +66,14 @@ body {
     text-align: center;
 }
 .fare-amount {
-    font-size: 2.5rem;
+    font-size: 22px;
     font-weight: bold;
     color: var(--primary-blue);
     margin-bottom: 0.5rem;
 }
 .fare-label {
     color: var(--text-color);
-    font-size: 1.1rem;
+    font-size: 20px;
 }
 .quantity-selector {
     display: flex;
@@ -87,7 +88,7 @@ body {
     border: 2px solid var(--primary-blue);
     background: white;
     color: var(--primary-blue);
-    font-size: 1.5rem;
+    font-size: 22px;;
     font-weight: bold;
     display: flex;
     align-items: center;
@@ -100,7 +101,7 @@ body {
     color: white;
 }
 .quantity-display {
-    font-size: 1.8rem;
+    font-size: 20px;
     font-weight: bold;
     min-width: 50px;
     text-align: center;
@@ -112,6 +113,7 @@ body {
     margin-bottom: 1rem;
     cursor: pointer;
     transition: all 0.3s;
+    font-size: 14px;
 }
 .payment-option:hover, .payment-option.selected {
     border-color: var(--primary-blue);
@@ -128,7 +130,7 @@ body {
     color: white;
     padding: 1rem;
     font-weight: 600;
-    font-size: 1.2rem;
+    font-size: 16px;
     border-radius: 0;
     width: 100%;
     margin-top: 1rem;
@@ -142,7 +144,16 @@ body {
     top: 0;
     right: 0;
     width: 120px;    
-    opacity: 0.35;
+    opacity: 1;
+    pointer-events: none;
+}
+.header-corner-img-2 {
+    position: absolute;
+    top: 27px;
+    left: 20px;
+    width: 80px;
+    height: 80px;    
+    opacity: 0.8;
     pointer-events: none;
 }
 .total-display {
@@ -162,7 +173,39 @@ body {
 }
 
 .total-amount {
-    font-size: 2rem;
+    font-size: 20px;
     font-weight: bold;
     color: var(--primary-blue);
+}
+.ad-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 2rem;
+    margin-top: 2rem;
+    text-align: center;
+    border: 2px dashed #dee2e6;
+}
+.ad-title {
+    color: var(--primary-blue);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 22px;
+}
+.ad-content {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
+.ad-btn {
+    background: white;
+    border: 2px solid var(--primary-blue);
+    color: var(--primary-blue);
+    padding: 0.8rem 2rem;
+    font-weight: 600;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.ad-btn:hover {
+    background: var(--primary-blue);
+    color: white;
 }

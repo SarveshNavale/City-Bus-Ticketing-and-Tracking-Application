@@ -32,11 +32,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     increaseBtn.addEventListener('click', function() {
-        if (quantity < 10) {
+        if (quantity < 5) {
             quantity++;
             updateTotals();
         } else {
-            alert('Maximum 10 passes per transaction');
+            alert('Maximum 5 passes per transaction');
         }
     });
     // Payment Option Selection
@@ -66,6 +66,11 @@ document.addEventListener('DOMContentLoaded', function() {
             default: return 'Selected Payment Method';
         }
     }
+    // Ad Button
+    const adBtn = document.querySelector('.ad-btn');
+    adBtn.addEventListener('click', function() {
+        alert('Redirecting to advertising information page...');
+    });
     // Initialize totals
     updateTotals();
 });
