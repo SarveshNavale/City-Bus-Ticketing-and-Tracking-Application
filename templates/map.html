@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@600&display=swap" rel="stylesheet">
+<title>Map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+.bluebg {
+    background-color: #6C64FF;
+    height: 190px;
+    width: 100%;
+    position: relative;
+}
+
+.backbutton {
+    position: absolute;
+    top: 45px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 49px;   
+}
+
+.backbutton img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: flaot;   
+}
+
+.topcircles {
+    position: absolute;
+    right: 5px;
+    top: 0px;
+}
+
+#map {
+    width: 100%;
+    height: calc(100vh - 190px);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bluebg">
+    <div class="backbutton">
+        <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+        <p style="font-size: 22px; font-family: 'Hind Guntur'; font-weight:600; color:white;">Map</p>
+    </div>
+
+    <div class="topcircles">
+        <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" style="width:150px;">
+    </div>
+</div>
+
+<div id="map"></div>
+
+<script>
+var map = L.map('map').setView([20.5937, 78.9629], 5);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+}).addTo(map);
+
+let userId = 1;
+var marker = null;
+var firstFix = true;
+
+//College loc
+var fallbackLat = 16.983972;   
+var fallbackLon = 73.312583;   
+
+
+function setMarker(lat, lon, label) {
+    if (!marker) {
+        marker = L.marker([lat, lon]).addTo(map)
+            .bindPopup(label)
+            .openPopup();
+    } else {
+        marker.setLatLng([lat, lon]);
+    }
+
+    if (firstFix) {
+        map.setView([lat, lon], 16);
+        firstFix = false;
+    }
+
+    
+    fetch("/update_location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            user_id: userId,
+            latitude: lat,
+            longitude: lon
+        })
+    });
+}
+
+
+if ("geolocation" in navigator) {
+    navigator.geolocation.watchPosition(function(position) {
+
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+
+        setMarker(lat, lon, "Your Live Location");
+
+    }, function(error) {
+
+        
+        setMarker(fallbackLat, fallbackLon, "📍 Government Polytechnic, Ratnagiri");
+
+    }, {
+        enableHighAccuracy: true,
+        maximumAge: 0
+    });
+} else {
+    
+    setMarker(fallbackLat, fallbackLon, "Government Polytechnic, Ratnagiri");
+}
+</script>
+
+
+</body>
+</html>
