@@ -13,6 +13,11 @@ db = mysql.connector.connect(
 
 @app.route('/')
 def home():
+    return render_template("homepage.html")
+
+
+@app.route('/map')
+def map():
     return render_template("map.html")
 
 @app.route('/dino')
@@ -62,5 +67,5 @@ def get_location(user_id):
 
 # ================== RUN SERVER ==================
 
-if __name__ == '__main__':
+if __name__ == '__main__':      
     app.run(host="0.0.0.0", port=5000, debug=True)
