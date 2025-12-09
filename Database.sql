@@ -44,7 +44,46 @@ VALUES
 ('Sarvesh Navale', '9763772464', 18, 'sarveshnavale18@gmail.com');
 
 
+CREATE TABLE stops_info (
+    Stop_name VARCHAR(100),         
+    track_no   INT,           
+    latitude DECIMAL(10,7) DEFAULT NULL,
+    longitude DECIMAL(10,7) DEFAULT NULL           
+);
+ALTER TABLE stops_info
+ADD COLUMN stop_no int;
 
+CREATE TABLE tickets_info (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    start_dest VARCHAR(150) NOT NULL,
+    final_dest VARCHAR(150) NOT NULL,
+    no_of_tickets INT NOT NULL,
+    ticket_holder VARCHAR(150) NOT NULL,
+    mobile_no VARCHAR(15) NOT NULL,
+    ticket_number VARCHAR(30) UNIQUE NOT NULL,
+    amount_paid DECIMAL(10,2) NOT NULL,
+    issue_date DATE NOT NULL,
+    issue_time TIME NOT NULL
+);
+
+create table current_login (
+	mobo_no int NOT NULL
+);
+
+CREATE TABLE passes_info (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    pass_holder VARCHAR(150) NOT NULL,
+
+    pass_number VARCHAR(50) UNIQUE NOT NULL,
+
+    amount_paid DECIMAL(10,2) NOT NULL,
+
+    mobile_no VARCHAR(15) NOT NULL,
+
+    issue_date DATE NOT NULL,
+    issue_time TIME NOT NULL
+);
 
 
 
