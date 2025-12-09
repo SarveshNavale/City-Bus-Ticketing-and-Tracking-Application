@@ -5,8 +5,8 @@ app = Flask(__name__)
 
 db = mysql.connector.connect(
     host="localhost",
-    user="root",
-    password="hrishi@123",
+    user="flaskuser",
+    password="shreyash45",
     database="RotaryClub_Database"
 )
 
@@ -21,6 +21,18 @@ def dino():
 @app.route('/static/games/dino/<path:filename>')
 def serve_dino_files(filename):
     return send_from_directory('static/games/dino', filename)
+  
+@app.route('/view_ticket')
+def view_ticket():
+    return render_template("view_ticket.html",
+        from_stop="Maruti Mandir",
+        to_stop="Hathkhamba",
+        total_tickets=5,
+        holder_name="Shreyash Khot",
+        ticket_number="TC8011192222",
+        amount_paid=28.20,
+        issue_datetime="11/11/2011 | 2:17 AM"
+    )
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)

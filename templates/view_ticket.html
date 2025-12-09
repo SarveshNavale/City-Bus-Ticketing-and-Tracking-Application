@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="mr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>View Ticket</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --purple-1:#6f5af8;
+      --purple-2:#7c63ff;
+      --bg:#ffffff;
+      --card:#f2f2f2;
+      --text:#333;
+      --muted:#777;
+      --radius:20px;
+      --shadow:0 14px 28px rgba(0,0,0,0.1);
+    }
+
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:"Poppins", sans-serif;
+      background:#111;
+      color:var(--text);
+    }
+
+    /* Header */
+    .bluebg {
+    background-color: #6C64FF;
+    height: 220px;
+    width: 100%;
+    position: relative;
+}
+
+.backbutton {
+    position: absolute;
+    top: 45px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 49px;   /* 🔒 kept exactly like your admin page */
+}
+
+.backbutton img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: flaot;   /* 🔒 kept same */
+}
+
+.topcircles {
+    position: absolute;
+    right: 5px;
+    top: 0px;
+}
+
+    .back{
+      width:46px;height:46px;border-radius:50%;
+      background:rgba(255,255,255,0.1);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+    }
+    .header h1{
+      font-size:18px;
+      font-weight:400;
+      margin:0;
+    }
+
+    .page{
+      background:#fff;
+      min-height:calc(100vh - 86px);
+      padding:20px 0 50px;
+    }
+
+    .wrap{
+      display:flex;
+      justify-content:center;
+    }
+
+    .card{
+      width:100%;
+      max-width:360px;
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:20px;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(0,0,0,0.05);
+    }
+
+    .stop-block{
+      text-align:center;
+      padding:10px 0;
+    }
+    .stop-name{
+      font-size:16px;
+      font-weight:400;
+      color:#555;
+    }
+    .dots{
+      width:2px;
+      height:45px;
+      margin:10px auto;
+      background-image:repeating-linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.35) 0px,
+        rgba(0,0,0,0.35) 4px,
+        transparent 4px,
+        transparent 8px
+      );
+    }
+
+    .divider{
+      height:1px;
+      background:rgba(0,0,0,0.18);
+      margin:12px 0;
+    }
+
+    .info{
+      font-size:14px;
+      color:#444;
+      line-height:1.7;
+      font-weight:300;
+    }
+
+    .barcode{
+      margin:22px auto 0;
+      width:80%;
+      background:#e1e1e1;
+      padding:12px;
+      border-radius:6px;
+      text-align:center;
+      font-size:14px;
+      color:#333;
+      font-weight:300;
+    }
+
+  </style>
+</head>
+<body>
+
+  
+    <div class="bluebg">
+
+    <div class="backbutton">
+        <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+        <p style="font-size: 22px; font-family: 'Hind Guntur'; font-weight:600; color:white;">Play</p>
+    </div>
+
+    <div class="topcircles">
+        <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" style="width:150px;">
+    </div>
+     <div>
+    <h1>View Ticket</h1>
+  </div>
+
+  <div class="page">
+    <div class="wrap">
+      <div class="card">
+
+        <div class="stop-block">
+          <div class="stop-name">from_stop</div>
+          <div class="dots"></div>
+          <div class="stop-name">to_stop </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="info">
+          Total Number Of Tickets: {{ total_tickets}} <br>
+          Ticket Holder:  {{holder_name}} <br>
+          Ticket Number: {{ticket_number}} <br>
+          Amount Paid:{{ ₹ amount_paid }}<br>
+          Issue Date & Time:{{ issue_datetime}}
+        </div>
+
+        <div class="barcode">bar code</div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
