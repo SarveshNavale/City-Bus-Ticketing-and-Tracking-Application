@@ -24,7 +24,8 @@ def serve_dino_files(filename):
   
 @app.route('/view_ticket')
 def view_ticket():
-    return render_template("view_ticket.html",
+    return render_template(
+        "view_ticket.html",
         from_stop="Maruti Mandir",
         to_stop="Hathkhamba",
         total_tickets=5,
@@ -33,6 +34,7 @@ def view_ticket():
         amount_paid=28.20,
         issue_datetime="11/11/2011 | 2:17 AM"
     )
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)

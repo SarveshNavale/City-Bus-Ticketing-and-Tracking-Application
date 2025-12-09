@@ -161,20 +161,21 @@
       <div class="card">
 
         <div class="stop-block">
-          <div class="stop-name">{{from_stop}}</div>
+          <div class="stop-name">{{ from_stop }}</div>
           <div class="dots"></div>
-          <div class="stop-name">{{to_stop}} </div>
+          <div class="stop-name">{{ to_stop }} </div>
         </div>
 
         <div class="divider"></div>
 
         <div class="info">
-          Total Number Of Tickets: {{ total_tickets}} <br>
-          Ticket Holder:  {{holder_name}} <br>
-          Ticket Number: {{ticket_number}} <br>
-          Amount Paid:{{ ₹ amount_paid }}<br>
-          Issue Date & Time:{{ issue_datetime}}
-        </div>
+    Total Number Of Tickets: {{ total_tickets }} <br>
+    Ticket Holder: {{ holder_name }} <br>
+    Ticket Number: {{ ticket_number }} <br>
+    Amount Paid: ₹{{ amount_paid }} <br>
+    Issue Date & Time: {{ issue_datetime }}
+          </div>
+
 
         <div class="barcode">bar code</div>
 
