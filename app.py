@@ -34,6 +34,16 @@ def view_ticket():
         amount_paid=28.20,
         issue_datetime="11/11/2011 | 2:17 AM"
     )
+@app.route('/view_pass')
+def view_pass():
+    return render_template(
+        "view_pass.html",
+        total_tickets=5,
+        holder_name="Shreyash Khot",
+        pass_number="PS8011192222",
+        amount_paid=500,
+        issue_datetime="11/11/2011 | 2:17 AM"
+    )
 
 
 if __name__ == '__main__':
