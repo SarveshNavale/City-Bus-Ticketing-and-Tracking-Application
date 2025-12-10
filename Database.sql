@@ -84,6 +84,36 @@ CREATE TABLE passes_info (
     issue_date DATE NOT NULL,
     issue_time TIME NOT NULL
 );
+-- Create table (safe columns)
+CREATE TABLE IF NOT EXISTS bus_info (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    bus_no INT NOT NULL,
+    no_plate VARCHAR(16) NOT NULL,
+    route INT NOT NULL,                -- 1 = kokan, 2 = highway, 3 = nachane, 4 = railway
+    latitude DOUBLE DEFAULT NULL,
+    longitude DOUBLE DEFAULT NULL,
+    last_seen DATETIME DEFAULT NULL
+);
+
+-- Insert exactly 12 buses (initial lat/lon = City Bus Stand)
+-- City Bus Stand coordinates used as spawn initial position
+INSERT INTO bus_info (bus_no, no_plate, route, latitude, longitude) VALUES
+ (101, 'MH08-101-A', 1, 16.991452, 73.295039),
+ (101, 'MH08-101-B', 1, 16.991452, 73.295039),
+ (101, 'MH08-101-C', 1, 16.991452, 73.295039),
+
+ (102, 'MH08-102-A', 2, 16.991452, 73.295039),
+ (102, 'MH08-102-B', 2, 16.991452, 73.295039),
+ (102, 'MH08-102-C', 2, 16.991452, 73.295039),
+
+ (103, 'MH08-103-A', 3, 16.991452, 73.295039),
+ (103, 'MH08-103-B', 3, 16.991452, 73.295039),
+ (103, 'MH08-103-C', 3, 16.991452, 73.295039),
+
+ (98,  'MH08-098-A', 4, 16.991452, 73.295039),
+ (98,  'MH08-098-B', 4, 16.991452, 73.295039),
+ (98,  'MH08-098-C', 4, 16.991452, 73.295039);
+
 
 
 
