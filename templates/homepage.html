@@ -176,14 +176,16 @@ body {
 <div class="top-area">
     <div class="top-content">
 
-        <div class="profile-row">
-            <img src="static/Assets/images/homepfp.png">
-            <span style="font-size: 18px; font-family: 'poppins', sans-serif; color: rgba(255,255,255,0.9);">
-                Sarvesh Navale
-            </span>
+            <a href="/profile" style="text-decoration: none; color: inherit; outline: none; -webkit-tap-highlight-color: transparent;">
+                <div class="profile-row">
+                    <img src="static/Assets/images/homepfp.png">
+                    <span style="font-size: 18px; font-family: 'poppins', sans-serif; color: rgba(255,255,255,0.9);">
+                        Sarvesh Navale
+                    </span>
+                </div>
+            </a>
 
-    
-        </div>
+
 
         <img src="static/Assets/images/Bell-icon.png" class="bell">
 
@@ -191,11 +193,15 @@ body {
 </div>
 
 <div class="white-card">
-
-    <div class="search-container">
-        <img src="static/Assets/images/search.png" alt="search logo" class="search-icon">
-        <input class="search-box" type="text" placeholder="  Choose your destination">
-    </div>
+<!-- search bar hach ahe form tag cha , get ani post method ni data transfer karta yeil -->
+<form action="/search" method="GET" style="position: relative; width: 375px;">
+    <img src="static/Assets/images/search.png" alt="search logo" class="search-icon">
+    <input class="search-box" 
+           type="search" 
+           name="q"
+           placeholder="  Choose your destination"
+           autocomplete="on">
+</form>
 
 
 
@@ -221,11 +227,13 @@ body {
             <p style="font-size:20px; margin-top: 5px;">Buy Pass</p>
         </div>
 
-        <div class="card-btn full-btn">
-            <span style="color: rgb(247, 149, 149); font-size: 20px;">NEW!</span>
-            <img src="static/Assets/images/robo.png" style="margin-bottom: 1px; margin-top: 0px;">
-            <p class="text" style="font-size:22px;">Chat With Tiko</p>
-        </div>
+        
+<div class="card-btn full-btn" onclick="window.location.href='/robo'" style="cursor: pointer;">
+    <span style="color: rgb(247, 149, 149); font-size: 20px;">NEW!</span>
+    <img src="static/Assets/images/robo.png" style="margin-bottom: 1px; margin-top: 0px;">
+    <p class="text" style="font-size:22px;">Chat With Tiko</p>
+</div>
+
 
     </div>
 </div>
@@ -238,15 +246,21 @@ body {
         <div>Home</div>
     </div>
 
+    <a href="/map" style="text-decoration: none; color: inherit;">
     <div class="navitem">
         <img src="static/Assets/images/loc-logo.png" alt="loc">
-        <div>Near me</div>
+        <div>Map</div>
     </div>
+    </a>
 
-    <div class="navitem">
-        <img src="static/Assets/images/games-logo.png" alt="play">
-        <div>Play</div>
-    </div>
+
+            <a href="/play" style="text-decoration: none; color: inherit; outline: none; -webkit-tap-highlight-color: transparent;">
+            <div class="navitem">
+                <img src="static/Assets/images/games-logo.png" alt="play">
+                <div>Play</div>
+            </div>
+            </a>
+
 
     <div class="navitem">
         <img src="static/Assets/images/FAQs-logo.png" alt="faqs">

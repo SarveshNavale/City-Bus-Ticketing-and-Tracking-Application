@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@600&display=swap" rel="stylesheet">
+
+  <style>
+    html, body 
+    { margin:0; padding:0; font-family: 'Hind Guntur', sans-serif; }
+    .bluebg { background-color: #6C64FF; height: 190px; width: 100%; position: relative; }
+    .backbutton { position: absolute; top: 45px; left: 20px; display:flex; align-items:center; gap:49px; }
+    .topcircles { position:absolute; right:5px; top:0px; }
+    #map { width:100%; height: calc(100vh - 190px); }
+
+    /* bus rectangle */
+    .bus-div{ background:#2ecc71; color:#fff; padding:3px 6px; border-radius:4px; font-weight:700; font-size:12px; text-align:center; border:1px solid rgba(0,0,0,0.15); }
+  </style>
+</head>
+<body>
+
+<div class="bluebg">
+<a href="/backtohome" style="text-decoration: none; color: inherit;">
+  <div class="backbutton">
+    <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+    <p style="font-size:22px; font-weight:600; color:white;">Map</p>
+  </div>
+</a>
+
+  <div class="topcircles">
+    <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" style="width:150px;">
+  </div>
+</div>
+
+<div id="map"></div>
+
+<script>
+/* --------------- map setup --------------- */
+var map = L.map('map').setView([16.995, 73.33], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom:19 }).addTo(map);
+
+/* --------------- route definitions (stop-by-stop) --------------- */
+/* Kokan Nagar Marg (101): City Bus Stand -> Jambhul Phata */
+var ROUTE_1 = [
+  [16.991452, 73.295039],        // City bus stand
+  [16.99064125770783,73.30594553525175], // Malnaka
+  [16.990800968717373,73.31206367358372], // Maruti Mandir (kokan)
+  [16.995016862941338,73.31904173559761], // Godbole
+  [16.99641543721497,73.32083529243269], // Charmalay
+  [17.001612134020696,73.32455084660955], // Kokan nagar
+  [17.00357182203808,73.32695598511572], // Radha Krishna nagar
+  [17.009984303061533,73.33012668733534], // Aadishti
+  [17.011694866524202,73.33537638177984], // Finolex
+  [17.01730152480268,73.33568635248713] // Jambhul Phata
+];
+
+/* Main Highway (102): City Bus Stand -> Hatkhamba (via Shivaji nagar etc) */
+var ROUTE_2 = [
+  [16.991452,73.295039], // City bus stand
+  [16.99064125770783,73.30594553525175], // Malnaka
+  [16.990457493888606,73.31306246151857], // Maruti mandir (main highway)
+  [16.991314422881047,73.32132314364873], // Shivaji nagar
+  [16.994014235658177,73.32738397127208], // Salvi
+  [16.995583372835014,73.33092379872737], // JK Files
+  [16.9980804522789,73.35781632676266], // Railway station
+  [17.001526443623323,73.37203523938491], // Mahalakshmi
+  [17.013904561270415,73.39491337218843], // Khedshi
+  [17.015012744452644,73.40540621368129] // Hatkhamba (end)
+];
+
+/* Nachane Marg (103) */
+var ROUTE_3 = [
+  [16.991452,73.295039], // City
+  [16.99064125770783,73.30594553525175], // Malnaka
+  [16.989781011997803,73.31284780065187], // Maruti mandir (nachane road)
+  [16.989762154491718,73.31456042409866], // Jogalekar
+  [16.988566009579785,73.31786801007729], // Power house
+  [16.986714135757698,73.3230856657965], // I.T.I
+  [16.985380333358734,73.32910877850728], // Nachane
+  [16.9865191811402,73.3334559201662], // Godown
+  [16.984572189029564,73.33964314925852], // Shantinagar
+  [16.9769149102026,73.36743802947721] // Kajarghati (end)
+];
+
+/* Railway route (98): City Bus Stand -> Railway Station */
+var ROUTE_4 = [
+  [16.991452,73.295039], // City bus stand
+  [16.99064125770783,73.30594553525175], // Malnaka
+  [16.990457493888606,73.31306246151857], // Maruti mandir (main highway)
+  [16.991314422881047,73.32132314364873], // Shivaji nagar
+  [16.994014235658177,73.32738397127208], // Salvi
+  [16.995583372835014,73.33092379872737], // JK Files
+  [16.9980804522789,73.35781632676266] // Railway station (end)
+];
+
+/* --------------- bus-stop icons: only shown at zoom >= 15 --------------- */
+var busStopIcon = L.icon({
+  iconUrl:'static/Assets/images/bus-stop.png', // simple relative path
+  iconSize: [28,28],
+  iconAnchor: [14,28],
+  popupAnchor: [0,-26]
+});
+
+var stopMarkers = []; // keep references so we can add/remove depending on zoom
+
+// list of all stops (re-using your list) for showing icons when zoomed
+var stopsList = [
+  {name:"City Bus Stand", lat:16.991452, lon:73.295039},
+  {name:"Malnaka", lat:16.99064125770783, lon:73.30594553525175},
+  {name:"Maruti Mandir - Kokan Nagar Road", lat:16.990800968717373, lon:73.31206367358372},
+  {name:"Maruti Mandir - Main Highway", lat:16.990457493888606, lon:73.31306246151857},
+  {name:"Maruti Mandir - Nachane Road", lat:16.989781011997803, lon:73.31284780065187},
+  {name:"Shivaji nagar", lat:16.991314422881047, lon:73.32132314364873},
+  {name:"Salvi stop", lat:16.994014235658177, lon:73.32738397127208},
+  {name:"J K Files", lat:16.995583372835014, lon:73.33092379872737},
+  {name:"Railway station", lat:16.9980804522789, lon:73.35781632676266},
+  {name:"Mahalakshmi", lat:17.001526443623323, lon:73.37203523938491},
+  {name:"Khedshi", lat:17.013904561270415, lon:73.39491337218843},
+  {name:"Hatkhamba", lat:17.015012744452644, lon:73.40540621368129},
+  {name:"Jogalekar stop", lat:16.989762154491718, lon:73.31456042409866},
+  {name:"Power house", lat:16.988566009579785, lon:73.31786801007729},
+  {name:"I.T.I", lat:16.986714135757698, lon:73.3230856657965},
+  {name:"Nachane", lat:16.985380333358734, lon:73.32910877850728},
+  {name:"Godown stop", lat:16.9865191811402, lon:73.3334559201662},
+  {name:"Shantinagar", lat:16.984572189029564, lon:73.33964314925852},
+  {name:"Kajarghati", lat:16.9769149102026, lon:73.36743802947721},
+  {name:"Godbole stop", lat:16.995016862941338, lon:73.31904173559761},
+  {name:"Charmalay", lat:16.99641543721497, lon:73.32083529243269},
+  {name:"Kokan nagar", lat:17.001612134020696, lon:73.32455084660955},
+  {name:"Radha Krishna nagar", lat:17.00357182203808, lon:73.32695598511572},
+  {name:"Aadishti", lat:17.009984303061533, lon:73.33012668733534},
+  {name:"Finolex", lat:17.011694866524202, lon:73.33537638177984},
+  {name:"Jambhul Phata", lat:17.01730152480268, lon:73.33568635248713}
+];
+
+function updateStopMarkersVisibility() {
+  var z = map.getZoom();
+  if (z >= 15) {
+    if (stopMarkers.length === 0) {
+      stopsList.forEach(s=>{
+        var m = L.marker([s.lat, s.lon], {icon: busStopIcon}).addTo(map).bindPopup(s.name);
+        stopMarkers.push(m);
+      });
+    }
+  } else {
+    stopMarkers.forEach(m => map.removeLayer(m));
+    stopMarkers = [];
+  }
+}
+map.on('zoomend', updateStopMarkersVisibility);
+updateStopMarkersVisibility(); // initial
+
+/* --------------- Bus icon creation (small rectangle) --------------- */
+function makeBusDivIcon(busNo){
+  return L.divIcon({
+    html: '<div class="bus-div">'+busNo+'</div>',
+    className: '',
+    iconSize: [44,22],
+    iconAnchor: [22,11],
+    popupAnchor: [0,-10]
+  });
+}
+
+/* --------------- map: load buses from server and simulate --------------- */
+var buses = []; // runtime bus objects
+
+// helper: map route int (DB) or bus_no to route array - enforce strict mapping
+function routeArrayFor(dbRoute, busNo) {
+  // enforce bus_no rule first
+  if (parseInt(busNo) === 101) return ROUTE_1;
+  if (parseInt(busNo) === 102) return ROUTE_2;
+  if (parseInt(busNo) === 103) return ROUTE_3;
+  if (parseInt(busNo) === 98)  return ROUTE_4;
+  // fallback: if DB route provided (1..4), map those
+  if (dbRoute === 1) return ROUTE_1;
+  if (dbRoute === 2) return ROUTE_2;
+  if (dbRoute === 3) return ROUTE_3;
+  if (dbRoute === 4) return ROUTE_4;
+  return ROUTE_1;
+}
+
+// load buses once from server
+fetch('/get_buses').then(r=>r.json()).then(rows=>{
+  rows.forEach(rw=>{
+    var arr = routeArrayFor(rw.route, rw.bus_no);
+    // spawn index randomly on a route segment (point index)
+    var spawnIdx = Math.floor(Math.random() * (arr.length - 1));
+    var latlng = arr[spawnIdx];
+
+    var bus = {
+      id: rw.id,
+      bus_no: rw.bus_no,
+      no_plate: rw.no_plate,
+      routeArr: arr,
+      idx: spawnIdx,      // current point index (we will move toward next)
+      progress: 0,        // 0..1 progress between idx and idx+1
+      forward: true,      // direction along route
+      waiting: false,
+      speed: 0.002 + Math.random()*0.002, // movement per tick
+      marker: L.marker(latlng, { icon: makeBusDivIcon(rw.bus_no) }).addTo(map),
+      lastPostAt: 0      // timestamp of last POST to server
+    };
+    bus.marker.bindPopup("Bus: " + bus.bus_no + "<br>Plate: " + bus.no_plate);
+    buses.push(bus);
+  });
+});
+
+/* --------------- Simulation loop --------------- */
+var tickMs = 120; // movement tick
+var postIntervalMs = 5000; // POST updates to DB every 5 seconds
+
+setInterval(function(){
+  var now = Date.now();
+  buses.forEach(function(b){
+    var arr = b.routeArr;
+    if (!arr || arr.length < 2) return;
+
+    // compute next index depending on direction
+    var nextIdx = b.forward ? b.idx + 1 : b.idx - 1;
+
+    // handle bounds: if next out of range, flip direction but stay on last point and wait
+    if (nextIdx >= arr.length) {
+      // reached final destination (end)
+      // ensure marker fixed at end, then flip direction for return
+      b.idx = arr.length - 1;
+      b.forward = false;
+      b.progress = 0;
+      if (!b.waiting) {
+        b.waiting = true;
+        setTimeout(()=>{ b.waiting = false; }, 20000 + Math.random()*10000);
+      }
+      return;
+    }
+    if (nextIdx < 0) {
+      // reached start again
+      b.idx = 0;
+      b.forward = true;
+      b.progress = 0;
+      if (!b.waiting) {
+        b.waiting = true;
+        setTimeout(()=>{ b.waiting = false; }, 20000 + Math.random()*10000);
+      }
+      return;
+    }
+
+    if (b.waiting) {
+      // still waiting at a stop
+      // but we might want to send periodic DB updates while waiting too (respect 5s rule)
+      if (now - b.lastPostAt >= postIntervalMs) {
+        postBusLocation(b);
+        b.lastPostAt = now;
+      }
+      return;
+    }
+
+    // move fractionally between arr[b.idx] and arr[nextIdx]
+    var a = arr[b.idx];
+    var c = arr[nextIdx];
+
+    b.progress += b.speed;
+    if (b.progress >= 1) {
+      // arrive at nextIdx exactly
+      b.idx = nextIdx;
+      b.progress = 0;
+
+      // set marker exact position
+      b.marker.setLatLng([c[0], c[1]]);
+
+      // pause at this stop for 20-30s
+      b.waiting = true;
+      setTimeout(()=>{ b.waiting = false; }, 20000 + Math.random()*10000);
+
+      // send DB update immediately upon arrive (but still respect 5s throttle)
+      if (now - b.lastPostAt >= postIntervalMs) {
+        postBusLocation(b);
+        b.lastPostAt = now;
+      }
+      return;
+    } else {
+      // interpolated position
+      var lat = a[0] + (c[0] - a[0]) * b.progress;
+      var lon = a[1] + (c[1] - a[1]) * b.progress;
+      b.marker.setLatLng([lat, lon]);
+
+      // send periodic updates only every postIntervalMs
+      if (now - b.lastPostAt >= postIntervalMs) {
+        postBusLocation(b);
+        b.lastPostAt = now;
+      }
+    }
+  });
+}, tickMs);
+
+/* --------------- POST bus location to server (every 5s per bus) --------------- */
+function postBusLocation(bus) {
+  var pos = bus.marker.getLatLng();
+  fetch('/update_bus_location', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      bus_id: bus.id,
+      latitude: pos.lat,
+      longitude: pos.lng
+    })
+  }).catch(()=>{ /* ignore network errors */ });
+}
+
+/* --------------- keep user live location (unchanged) --------------- */
+if ("geolocation" in navigator) {
+  navigator.geolocation.watchPosition(function(position) {
+    var lat = position.coords.latitude;
+    var lon = position.coords.longitude;
+    if (!window.userMarker) window.userMarker = L.marker([lat, lon]).addTo(map);
+    window.userMarker.setLatLng([lat, lon]);
+  }, function(e){}, { enableHighAccuracy: true });
+}
+
+</script>
+</body>
+</html>
