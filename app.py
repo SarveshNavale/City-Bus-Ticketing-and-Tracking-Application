@@ -83,6 +83,9 @@ def view_pass():
         amount_paid=500,
         issue_datetime="11/11/2011 | 2:17 AM"
     )
+@app.route('/faqs')
+def faqs():
+    return render_template("FAQs.html")
 
 
 @app.route('/update_location', methods=['POST'])
