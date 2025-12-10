@@ -25,7 +25,7 @@ html, body {
     left: 20px;
     display: flex;
     align-items: center;
-    gap: 49px;   /* 🔒 kept exactly like your admin page */
+    gap: 49px;   
 }
 
 .backbutton img {
@@ -81,11 +81,12 @@ html, body {
 <body>
 
 <div class="bluebg">
-
+    <a href="/backtohome" style="text-decoration: none; color: inherit; outline: none; -webkit-tap-highlight-color: transparent;">
     <div class="backbutton">
         <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
         <p style="font-size: 22px; font-family: 'Hind Guntur'; font-weight:600; color:white;">Play</p>
     </div>
+    </a>
 
     <div class="topcircles">
         <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" style="width:150px;">
@@ -105,7 +106,9 @@ html, body {
 
     <div style="display:flex; margin-top:10px;">
 
-        <!-- ✅ Dino Rush with IMAGE -->
+        
+
+
         <a href="{{ url_for('dino') }}" class="gamecard">
             <div class="smallgamebox">
                 <img src="{{ url_for('static', filename='games/dino/icon.png') }}">
@@ -113,7 +116,7 @@ html, body {
             <p style="font-family:'Hind Guntur'; font-size:14px; margin:5px 0;">Dino Rush</p>
         </a>
 
-        <!-- ✅ Maze Runner grey box + popup -->
+   
         <div onclick="mazeAlert()" style="cursor:pointer;">
             <div class="smallgamebox"></div>
             <p style="font-family:'Hind Guntur'; font-size:14px; margin:5px 0;">Maze Runner</p>

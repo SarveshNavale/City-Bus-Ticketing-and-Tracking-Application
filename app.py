@@ -21,6 +21,14 @@ def home():
 def robo():
     return render_template("robo.html")
 
+
+
+
+
+@app.route('/play')
+def play():
+    return render_template("play.html")
+
 @app.route('/backtohome')
 def backtohome():
     return render_template("homepage.html")
