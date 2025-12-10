@@ -95,7 +95,7 @@ var ROUTE_4 = [
 
 /* --------------- bus-stop icons: only shown at zoom >= 15 --------------- */
 var busStopIcon = L.icon({
-  iconUrl: "{{ url_for('static', filename='Assets/images/bus-stop.png') }}",
+  iconUrl:'static/Assets/images/bus-stop.png', // simple relative path
   iconSize: [28,28],
   iconAnchor: [14,28],
   popupAnchor: [0,-26]
