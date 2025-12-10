@@ -1,1 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FAQs</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --blue:#6C64FF;
+      --bg:#111;
+      --white:#fff;
+      --grey:#e4e4e4;
+      --text:#333;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;}
+
+    body{
+      background:var(--bg);
+      font-family:"Poppins",sans-serif;
+      padding:20px;
+      display:flex;
+      justify-content:center;
+    }
+
+    .page{
+      width:100%;
+      max-width:800px;
+    }
+
+    /* header */
+    .bluebg{
+      background:var(--blue);
+      height:220px;
+      width:100%;
+      position:relative;
+      border-radius:4px;
+      overflow:hidden;
+    }
+
+    .backbutton{
+      position:absolute; top:45px; left:20px;
+      display:flex; align-items:center; gap:16px;
+    }
+
+    .backbutton img{
+      width:44px; height:44px;
+      object-fit:contain;
+      background:rgba(255,255,255,0.10);
+      border-radius:50%;
+      padding:6px;
+    }
+
+    .backbutton p{
+      color:#fff;
+      font-weight:600;
+      font-size:18px;
+    }
+
+    .topcircles{
+      position:absolute;
+      right:6px;
+      top:6px;
+      opacity:0.95;
+    }
+    .content{
+      background:var(--white);
+      margin-top:-16px;
+      padding:28px;
+      border-radius:10px;
+      min-height:400px;
+    }
+
+    .faq-card{
+      background:var(--grey);
+      height:300px;
+      border-radius:6px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      font-weight:600;
+      margin-bottom:20px;
+    }
+
+    .faq-list{
+      display:grid;
+      gap:10px;
+    }
+
+    .faq-item{
+      background:#fff;
+      border:1px solid #ddd;
+      border-radius:8px;
+      padding:14px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.06);
+    }
+
+    .faq-q{
+      display:flex;
+      justify-content:space-between;
+      font-weight:600;
+      color:#333;
+      cursor:pointer;
+    }
+
+    .faq-a{
+      margin-top:8px;
+      color:#555;
+      line-height:1.5;
+      display:none;
+    }
+
+    .faq-a.show{display:block;}
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+   <!-- HEADER -->
+  <div class="bluebg">
+    <div class="backbutton">
+      <img src="static/Assets/images/back-button.png" alt="#">
+      <p>FAQs</p>
+    </div>
+
+    <div class="topcircles">
+      <img src="static/Assets/images/Just-circles.png" width="150">
+    </div>
+  </div>
+
+    <div class="content">
+
+      
+
+      <div class="faq-list" id="faqList"></div>
+    </div>
+
+  </div>
+
+  <script>
+    const faqs = [
+      { q:"How do I buy a ticket?", a:"Go to 'Buy Ticket', choose route, pay online. Ticket appears in 'My Tickets'." },
+       { q:"Can I track the live location of buses?", a:"Yes. The app shows real-time GPS tracking of buses so you can see arrival time, current location, and estimated time to reach your stop." },
+        { q:"Can I cancel the ticket?", a:"If eligible, open your ticket → Cancel. Refund takes 2–4 days." },
+         { q:"How do I purchase a monthly/weekly bus pass?", a:"Go to Pass → Buy New Pass, choose your zone or route, and complete the payment. Your pass will be visible under 'My Passes'." },
+          { q:"How do I use my digital bus pass?", a:"Show the QR code / Barcode to the conductor or scanning device inside the bus. The pass is valid only for the selected dates and zones." },
+           { q:"What if I lose my phone or ticket?", a:"Your tickets and passes are linked to your account. Log in from another device and you will be able to access them. You may also contact support to block unauthorized access." },
+            { q:"Why is my bus delayed?", a:"Delays may occur due to traffic, road conditions, or technical issues. The app updates estimated arrival time based on live GPS data." },
+             { q:"Do I need to create an account?", a:"Yes, creating an account ensures your tickets, passes, and tracking preferences stay saved across devices." },
+              { q:"What if my payment fails?", a:"If money is deducted but ticket is not generated, the amount will be refunded automatically within 2–5 business days. You can also report the transaction through the app." },
+               { q:"Is my data safe?", a:"Yes. All personal data, transactions, and GPS records are encrypted and stored securely." },
+    ];
+
+    const faqList = document.getElementById("faqList");
+
+    faqs.forEach((item,i)=>{
+      const box = document.createElement("div");
+      box.className = "faq-item";
+
+      box.innerHTML = `
+        <div class="faq-q" data-i="${i}">
+          <span>${item.q}</span>
+          <span>+</span>
+        </div>
+        <div class="faq-a" id="ans-${i}">${item.a}</div>
+      `;
+
+      faqList.appendChild(box);
+    });
+
+    faqList.addEventListener("click", e=>{
+      const q = e.target.closest(".faq-q");
+      if(!q) return;
+
+      const i = q.dataset.i;
+      const ans = document.getElementById("ans-"+i);
+      const sign = q.querySelector("span:last-child");
+
+      ans.classList.toggle("show");
+      sign.textContent = ans.classList.contains("show") ? "−" : "+";
+    });
+  </script>
+</body>
+</html>
 
