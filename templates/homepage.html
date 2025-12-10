@@ -191,11 +191,15 @@ body {
 </div>
 
 <div class="white-card">
-
-    <div class="search-container">
-        <img src="static/Assets/images/search.png" alt="search logo" class="search-icon">
-        <input class="search-box" type="text" placeholder="  Choose your destination">
-    </div>
+<!-- search bar hach ahe form tag cha , get ani post method ni data transfer karta yeil -->
+<form action="/search" method="GET" style="position: relative; width: 375px;">
+    <img src="static/Assets/images/search.png" alt="search logo" class="search-icon">
+    <input class="search-box" 
+           type="search" 
+           name="q"
+           placeholder="  Choose your destination"
+           autocomplete="on">
+</form>
 
 
 
