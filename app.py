@@ -4,7 +4,6 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# ---------- DB helper (fresh connection per request) ----------
 def get_db():
     return mysql.connector.connect(
         host="localhost",
@@ -13,14 +12,26 @@ def get_db():
         database="RotaryClub_Database"
     )
 
-# ---------- existing routes (unchanged behavior) ----------
+# ---------- normal routes sagle hite taka! ----------
 @app.route('/')
 def home():
-    return render_template("map.html")
+    return render_template("homepage.html")
+
+
+@app.route('/backtohome')
+def backtohome():
+    return render_template("homepage.html")
+
+@app.route('/profile')
+def profile():
+    return render_template("profile.html")
 
 @app.route('/map')
 def map():
     return render_template("map.html")
+
+
+
 
 @app.route('/dino')
 def dino():
