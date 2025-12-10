@@ -17,6 +17,9 @@ def get_db():
 def home():
     return render_template("homepage.html")
 
+@app.route('/robo')
+def robo():
+    return render_template("robo.html")
 
 @app.route('/backtohome')
 def backtohome():
