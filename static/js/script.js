@@ -162,14 +162,185 @@ if (registrationForm) {
             const result = await response.json();
             
             if (result.success) {
-                alert("✅ Registration successful!\nUser data stored in database.");
+                alert("Registration successful!\nUser data stored in database.");
                 registrationForm.reset(); // Clear form
             } else {
-                alert("❌ Error: " + result.error);
+                alert("Error: " + result.error);
             }
         } catch (error) {
             console.error("Network error:", error);
-            alert("🌐 Cannot connect to server. Make sure Flask is running.");
+            alert("Cannot connect to server. Make sure Flask is running.");
+        }
+    });
+}
+// LOGIN function
+const loginBtn = document.getElementById('loginBtn');
+if (loginBtn) {
+    loginBtn.addEventListener('click', async function () {
+        console.log('Login button clicked');
+        
+        const checkedRadio = document.querySelector('input[name="loginMethod"]:checked');
+        if (!checkedRadio) {
+            alert('Please select a login method.');
+            return;
+        }
+        
+        const loginMethod = checkedRadio.id;
+        let identifier = '';
+        let method = 'mobile';
+        
+        // Get identifier based on selected method
+        if (loginMethod === 'mobileLogin') {
+            identifier = document.getElementById('loginMobile').value.trim();
+            method = 'mobile';
+            if (!identifier) {
+                alert('Please enter mobile number.');
+                return;
+            }
+        } else {
+            identifier = document.getElementById('loginEmail').value.trim();
+            method = 'email';
+            if (!identifier) {
+                alert('Please enter email address.');
+                return;
+            }
+        }
+        
+        const password = document.getElementById('loginPassword').value;
+        if (!password) {
+            alert('Please enter password.');
+            return;
+        }
+        
+        console.log('Login data:', { identifier, method, password: '***' });
+        
+        const loginData = {
+            identifier: identifier,
+            password: password,
+            method: method
+        };
+        
+        try {
+            console.log('Sending login request to /login...');
+            
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(loginData)
+            });
+            
+            console.log('Login response status:', response.status);
+            
+            const result = await response.json();
+            console.log('Login result:', result);
+            
+            if (result.success) {
+                alert('Login successful! Redirecting to homepage...');
+                console.log('Redirecting to:', result.redirect);
+                window.location.href = result.redirect;
+            } else {
+                alert('Login failed: ' + result.error);
+                console.error('Login error:', result.error);
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+            alert('Cannot connect to server. Please check:\n1. Flask server is running\n2. URL: http://127.0.0.1:5000');
+        }
+    });
+}
+//registration form 
+if (registrationForm) {
+    registrationForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        console.log('Registration form submitted');
+        
+        const name = document.getElementById('name').value.trim();
+        const mobile = document.getElementById('mobile').value.trim();
+        const age = document.getElementById('age').value;
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        
+        console.log('Form data collected:', { name, mobile, age, email });
+        
+        if (!name || !mobile || !age || !email || !password) {
+            alert('Please fill in all fields before submitting.');
+            return;
+        }
+        
+        // Mobile validation
+        const mobileRegex = /^[0-9]{10}$/;
+        if (!mobileRegex.test(mobile)) {
+            alert('Please enter a valid 10-digit mobile number.');
+            document.getElementById('mobile').focus();
+            return;
+        }
+        
+        // Age validation
+        if (age < 12 || age > 100) {
+            alert('Age must be between 12 and 100.');
+            document.getElementById('age').focus();
+            return;
+        }
+        
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Please enter a valid email address.');
+            document.getElementById('email').focus();
+            return;
+        }
+        
+        // Password validation
+        if (password.length < 6) {
+            alert('Password must be at least 6 characters long.');
+            document.getElementById('password').focus();
+            return;
+        }
+
+        const userData = {
+            name: name,
+            mobile: mobile,
+            age: age,
+            email: email,
+            password: password
+        };
+        
+        console.log('Sending registration data to server:', userData);
+        
+        try {
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+            
+            console.log('Server response status:', response.status);
+            
+            // Parse response
+            const result = await response.json();
+            console.log('Server response data:', result);
+            
+            if (result.success) {
+                alert('Registration successful! Redirecting to homepage...');
+                console.log('Redirecting to:', result.redirect);
+                
+                registrationForm.reset();
+                
+                if (result.redirect) {
+                    window.location.href = result.redirect;
+                }
+            } else {
+                alert('Registration failed: ' + result.error);
+                console.error('Registration error:', result.error);
+            }
+        } catch (error) {
+            // Network error
+            console.error('Network error:', error);
+            alert('Network error. Please check if Flask server is running.');
         }
     });
 }
