@@ -4,14 +4,6 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-<<<<<<< HEAD
-db = mysql.connector.connect(
-    host="localhost",
-    user="flaskuser",
-    password="shreyash45",
-    database="RotaryClub_Database"
-)
-=======
 def get_db():
     return mysql.connector.connect(
         host="localhost",
@@ -19,8 +11,6 @@ def get_db():
         password="#SAR1807",
         database="RotaryClub_Database"
     )
->>>>>>> 524e93f54f210f6ed05cef995e016efa42381b8b
-
 # ---------- normal routes sagle hite taka! ----------
 @app.route('/')
 def home():

@@ -113,6 +113,11 @@ INSERT INTO bus_info (bus_no, no_plate, route, latitude, longitude) VALUES
  (98,  'MH08-098-A', 4, 16.991452, 73.295039),
  (98,  'MH08-098-B', 4, 16.991452, 73.295039),
  (98,  'MH08-098-C', 4, 16.991452, 73.295039);
+ 
+ 
+ create table current_login (
+	 mobile_no VARCHAR(15) NOT NULL
+ );
 
 
 
