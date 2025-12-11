@@ -28,7 +28,7 @@ def robo():
 def play():
     return render_template("play.html")
 
-@app.route('/backtohome')
+@app.route('/home')
 def backtohome():
     return render_template("homepage.html")
 
@@ -150,39 +150,153 @@ def update_bus_location():
 def register():
     try:
         data = request.get_json()
-        print("Registration data received:", data)
         
-        name = data.get('name', '')
-        mobile = data.get('mobile', '')
+        name = data.get('name', '').strip()
+        mobile = data.get('mobile', '').strip() 
         age = data.get('age', '')
-        email = data.get('email', '')
-        password = data.get('password', '')
+        email = data.get('email', '').strip()
+        password = data.get('password', '').strip()
+        
+        print(f"Registration attempt - Name: {name}, Mobile: {mobile}")
+        
+        if not all([name, mobile, age, email, password]):
+            return jsonify({'success': False, 'error': 'All fields are required'})
         
         db = get_db()
         cursor = db.cursor()
+        
+        cursor.execute("SELECT * FROM cust_info WHERE cust_number = %s OR cust_email = %s", 
+                      (mobile, email))
+        existing_user = cursor.fetchone()
+        
+        if existing_user:
+            cursor.close()
+            db.close()
+            return jsonify({'success': False, 'error': 'User already exists with this mobile or email'})
         
         cursor.execute("""
             INSERT INTO cust_info (cust_name, cust_number, cust_age, cust_email, password) 
             VALUES (%s, %s, %s, %s, %s)
         """, (name, mobile, age, email, password))
         
+        try:
+            cursor.execute("SHOW TABLES LIKE 'current_login'")
+            if not cursor.fetchone():
+                cursor.execute("CREATE TABLE current_login (mobile_no VARCHAR(15) NOT NULL)")
+            
+            cursor.execute("DELETE FROM current_login")
+            cursor.execute("INSERT INTO current_login (mobile_no) VALUES (%s)", (mobile,))
+        except Exception as e:
+            print(f"Warning: Could not update current_login: {e}")
+        
         db.commit()
+        
         cursor.close()
         db.close()
         
-        print(f"✅ User registered: {name}, {mobile}")
+        print(f"User registered: {name}, Mobile (cust_number): {mobile}")
+        print(f"Stored in current_login: {mobile}")
         
         return jsonify({
             'success': True,
-            'message': 'Registration successful! Data stored in database.'
+            'message': 'Registration successful!',
+            'redirect': '/home'
         })
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Registration error: {e}")
         return jsonify({
             'success': False,
-            'error': str(e)
+            'error': f'Registration failed: {str(e)}'
         })
+    
+    
+# login function 
+@app.route('/login', methods=['POST'])
+def login():
+    try:
+        data = request.get_json()
+        print("Login attempt:", data)
+        
+        identifier = data.get('identifier', '').strip()
+        password = data.get('password', '').strip()
+        method = data.get('method', 'mobile')
+        
+        if not identifier or not password:
+            return jsonify({'success': False, 'error': 'Mobile/Email and password required'})
+        
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        if method == 'mobile':
+            cursor.execute("SELECT * FROM cust_info WHERE cust_number = %s", (identifier,))
+            print(f"Searching by cust_number: {identifier}")
+        else:
+            cursor.execute("SELECT * FROM cust_info WHERE cust_email = %s", (identifier,))
+            print(f"Searching by cust_email: {identifier}")
+        
+        user = cursor.fetchone()
+        
+        if user:
+            print(f"User found: {user.get('cust_name', 'Unknown')}")
+            print(f"   Mobile (cust_number): {user.get('cust_number')}")
+            print(f"   Password in DB: {user.get('password', 'Not set')}")
+            
+            db_password = user.get('password')
+            if not db_password:
+                print("User has no password set in database")
+                cursor.close()
+                db.close()
+                return jsonify({'success': False, 'error': 'Password not set for this user'})
+
+            if db_password == password:
+                print(f"Password correct for {user['cust_name']}")
+                
+                try:
+                    cursor.execute("SHOW TABLES LIKE 'current_login'")
+                    table_exists = cursor.fetchone()
+                    if not table_exists:
+                        print("current_login table doesn't exist")
+                        cursor.execute("CREATE TABLE current_login (mobile_no VARCHAR(15) NOT NULL)")
+                        print("Created current_login table")
+                    
+                    cursor.execute("DELETE FROM current_login")
+                    
+                    mobile_to_store = user['cust_number']
+                    cursor.execute("INSERT INTO current_login (mobile_no) VALUES (%s)", (mobile_to_store,))
+                    
+                    db.commit()
+                    print(f"Mobile stored in current_login: {mobile_to_store}")
+                    
+                    cursor.close()
+                    db.close()
+                    
+                    return jsonify({
+                        'success': True,
+                        'message': 'Login successful!',
+                        'redirect': '/home'
+                    })
+                    
+                except Exception as db_error:
+                    print(f"Database error during login storage: {db_error}")
+                    cursor.close()
+                    db.close()
+                    return jsonify({'success': False, 'error': f'Database error: {str(db_error)}'})
+                
+            else:
+                cursor.close()
+                db.close()
+                print(f"Password mismatch. DB: {db_password}, Input: {password}")
+                return jsonify({'success': False, 'error': 'Wrong password'})
+        else:
+            cursor.close()
+            db.close()
+            print("User not found")
+            return jsonify({'success': False, 'error': 'User not found'})
+            
+    except Exception as e:
+        print(f"Login error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
 
 if __name__ == "__main__":
     # you can set debug=False if you want debug disabled,
