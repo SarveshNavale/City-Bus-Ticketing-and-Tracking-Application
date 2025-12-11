@@ -8,13 +8,13 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="#SAR1807",
+        password="hrishi@123",
         database="RotaryClub_Database"
     )
 # ---------- normal routes sagle hite taka! ----------
 @app.route('/')
 def home():
-    return render_template("homepage.html")
+    return render_template("registration.html")
 
 @app.route('/robo')
 def robo():
@@ -143,6 +143,46 @@ def update_bus_location():
     cursor.close()
     db.close()
     return jsonify({"status": "ok"})
+
+#registration data
+
+@app.route('/register', methods=['POST'])
+def register():
+    try:
+        data = request.get_json()
+        print("Registration data received:", data)
+        
+        name = data.get('name', '')
+        mobile = data.get('mobile', '')
+        age = data.get('age', '')
+        email = data.get('email', '')
+        password = data.get('password', '')
+        
+        db = get_db()
+        cursor = db.cursor()
+        
+        cursor.execute("""
+            INSERT INTO cust_info (cust_name, cust_number, cust_age, cust_email, password) 
+            VALUES (%s, %s, %s, %s, %s)
+        """, (name, mobile, age, email, password))
+        
+        db.commit()
+        cursor.close()
+        db.close()
+        
+        print(f"✅ User registered: {name}, {mobile}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Registration successful! Data stored in database.'
+        })
+        
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        })
 
 if __name__ == "__main__":
     # you can set debug=False if you want debug disabled,

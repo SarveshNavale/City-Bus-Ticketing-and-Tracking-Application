@@ -134,3 +134,42 @@ showRegisterLink.addEventListener('click', function (e) {
 } else {
     console.error('Toggle elements missing');
 }
+// registration
+const registrationForm = document.getElementById('registrationForm');
+if (registrationForm) {
+    registrationForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = {
+            name: document.getElementById('name').value,
+            mobile: document.getElementById('mobile').value,
+            age: document.getElementById('age').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+        };
+        
+        console.log("Sending registration:", formData);
+        
+        try {
+            // Send to server
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert("✅ Registration successful!\nUser data stored in database.");
+                registrationForm.reset(); // Clear form
+            } else {
+                alert("❌ Error: " + result.error);
+            }
+        } catch (error) {
+            console.error("Network error:", error);
+            alert("🌐 Cannot connect to server. Make sure Flask is running.");
+        }
+    });
+}
