@@ -144,7 +144,7 @@ def update_bus_location():
     db.close()
     return jsonify({"status": "ok"})
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # you can set debug=False if you want debug disabled,
     # but leaving debug=True is fine while developing
     app.run(host="0.0.0.0", port=5000, debug=True)
