@@ -105,39 +105,34 @@ html, body {
         <img src="static/Assets/images/pfp.png" style="display:block; margin:0 auto;">
 
         <div style="text-align:center;">
-            <p style="font-size: 20px; font-family: 'Hind Guntur', sans-serif; font-weight: 600; color: #636363; margin: 0;">Sarvesh Navale</p>
-           
+            <p id="profileUserName" style="font-size: 20px; font-family: 'Hind Guntur', sans-serif; font-weight: 600; color: #636363; margin: 0;">Loading...</p>
         </div>
 
         <!-- NAME-->
         <div style="margin-left: 15px;">
             <p style="font-size: 20px; font-family: 'Hind Guntur', sans-serif; font-weight: 600; color: #636363; margin: 0;">Name</p>
-            <input class="field-input" type="text" value="Sarvesh Navale" disabled>
+            <input class="field-input" id="inputName" type="text" value="Loading..." disabled>
         </div>
         <p class="edit-btn">✎ Edit</p>
-
 
         <!-- AGE-->
         <div style="margin-left: 15px;">
             <p style="font-family: 'Hind Guntur', sans-serif; font-weight: 600; color: #636363; margin: 0;">Age</p>
-            <input class="field-input" type="number" value="18" disabled>
+            <input class="field-input" id="inputAge" type="number" value="0" disabled>
         </div>
         <p class="edit-btn">✎ Edit</p>
-
 
         <!-- MOBILE -->
         <div style="margin-left: 15px;">
             <p style="font-family: 'Hind Guntur', sans-serif; font-weight: 600; color: #636363; margin: 0;">Mobile Number</p>
-            <input class="field-input" type="number" value="9763772464" disabled>
+            <input class="field-input" id="inputMobile" type="text" value="Loading..." disabled>
         </div>
         <p class="edit-btn">✎ Edit</p>
-
-        
 
         <!-- EMAIL -->
         <div style="margin-left: 15px;">
             <p style="font-family: 'Hind Guntur', sans-serif; font-weight: 600; color: #636363; margin: 0;">Email</p>
-            <input class="field-input" type="text" value="sarveshnavale18@gmail.com" disabled>
+            <input class="field-input" id="inputEmail" type="text" value="Loading..." disabled>
         </div>
         <p class="edit-btn">✎ Edit</p>
 
@@ -149,6 +144,70 @@ html, body {
     </div>
 
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Profile page loaded, fetching user data...');
+    
+    console.log('Looking for elements:');
+    console.log('profileUserName:', document.getElementById('profileUserName'));
+    console.log('inputName:', document.getElementById('inputName'));
+    console.log('inputAge:', document.getElementById('inputAge'));
+    console.log('inputMobile:', document.getElementById('inputMobile'));
+    console.log('inputEmail:', document.getElementById('inputEmail'));
+    
+    fetch('/get_current_user')
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.json();
+        })
+        .then(result => {
+            console.log('Server response:', result);
+            
+            if (result.success && result.logged_in && result.user) {
+                updateProfile(result.user);
+            } else {
+                console.log('No user logged in:', result.error);
+                showLoginPrompt();
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user:', error);
+            showError();
+        });
+});
 
+function updateProfile(user) {
+    console.log('Updating profile with:', user);
+    
+    const nameDisplay = document.getElementById('profileUserName');
+    const nameInput = document.getElementById('inputName');
+    const ageInput = document.getElementById('inputAge');
+    const mobileInput = document.getElementById('inputMobile');
+    const emailInput = document.getElementById('inputEmail');
+    
+    if (!nameDisplay) console.error('profileUserName not found');
+    if (!nameInput) console.error('inputName not found');
+    if (!ageInput) console.error('inputAge not found');
+    if (!mobileInput) console.error('inputMobile not found');
+    if (!emailInput) console.error('inputEmail not found');
+    
+    if (nameDisplay) nameDisplay.textContent = user.name;
+    if (nameInput) nameInput.value = user.name;
+    if (ageInput) ageInput.value = user.age;
+    if (mobileInput) mobileInput.value = user.mobile;
+    if (emailInput) emailInput.value = user.email;
+    
+    console.log('Profile updated successfully');
+}
+
+function showLoginPrompt() {
+    alert('Please login to view your profile');
+    window.location.href = '/';
+}
+
+function showError() {
+    alert('Error loading profile. Please try again.');
+}
+</script>
 </body>
 </html>

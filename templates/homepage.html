@@ -179,12 +179,11 @@ body {
             <a href="/profile" style="text-decoration: none; color: inherit; outline: none; -webkit-tap-highlight-color: transparent;">
                 <div class="profile-row">
                     <img src="static/Assets/images/homepfp.png">
-                    <span style="font-size: 18px; font-family: 'poppins', sans-serif; color: rgba(255,255,255,0.9);">
-                        Sarvesh Navale
+                    <span id="currentUserName" style="font-size: 18px; font-family: 'poppins', sans-serif; color: rgba(255,255,255,0.9);">
+                        Loading...
                     </span>
                 </div>
             </a>
-
 
 
         <img src="static/Assets/images/Bell-icon.png" class="bell">
@@ -268,6 +267,31 @@ body {
     </div>
 
 </div>
-
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Homepage loaded, fetching user...');
+    
+    fetch('/get_current_user')
+        .then(response => response.json())
+        .then(result => {
+            console.log('User data:', result);
+            
+            if (result.success && result.logged_in && result.user) {
+                const userNameElement = document.getElementById('currentUserName');
+                if (userNameElement) {
+                    userNameElement.textContent = result.user.name;
+                    console.log('Homepage updated:', result.user.name);
+                } else {
+                    console.error('currentUserName element not found');
+                }
+            } else {
+                console.log('No user logged in');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading user:', error);
+        });
+});
+</script>
 </body>
 </html>
