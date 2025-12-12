@@ -86,7 +86,7 @@ html, body {
 
 <div class="bluebg">
 
-            <a href="/backtohome" style="text-decoration: none; color: inherit; outline: none; -webkit-tap-highlight-color: transparent;">
+            <a href="/home" style="text-decoration: none; color: inherit; outline: none; -webkit-tap-highlight-color: transparent;">
                 <div class="backbutton">
                     <img src="static/Assets/images/back-button.png" alt="Back">
                     <p style="font-size: 22px; font-family: 'Hind Guntur', sans-serif; font-weight: 600; color: white;">
@@ -146,68 +146,120 @@ html, body {
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Profile page loaded, fetching user data...');
+    console.log('Profile page loaded');
     
-    console.log('Looking for elements:');
-    console.log('profileUserName:', document.getElementById('profileUserName'));
-    console.log('inputName:', document.getElementById('inputName'));
-    console.log('inputAge:', document.getElementById('inputAge'));
-    console.log('inputMobile:', document.getElementById('inputMobile'));
-    console.log('inputEmail:', document.getElementById('inputEmail'));
+    document.getElementById('profileUserName').textContent = 'Loading...';
+    document.getElementById('inputName').value = 'Loading...';
+    document.getElementById('inputAge').value = 'Loading...';
+    document.getElementById('inputMobile').value = 'Loading...';
+    document.getElementById('inputEmail').value = 'Loading...';
+    
+    setTimeout(loadUserProfile, 500);
+});
+
+function loadUserProfile() {
+    console.log('Fetching user profile...');
     
     fetch('/get_current_user')
         .then(response => {
             console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
             return response.json();
         })
         .then(result => {
             console.log('Server response:', result);
             
             if (result.success && result.logged_in && result.user) {
-                updateProfile(result.user);
+                console.log('User data received:', result.user);
+                updateProfileFields(result.user);
             } else {
                 console.log('No user logged in:', result.error);
-                showLoginPrompt();
+                handleNoUser();
             }
         })
         .catch(error => {
-            console.error('Error fetching user:', error);
-            showError();
+            console.error('Fetch error:', error);
+            handleError();
         });
+}
+
+function updateProfileFields(user) {
+    console.log('Updating profile fields with:', user);
+    
+    try {
+        const elements = {
+            'profileUserName': user.name,
+            'inputName': user.name,
+            'inputAge': user.age,
+            'inputMobile': user.mobile,
+            'inputEmail': user.email
+        };
+        
+        for (const [id, value] of Object.entries(elements)) {
+            const element = document.getElementById(id);
+            if (element) {
+                if (element.tagName === 'INPUT') {
+                    element.value = value;
+                } else {
+                    element.textContent = value;
+                }
+                console.log(`   Updated ${id}: ${value}`);
+            } else {
+                console.error(`   Element not found: ${id}`);
+            }
+        }
+        
+        console.log('Profile updated successfully');
+    } catch (error) {
+        console.error('Error updating fields:', error);
+    }
+}
+
+function handleNoUser() {
+    console.log('No user logged in, redirecting to login...');
+    alert('Please login to view your profile');
+    
+    setTimeout(() => {
+        window.location.href = '/';
+    }, 1000);
+}
+
+function handleError() {
+    console.log('Error loading profile');
+    
+    setTimeout(() => {
+        console.log('Retrying...');
+        loadUserProfile();
+    }, 2000);
+}
+
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+        console.log('Page became visible, refreshing profile');
+        loadUserProfile();
+    }
 });
 
-function updateProfile(user) {
-    console.log('Updating profile with:', user);
+window.addEventListener('beforeunload', function(event) {
+    if (isNavigating) {
+        console.log('Page navigation, NOT clearing login');
+        return; 
+    }
     
-    const nameDisplay = document.getElementById('profileUserName');
-    const nameInput = document.getElementById('inputName');
-    const ageInput = document.getElementById('inputAge');
-    const mobileInput = document.getElementById('inputMobile');
-    const emailInput = document.getElementById('inputEmail');
+    console.log('Window actually closing, clearing login...');
     
-    if (!nameDisplay) console.error('profileUserName not found');
-    if (!nameInput) console.error('inputName not found');
-    if (!ageInput) console.error('inputAge not found');
-    if (!mobileInput) console.error('inputMobile not found');
-    if (!emailInput) console.error('inputEmail not found');
-    
-    if (nameDisplay) nameDisplay.textContent = user.name;
-    if (nameInput) nameInput.value = user.name;
-    if (ageInput) ageInput.value = user.age;
-    if (mobileInput) mobileInput.value = user.mobile;
-    if (emailInput) emailInput.value = user.email;
-    
-    console.log('Profile updated successfully');
-}
-
-function showLoginPrompt() {
-    alert('Please login to view your profile');
-    window.location.href = '/';
-}
-
-function showError() {
-    alert('Error loading profile. Please try again.');
-}
+    if (navigator.sendBeacon) {
+        navigator.sendBeacon('/clear_login');
+        console.log('Login cleared via sendBeacon');
+    } else {
+        fetch('/clear_login', {
+            method: 'POST',
+            keepalive: true
+        });
+    }
+});
 </script>
 </body>
 </html>
