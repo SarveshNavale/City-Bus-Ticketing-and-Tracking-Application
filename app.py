@@ -297,6 +297,104 @@ def login():
     except Exception as e:
         print(f"Login error: {e}")
         return jsonify({'success': False, 'error': str(e)})
+    
+# retrieve current logged in user
+@app.route('/get_current_user')
+def get_current_user():
+    try:
+        print("=" * 50)
+        print("DEBUG: Getting current logged in user...")
+
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+    
+        print("Checking current_login table...")
+        cursor.execute("SELECT * FROM current_login")
+        all_logins = cursor.fetchall()
+        print(f"All rows in current_login: {all_logins}")
+        
+        cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+        current_login = cursor.fetchone()
+        print(f"First row in current_login: {current_login}")
+        
+        if not current_login:
+            print("DEBUG: current_login table is EMPTY")
+            cursor.execute("SHOW TABLES")
+            tables = cursor.fetchall()
+            print(f"Available tables: {tables}")
+            
+            cursor.close()
+            db.close()
+            return jsonify({
+                'success': False, 
+                'error': 'No user logged in - current_login is empty',
+                'debug': {'tables': tables},
+                'logged_in': False
+            })
+        
+        mobile_in_login = current_login['mobile_no']
+        print(f"DEBUG: Mobile found in current_login: {mobile_in_login}")
+        
+        print(f"Searching cust_info for cust_number = {mobile_in_login}")
+        cursor.execute("SHOW COLUMNS FROM cust_info")
+        columns = cursor.fetchall()
+        print(f"cust_info columns: {[col['Field'] for col in columns]}")
+        
+        cursor.execute("SELECT * FROM cust_info WHERE cust_number = %s", (mobile_in_login,))
+        user = cursor.fetchone()
+        
+        if user:
+            print(f"DEBUG: User FOUND in cust_info: {user}")
+            print(f"   Name: {user.get('cust_name')}")
+            print(f"   Mobile: {user.get('cust_number')}")
+            print(f"   Age: {user.get('cust_age')}")
+            print(f"   Email: {user.get('cust_email')}")
+        else:
+            print(f"DEBUG: User NOT FOUND in cust_info for mobile: {mobile_in_login}")
+
+            cursor.execute("SELECT cust_number, cust_name FROM cust_info")
+            all_users = cursor.fetchall()
+            print(f"All users in cust_info: {all_users}")
+        
+        cursor.close()
+        db.close()
+        
+        if user:
+            return jsonify({
+                'success': True,
+                'logged_in': True,
+                'user': {
+                    'name': user['cust_name'],
+                    'mobile': user['cust_number'],
+                    'age': user['cust_age'],
+                    'email': user['cust_email']
+                },
+                'debug': {
+                    'mobile_in_login': mobile_in_login,
+                    'user_found': True
+                }
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': f'User with mobile {mobile_in_login} not found in cust_info',
+                'logged_in': False,
+                'debug': {
+                    'mobile_in_login': mobile_in_login,
+                    'user_found': False
+                }
+            })
+            
+    except Exception as e:
+        print(f"DEBUG: Error in get_current_user: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'logged_in': False,
+            'debug': {'exception': str(e)}
+        })
 
 if __name__ == "__main__":
     # you can set debug=False if you want debug disabled,
