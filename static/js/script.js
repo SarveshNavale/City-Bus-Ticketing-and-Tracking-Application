@@ -344,3 +344,37 @@ if (registrationForm) {
         }
     });
 }
+let isNavigating = false;
+
+document.addEventListener('click', function(e) {
+    if (e.target.tagName === 'A' || e.target.closest('a')) {
+        const link = e.target.closest('a');
+        if (link.href && !link.target) { 
+            isNavigating = true;
+            console.log('Internal navigation detected, will not clear login');
+        }
+    }
+});
+
+window.addEventListener('submit', function() {
+    isNavigating = true;
+    console.log('Form submission, will not clear login');
+});
+
+window.addEventListener('pageshow', function() {
+    isNavigating = false;
+    console.log('Page shown, reset navigation flag');
+});
+
+if (result.success) {
+    sessionStorage.setItem('justLoggedIn', 'true');
+    
+    alert('Login successful! Redirecting...');
+    window.location.href = result.redirect;
+}
+if (result.success) {
+    sessionStorage.setItem('justLoggedIn', 'true');
+    
+    alert('Registration successful! Redirecting...');
+    window.location.href = result.redirect;
+}

@@ -292,6 +292,46 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error loading user:', error);
         });
 });
+let isNavigating = false;
+
+document.addEventListener('click', function(e) {
+    if (e.target.tagName === 'A' || e.target.closest('a')) {
+        const link = e.target.closest('a');
+        if (link.href && !link.target) { 
+            isNavigating = true;
+            console.log('Internal navigation detected, will not clear login');
+        }
+    }
+});
+
+window.addEventListener('submit', function() {
+    isNavigating = true;
+    console.log('Form submission, will not clear login');
+});
+
+window.addEventListener('beforeunload', function(event) {
+    if (isNavigating) {
+        console.log('Page navigation, NOT clearing login');
+        return;
+    }
+    
+    console.log('Window actually closing, clearing login...');
+    
+    if (navigator.sendBeacon) {
+        navigator.sendBeacon('/clear_login');
+        console.log('Login cleared via sendBeacon');
+    } else {
+        fetch('/clear_login', {
+            method: 'POST',
+            keepalive: true
+        });
+    }
+});
+
+window.addEventListener('pageshow', function() {
+    isNavigating = false;
+    console.log('Page shown, reset navigation flag');
+});
 </script>
 </body>
 </html>
