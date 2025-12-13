@@ -44,6 +44,11 @@ VALUES
 ('Sarvesh Navale', '9763772464', 18, 'sarveshnavale18@gmail.com');
 
 
+INSERT INTO cust_info (cust_name, cust_number, cust_age, cust_email, password)
+VALUES 
+('Hrishikesh Patil', '9728394991', 20, 'hrishi@gmail.com', 123456);
+
+
 CREATE TABLE stops_info (
     Stop_name VARCHAR(100),         
     track_no   INT,           
