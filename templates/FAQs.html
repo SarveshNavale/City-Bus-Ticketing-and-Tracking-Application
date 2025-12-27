@@ -8,153 +8,198 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      --blue:#6C64FF;
-      --bg:#111;
-      --white:#fff;
-      --grey:#e4e4e4;
-      --text:#333;
-    }
+  :root{
+    --blue:#6C64FF;
+    --white:#fff;
+    --grey:#e4e4e4;
+    --text:#333;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:#ffffff;     
+    font-family:"Poppins",sans-serif;
+  }
 
-    *{margin:0;padding:0;box-sizing:border-box;}
+  .page{
+    width:100%;              
+    max-width:100%;
+  }
 
-    body{
-      background:var(--bg);
-      font-family:"Poppins",sans-serif;
-      padding:20px;
-      display:flex;
-      justify-content:center;
-    }
+   /* header */
+    .bluebg {
+    background-color: #6C64FF;
+    height: 220px;
+    width: 100%;
+    position: relative;
+}
 
-    .page{
-      width:100%;
-      max-width:800px;
-    }
+.backbutton {
+    position: absolute;
+    top: 45px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 49px;   
+}
 
-    /* header */
-    .bluebg{
-      background:var(--blue);
-      height:220px;
-      width:100%;
-      position:relative;
-      border-radius:4px;
-      overflow:hidden;
-    }
+.backbutton img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: flaot;   
+}
 
-    .backbutton{
-      position:absolute; top:45px; left:20px;
-      display:flex; align-items:center; gap:16px;
-    }
+.topcircles {
+    position: absolute;
+    right: 5px;
+    top: 0px;
+}
 
-    .backbutton img{
-      width:44px; height:44px;
-      object-fit:contain;
-      background:rgba(255,255,255,0.10);
-      border-radius:50%;
-      padding:6px;
-    }
+  /* CONTENT */
+  .content{
+    background:var(--white);
+    margin-top:-20px;
+    padding:30px 20px;
+    border-radius:18px 18px 0 0;
+    min-height:100vh;          
+  }
 
-    .backbutton p{
-      color:#fff;
-      font-weight:600;
-      font-size:18px;
-    }
+  .faq-list{
+    display:grid;
+    gap:14px;
+    max-width:900px;         
+    margin:0 auto;               
+  }
 
-    .topcircles{
-      position:absolute;
-      right:6px;
-      top:6px;
-      opacity:0.95;
-    }
-    .content{
-      background:var(--white);
-      margin-top:-16px;
-      padding:28px;
-      border-radius:10px;
-      min-height:400px;
-    }
+  .faq-item{
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:16px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.06);
+  }
 
-    .faq-card{
-      background:var(--grey);
-      height:300px;
-      border-radius:6px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      font-weight:600;
-      margin-bottom:20px;
-    }
+  .faq-q{
+    display:flex;
+    justify-content:space-between;
+    font-weight:600;
+    color:#333;
+    cursor:pointer;
+  }
 
-    .faq-list{
-      display:grid;
-      gap:10px;
-    }
+  .faq-a{
+    margin-top:10px;
+    color:#555;
+    line-height:1.6;
+    display:none;
+  }
 
-    .faq-item{
-      background:#fff;
-      border:1px solid #ddd;
-      border-radius:8px;
-      padding:14px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.06);
-    }
+  .faq-a.show{
+    display:block;
+  }
+</style>
 
-    .faq-q{
-      display:flex;
-      justify-content:space-between;
-      font-weight:600;
-      color:#333;
-      cursor:pointer;
-    }
-
-    .faq-a{
-      margin-top:8px;
-      color:#555;
-      line-height:1.5;
-      display:none;
-    }
-
-    .faq-a.show{display:block;}
-  </style>
 </head>
 
 <body>
   <div class="page">
 
-   <!-- HEADER -->
-  <div class="bluebg">
+    <!-- HEADER -->
+     <div class="bluebg">
+    <a href="/backtohome" style="text-decoration: none; color: inherit; outline: none; -webkit-tap-highlight-color: transparent;">
     <div class="backbutton">
-      <img src="static/Assets/images/back-button.png" alt="#">
-      <p>FAQs</p>
+        <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+        <p style="font-size: 22px; font-family: 'Hind Guntur'; font-weight:600; color:white;"> FAQs</p>
     </div>
+    </a>
 
     <div class="topcircles">
-      <img src="static/Assets/images/Just-circles.png" width="150">
+        <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" style="width:150px;">
     </div>
-  </div>
 
+</div>
+
+
+    <!-- CONTENT -->
     <div class="content">
-
-      
-
       <div class="faq-list" id="faqList"></div>
     </div>
 
   </div>
 
   <script>
-    const faqs = [
-      { q:"How do I buy a ticket?", a:"Go to 'Buy Ticket', choose route, pay online. Ticket appears in 'My Tickets'." },
-       { q:"Can I track the live location of buses?", a:"Yes. The app shows real-time GPS tracking of buses so you can see arrival time, current location, and estimated time to reach your stop." },
-        { q:"Can I cancel the ticket?", a:"If eligible, open your ticket → Cancel. Refund takes 2–4 days." },
-         { q:"How do I purchase a monthly/weekly bus pass?", a:"Go to Pass → Buy New Pass, choose your zone or route, and complete the payment. Your pass will be visible under 'My Passes'." },
-          { q:"How do I use my digital bus pass?", a:"Show the QR code / Barcode to the conductor or scanning device inside the bus. The pass is valid only for the selected dates and zones." },
-           { q:"What if I lose my phone or ticket?", a:"Your tickets and passes are linked to your account. Log in from another device and you will be able to access them. You may also contact support to block unauthorized access." },
-            { q:"Why is my bus delayed?", a:"Delays may occur due to traffic, road conditions, or technical issues. The app updates estimated arrival time based on live GPS data." },
-             { q:"Do I need to create an account?", a:"Yes, creating an account ensures your tickets, passes, and tracking preferences stay saved across devices." },
-              { q:"What if my payment fails?", a:"If money is deducted but ticket is not generated, the amount will be refunded automatically within 2–5 business days. You can also report the transaction through the app." },
-               { q:"Is my data safe?", a:"Yes. All personal data, transactions, and GPS records are encrypted and stored securely." },
-    ];
+  const faqs = [
+    {
+      q: "How do I register on the app?",
+      a: "Go to the Registration page, enter your name, age, phone number, email, and password. You can also sign in using Google."
+    },
+    {
+      q: "How do I login if I already have an account?",
+      a: "On the Registration page, tap “Login” at the bottom and enter your registered phone number or email."   
+   },
+     {
+      q: "How do I track a bus location?",
+      a: "Tap “Track Bus” from the Home Page, select your route, and the app will show live GPS movement of the bus on the map."
+    },
+    {
+      q: "How do I buy a ticket?",
+      a: "From the Home Page, select “Buy Ticket”, choose your start stop and destination stop, enter number of tickets, and pay using UPI or card."
+    },
+    {
+      q: "Where can I view my purchased tickets?",
+      a: "Go to “View Ticket” from the Home Page bottom navigation bar. All valid tickets appear there."
+    },
+    {
+      q: "What information is shown on a ticket?",
+      a: "Each ticket includes: From stop, To stop, Number of tickets, Ticket number, Amount paid, Issue date & time, and QR/Barcode for verification."
+    },
+    {
+      q: "How do I buy a pass?",
+      a: "From the Home Page, select “Buy Pass”, choose pass type (Daily / Weekly / Monthly), enter number of members, confirm details, and pay."
+    },
+    {
+      q: "How do I view my pass after buying?",
+      a: "Go to “View Pass” from the bottom menu. Your active pass will show with pass holder details, validity, and QR code."
+    },
+    
+    {
+      q: "Why is bus tracking delayed or inaccurate sometimes?",
+      a: "Tracking may be slow due to weak GPS on the bus or network issues. Refresh after 10–20 seconds or check signal strength."
+    },
+    {
+      q: "How do I file a complaint?",
+      a: "Open Complaint page, enter your issue and submit. TC (Ticket Checker) can scan your ticket barcode and verify your complaint."
+    },
+    {
+      q: "How do I check complaint status?",
+      a: "Go to “Complaint View” to see complaint date, bus number, route, and status (Pending / In-progress / Closed)."
+    },
+    {
+      q: "What payment methods are supported?",
+      a: "UPI, Debit Card, Credit Card, Net Banking, and Wallets are supported."
+    },
+    {
+      q: "What if payment fails but money is deducted?",
+      a: "Your ticket will auto-generate once payment confirms. If not, the amount will be refunded within 2–5 days."
+    },
+    {
+      q: "Can I cancel my ticket or pass?",
+      a: "Tickets may or may not be cancellable depending on operator policy. Passes are non-refundable once activated."
+    },
+    {
+      q: "How do I update my profile?",
+      a: "Go to Profile page and edit your mobile number, email, age, or password."
+    },
+    
+    {
+      q: "Do I need internet for this app?",
+      a: "Internet is required for buying tickets, tracking buses, viewing complaints, and updating profile. Downloaded tickets and passes can be shown offline."
+    },
+    {
+      q: "Is my data safe?",
+      a: "Yes. Your data is encrypted and securely stored. Only authorized transport staff can verify your QR ticket or pass."
+    }
+  ];
 
     const faqList = document.getElementById("faqList");
 
@@ -187,4 +232,3 @@
   </script>
 </body>
 </html>
-
