@@ -21,13 +21,13 @@
 
     *{box-sizing:border-box;}
     body{
-      margin:0;
-      font-family:"Poppins", sans-serif;
-      background:#111;
-      color:var(--text);
-    }
+  margin:0;
+  font-family:"Poppins", sans-serif;
+  background:#fff;   
+  color:var(--text);
+}
 
-    /* Header */
+    /* header */
     .bluebg {
     background-color: #6C64FF;
     height: 220px;
@@ -41,22 +41,22 @@
     left: 20px;
     display: flex;
     align-items: center;
-    gap: 49px;   /* 🔒 kept exactly like your admin page */
+    gap: 49px;   
 }
 
 .backbutton img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    display: flaot;   /* 🔒 kept same */
+    display: flaot;  
 }
 
 .topcircles {
     position: absolute;
     right: 5px;
     top: 0px;
-}
 
+}
     .back{
       width:46px;height:46px;border-radius:50%;
       background:rgba(255,255,255,0.1);
@@ -70,11 +70,10 @@
     }
 
     .page{
-      background:#fff;
-      min-height:calc(100vh - 86px);
-      padding:20px 0 50px;
-    }
-
+  background:#fff;
+  min-height:calc(100vh - 220px);
+  padding:40px 0;
+}
     .wrap{
       display:flex;
       justify-content:center;
@@ -140,22 +139,21 @@
   </style>
 </head>
 <body>
-
-  
-    <div class="bluebg">
-
+         
+<!-- HEADER -->
+  <div class="bluebg">
+    <a href="/backtohome" style="text-decoration: none; color: inherit; outline: none; -webkit-tap-highlight-color: transparent;">
     <div class="backbutton">
         <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
-        <p style="font-size: 22px; font-family: 'Hind Guntur'; font-weight:600; color:white;">View-Ticket</p>
+        <p style="font-size: 22px; font-family: 'Hind Guntur'; font-weight:600; color:white;"> View<br>Ticket</p>
     </div>
+    </a>
 
     <div class="topcircles">
         <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" style="width:150px;">
     </div>
 
 </div>
-
-<div style="padding-left:20px; padding-top:20px;">
   <div class="page">
     <div class="wrap">
       <div class="card">
@@ -175,13 +173,9 @@
     <div><strong> Amount Paid: </strong> ₹{{ amount_paid }} <br>
    <div><strong> Issue Date & Time: </strong> {{ issue_datetime }}
           </div>
-
-
         <div class="barcode">bar code</div>
-
       </div>
     </div>
-  </div>
-
 </body>
 </html>
+
