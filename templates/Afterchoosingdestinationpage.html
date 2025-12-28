@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buy Ticket</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+
+body{
+    background:#e8e8ef;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+}
+
+.phone{
+    width:100%;
+    max-width:400px;
+    background:#fff;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 0 6px rgba(0,0,0,0.15);
+}
+
+/* HEADER */
+.header{
+    background:#725bff;
+    padding:25px;
+    text-align:center;
+    color:#fff;
+    position:relative;
+    height:120px;
+}
+
+.back{
+    position:absolute;
+    top:35px;
+    left:16px;
+    background:rgba(255,255,255,0.2);
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    font-size:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.title{
+    font-size:20px;
+    font-weight:bold;
+    margin-top:25px;
+}
+
+/* Three Rings */
+.rings{
+    position:absolute;
+    right:22px;
+    top:10px;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,0.12);
+}
+.rings::before{
+    content:"";
+    position:absolute;
+    width:90px;
+    height:90px;
+    top:15px;
+    left:15px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,0.10);
+}
+.rings::after{
+    content:"";
+    position:absolute;
+    width:65px;
+    height:65px;
+    top:28px;
+    left:28px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,0.08);
+}
+
+/* CONTENT */
+.content{
+    padding:22px;
+    margin-top: 35px;
+}
+
+/* LABELS */
+.section{
+    margin-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.label{
+    font-size:15px;
+    font-weight:bold;
+    color:#444;
+}
+
+.value{
+    font-size:15px;
+    font-weight:bold;
+    color:#444;
+}
+
+/* TIMELINE */
+.line{
+    width:100%;
+    border-top:2px dashed #bbb;
+    margin:10px 0;
+}
+
+.route{
+    display:flex;
+    justify-content:center;
+    margin:22px 0;
+}
+
+.path{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.dot{
+    width:18px;
+    height:18px;
+    background:#fff;
+    border:3px solid #725bff;
+    border-radius:50%;
+}
+
+.dotted{
+    width:2px;
+    height:45px;
+    border-right:2px dashed #725bff;
+}
+
+/* COUNTER */
+.row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:20px;
+}
+
+.counter{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.btn{
+    width:32px;
+    height:32px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    font-size:20px;
+    background:#fff;
+}
+
+.num{
+    width:40px;
+    height:32px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    font-weight:bold;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* PAY BOX */
+.pay-box{
+    border:1px solid #ddd;
+    padding:16px;
+    border-radius:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:65px;
+}
+
+.pay-btn{
+    background:#725bff;
+    color:#fff;
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="phone">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="back">‹</div>
+        <div class="title">Buy Ticket</div>
+        <div class="rings"></div>
+    </div>
+
+    <div class="content">
+
+        <!-- START STOP -->
+        <div class="section">
+            <span class="label">Start Stop:</span>
+            <span class="value">⛯ Nearest Stop NM</span>
+        </div>
+
+        <div class="line"></div>
+
+        <div class="route">
+            <div class="path">
+                <div class="dot"></div>
+                <div class="dotted"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <div class="line"></div>
+
+        <!-- DESTINATION STOP -->
+        <div class="section">
+            <span class="label">Destination Stop:</span>
+            <span class="value">📍 Hathkhamba</span>
+        </div>
+
+        <hr style="margin:20px 0;border-top:1px solid #ddd;margin-top: 95px;">
+
+        <!-- FARE -->
+        <div>Ticket Fare:<span id="fareValue">₹90</span></div>
+<br>
+        <!-- COUNTER -->
+        <div class="row">
+            <div class="label">Total Tickets</div>
+
+            <div class="counter">
+                <button class="btn" onclick="dec()">−</button>
+                <div class="num" id="num">2</div>
+                <button class="btn" onclick="inc()">+</button>
+            </div>
+        </div>
+
+        <!-- PAY BOX -->
+        <div class="pay-box">
+            <div class="label" style="font-size:14px;">Pay Using Gpay</div>
+            <button class="pay-btn">Pay</button>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+let price = 90;
+
+function updateFare(){
+    let qty = parseInt(document.getElementById("num").innerText);
+    document.getElementById("fareValue").innerText = "₹" + (qty * price);
+}
+
+function inc(){
+    let n = document.getElementById("num");
+    n.innerText = parseInt(n.innerText) + 1;
+    updateFare();
+}
+
+function dec(){
+    let n = document.getElementById("num");
+    let v = parseInt(n.innerText);
+    if(v > 1){
+        n.innerText = v - 1;
+        updateFare();
+    }
+}
+
+updateFare();
+</script>
+
+</body>
+</html>
