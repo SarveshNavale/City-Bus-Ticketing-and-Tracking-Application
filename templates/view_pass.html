@@ -176,6 +176,36 @@
    <div class="barcode">bar code</div>
     </div>
   </div>
+  {% if actual_user %}
+<div id="pass-data" 
+     data-actual-user="true"
+     data-holder-name="{{ holder_name }}"
+     data-pass-number="{{ pass_number }}"
+     data-amount-paid="{{ amount_paid }}"
+     data-issue-datetime="{{ issue_datetime }}"
+     data-mobile-no="{{ mobile_no }}"
+     {% if no_pass %}data-no-pass="true"{% else %}data-no-pass="false"{% endif %}
+     style="display: none;">
+</div>
+{% endif %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const passDataElement = document.getElementById('pass-data');
+    if (passDataElement) {
+        const passData = {
+            actualUser: passDataElement.dataset.actualUser === 'true',
+            holderName: passDataElement.dataset.holderName,
+            passNumber: passDataElement.dataset.passNumber,
+            amountPaid: parseFloat(passDataElement.dataset.amountPaid),
+            issueDateTime: passDataElement.dataset.issueDatetime,
+            mobileNo: passDataElement.dataset.mobileNo,
+            noPass: passDataElement.dataset.noPass === 'true'
+        };
+        
+        console.log('Pass data:', passData);
+    }
+});
+</script>
 </body>
 </html>
 
