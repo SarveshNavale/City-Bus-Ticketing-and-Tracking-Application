@@ -221,7 +221,7 @@ body {
             <p style="font-size:20px; margin-top: 4px;">Route<br>Timetables</p>
         </div>
 
-        <div class="card-btn">
+        <div class="card-btn full-btn" onclick="handleBuyPassClick()">
             <img src="static/Assets/images/view-pass.png" style="margin-bottom: 1px;">
             <p style="font-size:20px; margin-top: 5px;">Buy Pass</p>
         </div>
@@ -309,29 +309,79 @@ window.addEventListener('submit', function() {
     console.log('Form submission, will not clear login');
 });
 
-window.addEventListener('beforeunload', function(event) {
-    if (isNavigating) {
-        console.log('Page navigation, NOT clearing login');
-        return;
-    }
-    
-    console.log('Window actually closing, clearing login...');
-    
-    if (navigator.sendBeacon) {
-        navigator.sendBeacon('/clear_login');
-        console.log('Login cleared via sendBeacon');
-    } else {
-        fetch('/clear_login', {
-            method: 'POST',
-            keepalive: true
-        });
-    }
-});
 
 window.addEventListener('pageshow', function() {
     isNavigating = false;
     console.log('Page shown, reset navigation flag');
 });
+async function handleBuyPassClick() {
+    console.log('Buy Pass button clicked');
+    
+    try {
+        const response = await fetch('/get_current_user');
+        const result = await response.json();
+        console.log('Pre-navigation login check:', result);
+        
+        if (result.success && result.logged_in) {
+            console.log('Navigating to buy_pass page...');
+            window.location.href = '/buy_pass';
+        } else {
+            alert('Please login first.');
+            window.location.href = '/';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Network error. Please try again.');
+    }
+}
+async function debugLoginFlow() {
+    console.log('=== DEBUG LOGIN FLOW ===');
+    
+    try {
+        const userResponse = await fetch('/get_current_user');
+        const userResult = await userResponse.json();
+        console.log('1. Current user:', userResult);
+    } catch (error) {
+        console.error('User check error:', error);
+    }
+    
+    try {
+        const debugResponse = await fetch('/debug_login_status');
+        const debugResult = await debugResponse.json();
+        console.log('2. Debug status:', debugResult);
+    } catch (error) {
+        console.error('Debug check error:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Homepage loaded');
+    debugLoginFlow();
+});
+
+async function handleBuyPassClick() {
+    console.log('=== BUY PASS CLICK DEBUG ===');
+    
+    await debugLoginFlow();
+    
+    try {
+        const response = await fetch('/get_current_user');
+        const result = await response.json();
+        console.log('Buy Pass click - login check:', result);
+        
+        if (result.success && result.logged_in) {
+            console.log('User IS logged in, navigating to /buy_pass');
+            window.location.href = '/buy_pass';
+        } else {
+            console.log('User is NOT logged in');
+            alert('Please login first. Debug: ' + (result.error || 'Unknown error'));
+            window.location.href = '/';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Network error. Please try again.');
+    }
+}
 </script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    checkLoginStatusOnLoad();
     // Quantity Selector
     const quantityDisplay = document.getElementById('quantityDisplay');
     const totalQuantity = document.getElementById('totalQuantity');
@@ -43,34 +44,133 @@ document.addEventListener('DOMContentLoaded', function() {
     const paymentOptions = document.querySelectorAll('.payment-option');
     paymentOptions.forEach(option => {
         option.addEventListener('click', function() {
-            // Remove selected class from all options
             paymentOptions.forEach(opt => opt.classList.remove('selected'));
-            // Add selected class to clicked option
             this.classList.add('selected');
         });
     });
-     // Pay Button Functionality
+    
+    // Pay Button Functionality
     const payButton = document.getElementById('payButton');
-    payButton.addEventListener('click', function() {
+    payButton.addEventListener('click', async function() {
+        const isLoggedIn = await checkLoginStatus();
+        if (!isLoggedIn) {
+            return;
+        }
+        
         const selectedPayment = document.querySelector('.payment-option.selected').dataset.payment;
         const totalPrice = parseFloat(totalAmount.textContent);
         
-        alert(`Processing payment of ₹${totalPrice.toFixed(2)} via ${getPaymentMethodName(selectedPayment)}...\n\nYour pass will be activated immediately after successful payment.`);
-    });
+        payButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+        payButton.disabled = true;
+        
+        try {
+            const response = await fetch('/purchase_pass', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    quantity: quantity,
+                    amount_per_pass: passPrice,
+                    service_fee: feePerPass,
+                    payment_method: selectedPayment,
+                    total_amount: totalPrice
+                })
+            });
             
-    function getPaymentMethodName(method) {
-        switch(method) {
-            case 'gpay': return 'Google Pay';
-            case 'card': return 'Credit/Debit Card';
-            case 'wallet': return 'Digital Wallet';
-            default: return 'Selected Payment Method';
+            const result = await response.json();
+            
+            if (result.success) {
+                alert(`Pass Purchase Successful!\n\n` +
+                      `Pass Holder: ${result.details.pass_holder}\n` +
+                      `Mobile: ${result.details.mobile_no}\n` +
+                      `Pass Number(s): ${result.details.pass_numbers.join(', ')}\n` +
+                      `Amount Paid: ₹${result.details.total_amount.toFixed(2)}\n\n` +
+                      `Your pass(es) have been activated!`);
+                
+                window.location.href = '/view_pass';
+            } else {
+                alert(`Purchase Failed: ${result.error}`);
+                payButton.innerHTML = '<i class="fas fa-lock me-2"></i>Pay Now - ₹<span id="payAmount">' + totalPrice.toFixed(2) + '</span>';
+                payButton.disabled = false;
+            }
+        } catch (error) {
+            console.error('Purchase error:', error);
+            alert('Network error. Please check your connection and try again.');
+            payButton.innerHTML = '<i class="fas fa-lock me-2"></i>Pay Now - ₹<span id="payAmount">' + totalPrice.toFixed(2) + '</span>';
+            payButton.disabled = false;
         }
-    }
-    // Ad Button
-    const adBtn = document.querySelector('.ad-btn');
-    adBtn.addEventListener('click', function() {
-        alert('Redirecting to advertising information page...');
     });
-    // Initialize totals
+    
+    const adBtn = document.querySelector('.ad-btn');
+    if (adBtn) {
+        adBtn.addEventListener('click', function() {
+            alert('Redirecting to advertising information page...');
+        });
+    }
     updateTotals();
+});
+
+async function checkLoginStatus() {
+    try {
+        console.log('=== BUY PASS PAGE: Checking login status ===');
+        const response = await fetch('/get_current_user');
+        const result = await response.json();
+        
+        console.log('Buy Pass page login check result:', result);
+        
+        if (!result.success || !result.logged_in) {
+            console.log('User not logged in on buy pass page');
+            console.log('Error details:', result.error);
+            console.log('Debug info:', result.debug);
+            
+            try {
+                const debugResponse = await fetch('/debug_login_status');
+                const debugResult = await debugResponse.json();
+                console.log('Debug endpoint result:', debugResult);
+            } catch (debugError) {
+                console.error('Debug endpoint error:', debugError);
+            }
+            
+            alert('Please login first to purchase a pass.');
+            window.location.href = '/';
+            return false;
+        }
+        
+        console.log('User IS logged in on buy pass page:', result.user.name);
+        return true;
+    } catch (error) {
+        console.error('Login check error:', error);
+        alert('Network error. Please check your connection.');
+        return false;
+    }
+}
+async function checkLoginStatusOnLoad() {
+    try {
+        const response = await fetch('/get_current_user');
+        const result = await response.json();
+        
+        if (!result.success || !result.logged_in) {
+            console.log('No user logged in at page load');
+            document.getElementById('payButton').disabled = true;
+            document.getElementById('payButton').innerHTML = '<i class="fas fa-lock me-2"></i>Please Login First';
+        } else {
+            console.log('User logged in at page load:', result.user.name);
+        }
+    } catch (error) {
+        console.error('Error checking login on load:', error);
+    }
+}
+window.addEventListener('load', async function() {
+    try {
+        const response = await fetch('/get_current_user');
+        const result = await response.json();
+        
+        if (!result.success || !result.logged_in) {
+            alert('Please login first to access buy pass page.');
+            window.location.href = '/';
+        }
+    } catch (error) {
+        console.error('Login check error:', error);
+    }
 });

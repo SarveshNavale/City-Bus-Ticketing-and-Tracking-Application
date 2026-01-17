@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_from_directory, request, jsonify
+from flask import Flask, render_template, send_from_directory, request, jsonify, redirect
 import mysql.connector
 from datetime import datetime
 
@@ -8,7 +8,7 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="#SAR1807",
+        password="hrishi@123",
         database="RotaryClub_Database"
     )
 # ---------- normal routes sagle hite taka! ----------
@@ -19,10 +19,6 @@ def home():
 @app.route('/robo')
 def robo():
     return render_template("robo.html")
-
-
-
-
 
 @app.route('/play')
 def play():
@@ -44,9 +40,6 @@ def profile():
 def map():
     return render_template("map.html")
 
-
-
-
 @app.route('/dino')
 def dino():
     return render_template("dino-rush.html")
@@ -67,16 +60,210 @@ def view_ticket():
         amount_paid=28.20,
         issue_datetime="11/11/2011 | 2:17 AM"
     )
+
+@app.route('/buy_pass')
+def buy_pass_page():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+    current_login = cursor.fetchone()
+    cursor.close()
+    db.close()
+
+    if not current_login:
+        return redirect('/')
+    return render_template("buyPass.html")
+
+@app.route('/purchase_pass', methods=['POST'])
+def purchase_pass():
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+
+        cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+        current_login = cursor.fetchone()
+        
+        if not current_login:
+            return jsonify({'success': False, 'error': 'No user logged in'})
+        
+        mobile_no = current_login['mobile_no']
+        
+        cursor.execute("SELECT cust_name FROM cust_info WHERE cust_number = %s", (mobile_no,))
+        user = cursor.fetchone()
+        
+        if not user:
+            return jsonify({'success': False, 'error': 'User not found in database'})
+        
+        data = request.get_json()
+        quantity = int(data.get('quantity', 1))
+        amount_per_pass = float(data.get('amount_per_pass', 30.00))
+        service_fee = float(data.get('service_fee', 0.50))
+        payment_method = data.get('payment_method', 'gpay')
+        
+        total_amount = (quantity * amount_per_pass) + (quantity * service_fee)
+        
+        current_datetime = datetime.now()
+        current_date = current_datetime.date()
+        current_time = current_datetime.time()
+        
+        timestamp = int(current_datetime.timestamp())
+        
+        passes_created = []
+        for i in range(quantity):
+            pass_number = f"PS{mobile_no}_{timestamp}_{i+1}"
+            
+            cursor.execute("""
+                INSERT INTO passes_info 
+                (pass_holder, pass_number, amount_paid, mobile_no, issue_date, issue_time)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (
+                user['cust_name'],
+                pass_number,
+                amount_per_pass,
+                mobile_no,
+                current_date,
+                current_time
+            ))
+            
+            passes_created.append(pass_number)
+        
+        db.commit()
+        
+        placeholders = ','.join(['%s'] * len(passes_created))
+        cursor.execute(f"""
+            SELECT * FROM passes_info 
+            WHERE pass_number IN ({placeholders})
+            ORDER BY id DESC
+        """, tuple(passes_created))
+        
+        passes = cursor.fetchall()
+        
+        serialized_passes = []
+        for pass_item in passes:
+            if isinstance(pass_item.get('issue_time'), type(datetime.now().time())):
+                issue_time_str = str(pass_item['issue_time'])
+            else:
+                issue_time_str = str(pass_item.get('issue_time', ''))
+            
+            if isinstance(pass_item.get('issue_date'), type(datetime.now().date())):
+                issue_date_str = str(pass_item['issue_date'])
+            else:
+                issue_date_str = str(pass_item.get('issue_date', ''))
+            
+            serialized_passes.append({
+                'id': pass_item['id'],
+                'pass_holder': pass_item['pass_holder'],
+                'pass_number': pass_item['pass_number'],
+                'amount_paid': float(pass_item['amount_paid']),
+                'mobile_no': pass_item['mobile_no'],
+                'issue_date': issue_date_str,
+                'issue_time': issue_time_str
+            })
+        
+        cursor.close()
+        db.close()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Successfully purchased {quantity} pass(es)',
+            'passes': serialized_passes,  
+            'details': {
+                'pass_holder': user['cust_name'],
+                'mobile_no': mobile_no,
+                'total_amount': total_amount,
+                'pass_numbers': passes_created,
+                'purchase_time': current_datetime.strftime('%Y-%m-%d %H:%M:%S')
+            }
+        })
+        
+    except Exception as e:
+        print(f"Pass purchase error: {e}")
+        import traceback
+        traceback.print_exc() 
+        return jsonify({
+            'success': False,
+            'error': f'Pass purchase failed: {str(e)}'
+        })
 @app.route('/view_pass')
 def view_pass():
-    return render_template(
-        "view_pass.html",
-        total_tickets=5,
-        holder_name="Shreyash Khot",
-        pass_number="PS8011192222",
-        amount_paid=500,
-        issue_datetime="11/11/2011 | 2:17 AM"
-    )
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+        current_login = cursor.fetchone()
+        
+        if not current_login:
+            cursor.close()
+            db.close()
+            return render_template(
+                "view_pass.html",
+                total_tickets=5,
+                holder_name="Shreyash Khot",
+                pass_number="PS8011192222",
+                amount_paid=500,
+                issue_datetime="11/11/2011 | 2:17 AM",
+                actual_user=False
+            )
+        
+        mobile_no = current_login['mobile_no']
+        
+        cursor.execute("""
+            SELECT * FROM passes_info 
+            WHERE mobile_no = %s 
+            ORDER BY issue_date DESC, issue_time DESC 
+            LIMIT 1
+        """, (mobile_no,))
+        
+        pass_data = cursor.fetchone()
+        
+        cursor.execute("SELECT cust_name FROM cust_info WHERE cust_number = %s", (mobile_no,))
+        user = cursor.fetchone()
+        
+        cursor.close()
+        db.close()
+        
+        if pass_data and user:
+            issue_date = pass_data['issue_date']
+            issue_time = pass_data['issue_time']
+            issue_datetime = f"{issue_date} | {issue_time}"
+            
+            return render_template(
+                "view_pass.html",
+                total_tickets=1, 
+                holder_name=user['cust_name'],
+                pass_number=pass_data['pass_number'],
+                amount_paid=pass_data['amount_paid'],
+                issue_datetime=issue_datetime,
+                actual_user=True,
+                mobile_no=mobile_no,
+                pass_id=pass_data['id']
+            )
+        else:
+            return render_template(
+                "view_pass.html",
+                total_tickets=0,
+                holder_name=user['cust_name'] if user else "User",
+                pass_number="No active pass",
+                amount_paid=0,
+                issue_datetime="N/A",
+                actual_user=True,
+                mobile_no=mobile_no,
+                no_pass=True
+            )
+            
+    except Exception as e:
+        print(f"View pass error: {e}")
+        return render_template(
+            "view_pass.html",
+            total_tickets=5,
+            holder_name="Shreyash Khot",
+            pass_number="PS8011192222",
+            amount_paid=500,
+            issue_datetime="11/11/2011 | 2:17 AM",
+            actual_user=False,
+            error=str(e)
+        )
 @app.route('/faqs')
 def faqs():
     return render_template("FAQs.html")
@@ -118,7 +305,6 @@ def get_location(user_id):
 
     return jsonify({"error": "User not found"}), 404
 
-# ---------- NEW: return all buses (id, bus_no, no_plate, route, lat, lon) ----------
 @app.route('/get_buses')
 def get_buses():
     db = get_db()
@@ -129,7 +315,6 @@ def get_buses():
     db.close()
     return jsonify(buses)
 
-# ---------- NEW: update a bus location (called by client every 5s) ----------
 @app.route('/update_bus_location', methods=['POST'])
 def update_bus_location():
     data = request.get_json()
@@ -282,7 +467,6 @@ def login():
         print(f"Login error: {e}")
         return jsonify({'success': False, 'error': str(e)})
     
-# retrieve current logged in user
 @app.route('/get_current_user')
 def get_current_user():
     try:
@@ -292,14 +476,23 @@ def get_current_user():
         db = get_db()
         cursor = db.cursor(dictionary=True)
     
-        print("Checking current_login table...")
-        cursor.execute("SELECT * FROM current_login")
-        all_logins = cursor.fetchall()
-        print(f"All rows in current_login: {all_logins}")
+        print("Checking current_login table structure...")
         
-        cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
-        current_login = cursor.fetchone()
-        print(f"First row in current_login: {current_login}")
+        # First try with mobile_no, if fails try mobo_no
+        try:
+            cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+            current_login = cursor.fetchone()
+            column_name = 'mobile_no'
+        except:
+            cursor.execute("SELECT mobo_no FROM current_login LIMIT 1")
+            current_login = cursor.fetchone()
+            column_name = 'mobo_no'
+            
+        print(f"Column used: {column_name}, Result: {current_login}")
+        
+        if not current_login:
+            print("DEBUG: current_login table is EMPTY")
+            # ... rest of your code
         
         if not current_login:
             print("DEBUG: current_login table is EMPTY")
@@ -384,6 +577,12 @@ def get_current_user():
 def clear_login():
     """Clear login only if someone is actually logged in"""
     try:
+        print("=" * 50)
+        print("CLEAR_LOGIN CALLED!")
+        print(f"Time: {datetime.now()}")
+        print(f"Request method: {request.method}")
+        print(f"Request headers: {dict(request.headers)}")
+        
         db = get_db()
         cursor = db.cursor()
         
@@ -407,7 +606,28 @@ def clear_login():
         print(f"Error: {e}")
         return jsonify({'success': False, 'error': str(e)})
     
+@app.route('/test_direct_db')
+def test_direct_db():
+    """Direct database test"""
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        # Direct query
+        cursor.execute("SELECT * FROM current_login")
+        result = cursor.fetchall()
+        
+        cursor.close()
+        db.close()
+        
+        return f"""
+        <h1>Direct DB Test</h1>
+        <p>Rows in current_login: {len(result)}</p>
+        <pre>{result}</pre>
+        <p>Time: {datetime.now()}</p>
+        """
+    except Exception as e:
+        return f"Error: {str(e)}"
+      
 if __name__ == "__main__":
-    # you can set debug=False if you want debug disabled,
-    # but leaving debug=True is fine while developing
     app.run(host="0.0.0.0", port=5000, debug=True)

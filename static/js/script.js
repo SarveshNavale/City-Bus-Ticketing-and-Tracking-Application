@@ -378,3 +378,46 @@ if (result.success) {
     alert('Registration successful! Redirecting...');
     window.location.href = result.redirect;
 }
+if (window.location.pathname === '/' || window.location.pathname === '/registration.html') {
+    sessionStorage.setItem('preventLoginClear', 'true');
+}
+
+window.addEventListener('beforeunload', function(e) {
+    if (sessionStorage.getItem('preventLoginClear') === 'true') {
+        sessionStorage.removeItem('preventLoginClear');
+        return;
+    }
+    
+    if (!isNavigating) {
+        fetch('/clear_login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            keepalive: true
+        }).catch(error => {
+            console.log('Clear login error:', error);
+        });
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    checkLoginStatusOnHomepage();
+});
+
+async function checkLoginStatusOnHomepage() {
+    try {
+        const response = await fetch('/get_current_user');
+        const result = await response.json();
+        console.log('Homepage login status:', result);
+        
+        if (result.success && result.logged_in) {
+            console.log('✅ User IS logged in on homepage:', result.user.name);
+        } else {
+            console.log('❌ User is NOT logged in on homepage');
+            alert('Not logged in on homepage. Please login first.');
+            window.location.href = '/';
+        }
+    } catch (error) {
+        console.error('Error checking login:', error);
+    }
+}

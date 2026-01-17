@@ -71,10 +71,6 @@ CREATE TABLE tickets_info (
     issue_time TIME NOT NULL
 );
 
-create table current_login (
-	mobo_no int NOT NULL
-);
-
 CREATE TABLE passes_info (
     id INT AUTO_INCREMENT PRIMARY KEY,
 
