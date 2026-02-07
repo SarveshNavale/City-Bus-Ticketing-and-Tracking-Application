@@ -16,8 +16,6 @@ body {
     min-height: 100vh; 
 }
 
-
-
 .top-area {
     height: 220px;
     width: 100%;
@@ -50,10 +48,7 @@ body {
     position: absolute;
     right: 0px;
     top: 5px;
-
-    
 }
-
 
 .white-card {
     width: 88%;
@@ -65,7 +60,6 @@ body {
     box-shadow: 0px 4px 13px rgba(0,0,0,0.25);
 }
 
-
 .text {
     font-size: 3px;
     font-family: 'Hind Guntur', sans-serif;
@@ -73,7 +67,6 @@ body {
     color: #636263; 
     margin: 0;
 }
-
 
 .search-container {
     position: relative;
@@ -103,7 +96,6 @@ body {
     pointer-events: none; 
 }
 
-
 .btn-grid {
     display: flex;
     flex-wrap: wrap;
@@ -125,7 +117,6 @@ body {
     font-weight: 600;
 }
 
-
 .card-btn span {
     display: block;
     font-size: 25px;
@@ -134,12 +125,9 @@ body {
     text-align: left;
 }
 
-
 .full-btn {
     width: 100%;
-    
 }
-
 
 .navwrap {
     width: 92%;
@@ -168,6 +156,11 @@ body {
     margin-bottom: 4px;
     margin-top: 5px;
 }
+
+/* ONLY FIX – Buy Pass half width, Chat with Tiko stays full */
+.card-btn.full-btn[onclick*="handleBuyPassClick"] {
+    width: 46%;
+}
 </style>
 </head>
 
@@ -185,14 +178,12 @@ body {
                 </div>
             </a>
 
-
         <img src="static/Assets/images/Bell-icon.png" class="bell">
 
     </div>
 </div>
 
 <div class="white-card">
-<!-- search bar hach ahe form tag cha , get ani post method ni data transfer karta yeil -->
 <form action="/search" method="GET" style="position: relative; width: 375px;">
     <img src="static/Assets/images/search.png" alt="search logo" class="search-icon">
     <input class="search-box" 
@@ -202,41 +193,36 @@ body {
            autocomplete="on">
 </form>
 
+<div class="btn-grid">
 
-
-    <div class="btn-grid">
-
-        <div class="card-btn">
-            <img src="static/Assets/images/view-ticket.png" style="margin-bottom: 1px;">
-            <p style="font-size:20px; margin-top: 0px;">View Ticket</p>
-        </div>
-
-        <div class="card-btn">
-            <img src="static/Assets/images/view-pass.png" style="margin-bottom: 1px;">
-            <p style="font-size:20px; margin-top: 5px;">View Pass</p>
-        </div>
-
-        <div class="card-btn">
-            <img src="static/Assets/images/route-timetable.png" style="margin-bottom: 1px;">
-            <p style="font-size:20px; margin-top: 4px;">Route<br>Timetables</p>
-        </div>
-
-        <div class="card-btn full-btn" onclick="handleBuyPassClick()">
-            <img src="static/Assets/images/view-pass.png" style="margin-bottom: 1px;">
-            <p style="font-size:20px; margin-top: 5px;">Buy Pass</p>
-        </div>
-
-        
-<div class="card-btn full-btn" onclick="window.location.href='/robo'" style="cursor: pointer;">
-    <span style="color: rgb(247, 149, 149); font-size: 20px;">NEW!</span>
-    <img src="static/Assets/images/robo.png" style="margin-bottom: 1px; margin-top: 0px;">
-    <p class="text" style="font-size:22px;">Chat With Tiko</p>
-</div>
-
-
+    <div class="card-btn">
+        <img src="static/Assets/images/view-ticket.png" style="margin-bottom: 1px;">
+        <p style="font-size:20px; margin-top: 0px;">View Ticket</p>
     </div>
-</div>
 
+    <div class="card-btn">
+        <img src="static/Assets/images/view-pass.png" style="margin-bottom: 1px;">
+        <p style="font-size:20px; margin-top: 5px;">View Pass</p>
+    </div>
+
+    <div class="card-btn">
+        <img src="static/Assets/images/route-timetable.png" style="margin-bottom: 1px;">
+        <p style="font-size:20px; margin-top: 4px;">Route<br>Timetables</p>
+    </div>
+
+    <div class="card-btn full-btn" onclick="handleBuyPassClick()">
+        <img src="static/Assets/images/view-pass.png" style="margin-bottom: 1px;">
+        <p style="font-size:20px; margin-top: 5px;">Buy Pass</p>
+    </div>
+
+    <div class="card-btn full-btn" onclick="window.location.href='/robo'" style="cursor: pointer;">
+        <span style="color: rgb(247, 149, 149); font-size: 20px;">NEW!</span>
+        <img src="static/Assets/images/robo.png" style="margin-bottom: 1px; margin-top: 0px;">
+        <p class="text" style="font-size:22px;">Chat With Tiko</p>
+    </div>
+
+</div>
+</div>
 
 <div class="navwrap">
 
@@ -252,14 +238,12 @@ body {
     </div>
     </a>
 
-
-            <a href="/play" style="text-decoration: none; color: inherit; outline: none; -webkit-tap-highlight-color: transparent;">
-            <div class="navitem">
-                <img src="static/Assets/images/games-logo.png" alt="play">
-                <div>Play</div>
-            </div>
-            </a>
-
+    <a href="/play" style="text-decoration: none; color: inherit; outline: none; -webkit-tap-highlight-color: transparent;">
+        <div class="navitem">
+            <img src="static/Assets/images/games-logo.png" alt="play">
+            <div>Play</div>
+        </div>
+    </a>
 
     <div class="navitem">
         <img src="static/Assets/images/FAQs-logo.png" alt="faqs">
@@ -267,6 +251,7 @@ body {
     </div>
 
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Homepage loaded, fetching user...');
@@ -309,11 +294,11 @@ window.addEventListener('submit', function() {
     console.log('Form submission, will not clear login');
 });
 
-
 window.addEventListener('pageshow', function() {
     isNavigating = false;
     console.log('Page shown, reset navigation flag');
 });
+
 async function handleBuyPassClick() {
     console.log('Buy Pass button clicked');
     
@@ -334,6 +319,7 @@ async function handleBuyPassClick() {
         alert('Network error. Please try again.');
     }
 }
+
 async function debugLoginFlow() {
     console.log('=== DEBUG LOGIN FLOW ===');
     
@@ -383,5 +369,6 @@ async function handleBuyPassClick() {
     }
 }
 </script>
+
 </body>
 </html>

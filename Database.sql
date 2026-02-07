@@ -55,6 +55,8 @@ CREATE TABLE stops_info (
     latitude DECIMAL(10,7) DEFAULT NULL,
     longitude DECIMAL(10,7) DEFAULT NULL           
 );
+
+
 ALTER TABLE stops_info
 ADD COLUMN stop_no int;
 
@@ -120,6 +122,16 @@ INSERT INTO bus_info (bus_no, no_plate, route, latitude, longitude) VALUES
 	 mobile_no VARCHAR(15) NOT NULL
  );
 
+-- 7-2-26
+DROP TABLE IF EXISTS stops_info;
+CREATE TABLE stops_info (
+    stop_name VARCHAR(100) NOT NULL,
+    track_no INT NOT NULL,
+    latitude DECIMAL(11,8) NOT NULL,
+    longitude DECIMAL(11,8) NOT NULL
+);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude)
+VALUES ('City Bus Stand', 0, 16.99145200, 73.29503900);
 
 
 
