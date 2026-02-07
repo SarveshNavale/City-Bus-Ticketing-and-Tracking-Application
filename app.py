@@ -8,7 +8,7 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="hrishi@123",
+        password="#SAR1807",
         database="RotaryClub_Database"
     )
 # ---------- normal routes sagle hite taka! ----------
