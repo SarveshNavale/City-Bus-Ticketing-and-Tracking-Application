@@ -86,6 +86,11 @@ def buy_pass_page():
         return redirect('/')
     return render_template("buyPass.html")
 
+import bcrypt
+from flask import Flask, render_template, request, jsonify
+import mysql.connector
+
+
 @app.route('/purchase_pass', methods=['POST'])
 def purchase_pass():
     try:
