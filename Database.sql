@@ -54,6 +54,15 @@ VALUES
 INSERT INTO cust_info (cust_name, cust_number, cust_age, cust_email, password)
 VALUES 
 ('Hrishikesh Patil', '9728394991', 20, 'hrishi@gmail.com', 123456);
+ 
+ INSERT INTO cust_info (cust_name, cust_number, cust_age, cust_email, password)
+VALUES (
+  'Shreyash Khot',
+  '8788852145',
+  19,
+  'shreyashkhot2006@gmail.com',
+  '$2b$12$hUskzZ3BAA8j/xZgirYew.O7t8G.NrEekYRZaT2JovsOy0oLkh7s2'
+);
 
 
 CREATE TABLE stops_info (
