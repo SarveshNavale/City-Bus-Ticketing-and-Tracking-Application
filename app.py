@@ -44,6 +44,10 @@ def map():
 def dino():
     return render_template("dino-rush.html")
 
+@app.route('/notification')
+def notification():
+    return render_template("notification.html")
+
 @app.route('/static/games/dino/<path:filename>')
 def serve_dino_files(filename):
     return send_from_directory('static/games/dino', filename)
