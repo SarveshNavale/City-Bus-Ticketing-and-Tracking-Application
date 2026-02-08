@@ -51,6 +51,11 @@ def dino():
 def notification():
     return render_template("notification.html")
 
+@app.route('/admin_login')
+def admin():
+    return render_template("admin_login.html")
+
+
 @app.route('/static/games/dino/<path:filename>')
 def serve_dino_files(filename):
     return send_from_directory('static/games/dino', filename)
