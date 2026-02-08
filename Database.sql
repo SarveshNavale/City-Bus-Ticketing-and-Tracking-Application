@@ -22,6 +22,13 @@ VALUES ('TC918710', 4085);       -- for TC
 INSERT INTO Admin_info (Admin_id, OTP)     -- for complaint checkerr
 VALUES ('ADM918710', 4085);
 
+ CREATE TABLE admin_info (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  admin_username VARCHAR(50) UNIQUE,
+  admin_password VARCHAR(255)
+);
+ ALTER TABLE cust_info
+MODIFY password VARCHAR(255);
 
 CREATE TABLE complaints (
     idc INT AUTO_INCREMENT PRIMARY KEY,   
