@@ -86,11 +86,6 @@ def buy_pass_page():
         return redirect('/')
     return render_template("buyPass.html")
 
-import bcrypt
-from flask import Flask, render_template, request, jsonify
-import mysql.connector
-
-
 @app.route('/purchase_pass', methods=['POST'])
 def purchase_pass():
     try:
@@ -349,6 +344,46 @@ def update_bus_location():
     cursor.close()
     db.close()
     return jsonify({"status": "ok"})
+      
+ #admin_login data
+
+import bcrypt
+from flask import Flask, render_template, request, jsonify, redirect
+import mysql.connector
+
+@app.route('/admin_login', methods=['POST'])
+def admin_login():
+
+    username = request.form.get('admin_id')
+    password = request.form.get('password')
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute(
+        "SELECT * FROM admin_info WHERE admin_username=%s",
+        (username,)
+    )
+    admin = cursor.fetchone()
+
+    cursor.close()
+    db.close()
+
+    if admin and bcrypt.checkpw(password.encode(), admin['admin_password'].encode()):
+        return redirect('/admin_dashboard')
+    else:
+        return "Invalid admin login ❌"
+    
+@app.route('/admin_login', methods=['GET'])
+def admin_login_page():
+    return render_template("admin_login.html")
+ 
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    return "<h1>Welcome Admin ✅</h1>"
+
+
+
 
 #registration data
 
