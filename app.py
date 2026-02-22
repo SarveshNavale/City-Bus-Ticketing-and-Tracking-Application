@@ -459,7 +459,121 @@ def register():
             'error': f'Registration failed: {str(e)}'
         })
     
+# Ticket auto delete after 5 mins (100m radius logic)
+
+# Distance Function
+
+import math
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+    R = 6371000  # Earth radius in meters
+
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    delta_phi = math.radians(lat2 - lat1)
+    delta_lambda = math.radians(lon2 - lon1)
+
+    a = math.sin(delta_phi/2)**2 + \
+        math.cos(phi1) * math.cos(phi2) * \
+        math.sin(delta_lambda/2)**2
+
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+
+    return R * c
+
+# New Route: Check User Radius
+
+@app.route('/check_radius')
+def check_radius():
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    # current logged in user
+    cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+    login = cursor.fetchone()
+
+    if not login:
+        return "No user logged in"
+
+    mobile = login['mobile_no']
+
+    # get ticket
+    cursor.execute("SELECT * FROM tickets_info WHERE mobile_no=%s", (mobile,))
+    ticket = cursor.fetchone()
+
+    if not ticket:
+        return "No active ticket"
+
+    final_dest = ticket['final_dest']
+
+    # get stop coordinates
+    cursor.execute("SELECT latitude, longitude FROM stops_info WHERE Stop_name=%s", (final_dest,))
+    stop = cursor.fetchone()
+
+    # get user location
+    cursor.execute("SELECT latitude, longitude FROM cust_info WHERE cust_number=%s", (mobile,))
+    user_loc = cursor.fetchone()
+
+    cursor.close()
+    db.close()
+
+    if not stop or not user_loc:
+        return "Location data missing"
+
+    distance = calculate_distance(
+        float(user_loc['latitude']),
+        float(user_loc['longitude']),
+        float(stop['latitude']),
+        float(stop['longitude'])
+    )
+
+    if distance <= 100:
+        return "Inside 100m radius"
+    else:
+        return "Outside radius"
     
+    if distance <= 100:
+
+     db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("""
+        UPDATE tickets_info
+        SET arrival_time = NOW()
+        WHERE mobile_no=%s AND arrival_time IS NULL
+    """, (mobile,))
+
+    db.commit()
+    cursor.close()
+    db.close()
+
+    return "Timer started"
+  
+  # Delete After 5 Minutes Route
+
+@app.route('/auto_delete_ticket')
+def auto_delete_ticket():
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("""
+        DELETE FROM tickets_info
+        WHERE arrival_time IS NOT NULL
+        AND TIMESTAMPDIFF(MINUTE, arrival_time, NOW()) >= 5
+    """)
+
+    db.commit()
+    cursor.close()
+    db.close()
+
+    return "Old tickets deleted"
+
+
+
+
+
 # login function 
 @app.route('/login', methods=['POST'])
 def login():
