@@ -1,6 +1,9 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify, redirect
 import mysql.connector
-from datetime import datetime
+from datetime import datetime, date, time, timedelta
+import time  # This is the time module for sleep()
+import threading
+from math import radians, sin, cos, sqrt, atan2
 
 app = Flask(__name__)
 
@@ -8,7 +11,7 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="#SAR1807",
+        password="hrishi@123",
         database="RotaryClub_Database"
     )
 # ---------- normal routes sagle hite taka! ----------
@@ -632,6 +635,311 @@ def test_direct_db():
         """
     except Exception as e:
         return f"Error: {str(e)}"
-      
+    
+# Haversine formula to calculate distance between two coordinates
+def haversine_distance(lat1, lon1, lat2, lon2):
+    """Calculate distance between two points in kilometers"""
+    try:
+        lat1 = float(lat1)
+        lon1 = float(lon1)
+        lat2 = float(lat2)
+        lon2 = float(lon2)
+        
+        lat1, lon1, lat2, lon2 = radians(lat1), radians(lon1), radians(lat2), radians(lon2)
+        
+        dlat = lat2 - lat1
+        dlon = lon2 - lon1
+        
+        a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+        c = 2 * atan2(sqrt(a), sqrt(1-a))
+        
+        R = 6371  
+        return R * c
+        
+    except Exception as e:
+        print(f"Distance calculation error: {e}")
+        return float('inf')
+
+def check_bus_proximity():
+    """Check if any bus is within 1KM of any user and add to notification_info"""
+    db = None
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+        current_login = cursor.fetchone()
+        
+        if not current_login:
+            print("No user logged in")
+            return
+        
+        mobile_no = current_login['mobile_no']
+        print(f"Checking proximity for user: {mobile_no}")
+        
+        # Get current user's location
+        cursor.execute("""
+            SELECT cust_number, latitude, longitude 
+            FROM cust_info 
+            WHERE cust_number = %s 
+            AND latitude IS NOT NULL 
+            AND longitude IS NOT NULL
+        """, (mobile_no,))
+        
+        user = cursor.fetchone()
+        
+        if not user:
+            print(f"User {mobile_no} has no location data")
+            return
+        
+        print(f"User location: {user['latitude']}, {user['longitude']}")
+        
+        # Get all buses with location (updated in last 5 minutes)
+        cursor.execute("""
+            SELECT bus_no, latitude, longitude 
+            FROM bus_info 
+            WHERE latitude IS NOT NULL 
+            AND longitude IS NOT NULL
+            AND last_seen >= NOW() - INTERVAL 5 MINUTE
+        """)
+        
+        buses = cursor.fetchall()
+        print(f"Found {len(buses)} active buses")
+        
+        now = datetime.now()
+        current_date = now.date()
+        current_time = now.time()
+        
+        notifications_added = 0
+        
+        for bus in buses:
+            distance = haversine_distance(
+                user['latitude'], user['longitude'],
+                bus['latitude'], bus['longitude']
+            )
+            
+            print(f"Bus {bus['bus_no']} is {distance:.2f}KM away")
+            
+            if distance <= 1.0:
+                cursor.execute("""
+                    SELECT id FROM notification_info 
+                    WHERE notif_heading LIKE %s
+                    AND user_mobile = %s
+                    AND notif_time >= NOW() - INTERVAL 2 MINUTE
+                """, (f'%Bus {bus["bus_no"]}%', mobile_no))
+                
+                if not cursor.fetchone():
+                    heading = f"Bus {bus['bus_no']} nearby!"
+                    description = f"Bus {bus['bus_no']} is within {distance:.2f}KM of your location at {current_time.strftime('%I:%M %p')}."
+                    
+                    cursor.execute("""
+                        INSERT INTO notification_info 
+                        (notif_date, notif_time, notif_heading, notif_description, user_mobile, notification_type)
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                    """, (current_date, current_time, heading, description, mobile_no, 'bus_proximity'))
+                    
+                    db.commit()
+                    notifications_added += 1
+                    print(f"✅ NEW Notification: Bus {bus['bus_no']} is {distance:.2f}KM away at {current_time.strftime('%H:%M:%S')}")
+                else:
+                    print(f"⏳ Recent notification exists for Bus {bus['bus_no']} (skipping)")
+        
+        if notifications_added > 0:
+            print(f"Added {notifications_added} new notifications")
+        else:
+            print("No new notifications added")
+                    
+    except Exception as e:
+        print(f"Error in check_bus_proximity: {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        if db:
+            db.close()
+
+def notification_worker():
+    """Background worker to check for notifications periodically"""
+    while True:
+        try:
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] Checking bus proximity...")
+            with app.app_context():
+                check_bus_proximity()
+            time.sleep(30) 
+        except Exception as e:
+            print(f"Worker error: {e}")
+            time.sleep(60) 
+
+def start_notification_service():
+    """Start the notification background service"""
+    worker_thread = threading.Thread(target=notification_worker, daemon=True)
+    worker_thread.start()
+    print("=" * 50)
+    print("🔔 NOTIFICATION SERVICE STARTED")
+    print("=" * 50)
+
+@app.route('/force_check_notifications')
+def force_check_notifications():
+    """Manually trigger notification check"""
+    try:
+        check_bus_proximity()
+        return jsonify({'success': True, 'message': 'Notification check triggered'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/notifications')
+def show_notifications():
+    """Display data from notification_info to notifications page"""
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+        current_login = cursor.fetchone()
+        
+        if not current_login:
+            return redirect('/')
+        
+        mobile_no = current_login['mobile_no']
+        
+        cursor.execute("""
+            SELECT * FROM notification_info 
+            WHERE user_mobile = %s
+            ORDER BY notif_date DESC, notif_time DESC
+            LIMIT 50
+        """, (mobile_no,))
+        
+        notifications = cursor.fetchall()
+        
+        cursor.close()
+        db.close()
+        
+        return render_template("simple_notifications.html", notifications=notifications)
+        
+    except Exception as e:
+        print(f"Notification error: {e}")
+        return render_template("simple_notifications.html", notifications=[])
+    
+@app.route('/check_new_notifications')
+def check_new_notifications():
+    """Check if new notifications arrived for current user"""
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+        current_login = cursor.fetchone()
+        
+        if not current_login:
+            return jsonify({'success': False, 'new_notifications': False, 'count': 0})
+        
+        cursor.execute("""
+            SELECT COUNT(*) as new_count 
+            FROM notification_info 
+            WHERE user_mobile = %s
+            AND notif_time >= NOW() - INTERVAL 5 MINUTE
+        """, (current_login['mobile_no'],))
+        
+        result = cursor.fetchone()
+        cursor.close()
+        db.close()
+        
+        return jsonify({
+            'success': True,
+            'new_notifications': result['new_count'] > 0,
+            'count': result['new_count']
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/update_user_location_from_map', methods=['POST'])
+def update_user_location_from_map():
+    """Update user location from map page"""
+    try:
+        data = request.get_json()
+        lat = data.get('latitude')
+        lon = data.get('longitude')
+        
+        db = get_db()
+        cursor = db.cursor()
+        
+        cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+        current_login = cursor.fetchone()
+        
+        if current_login:
+            mobile_no = current_login[0]
+            cursor.execute("""
+                UPDATE cust_info 
+                SET latitude = %s, longitude = %s, last_seen = NOW()
+                WHERE cust_number = %s
+            """, (lat, lon, mobile_no))
+            db.commit()
+            print(f"📍 Location updated for user {mobile_no}: {lat}, {lon}")
+        
+        cursor.close()
+        db.close()
+        
+        return jsonify({'success': True})
+        
+    except Exception as e:
+        print(f"Location update error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/test_add_notification')
+def test_add_notification():
+    """Add a test notification manually"""
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        # Get current logged in user
+        cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+        current_login = cursor.fetchone()
+        
+        if not current_login:
+            return jsonify({'success': False, 'error': 'No user logged in'})
+        
+        now = datetime.now()
+        current_date = now.date()
+        current_time = now.time()
+        
+        cursor.execute("""
+            INSERT INTO notification_info 
+            (notif_date, notif_time, notif_heading, notif_description, user_mobile, notification_type)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (current_date, current_time, 
+              '🔔 Test Notification', 
+              'This is a test notification to verify the display works',
+              current_login['mobile_no'], 'test'))
+        
+        db.commit()
+        cursor.close()
+        db.close()
+        
+        return jsonify({'success': True, 'message': 'Test notification added'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+import atexit
+
+def cleanup_on_shutdown():
+    """Clear current_login when server stops"""
+    try:
+        print("\n" + "=" * 50)
+        print("SERVER SHUTTING DOWN - Clearing current_login table")
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("TRUNCATE TABLE current_login")
+        db.commit()
+        cursor.close()
+        db.close()
+        print("current_login table truncated successfully")
+        print("=" * 50)
+    except Exception as e:
+        print(f"Error truncating current_login: {e}")
+
+atexit.register(cleanup_on_shutdown)
+
+start_notification_service()
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

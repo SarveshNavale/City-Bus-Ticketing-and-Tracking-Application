@@ -309,16 +309,54 @@ function postBusLocation(bus) {
   }).catch(()=>{ /* ignore network errors */ });
 }
 
-/* --------------- keep user live location (unchanged) --------------- */
-if ("geolocation" in navigator) {
-  navigator.geolocation.watchPosition(function(position) {
-    var lat = position.coords.latitude;
-    var lon = position.coords.longitude;
-    if (!window.userMarker) window.userMarker = L.marker([lat, lon]).addTo(map);
-    window.userMarker.setLatLng([lat, lon]);
-  }, function(e){}, { enableHighAccuracy: true });
+
+function sendUserLocationToServer(lat, lon) {
+    fetch('/update_user_location_from_map', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            latitude: lat,
+            longitude: lon
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('📍 Location sent for notifications');
+        }
+    })
+    .catch(error => {
+        console.error('Error sending location:', error);
+    });
 }
 
+if ("geolocation" in navigator) {
+  navigator.geolocation.watchPosition(
+    function(position) {
+      var lat = position.coords.latitude;
+      var lon = position.coords.longitude;
+      
+      // Update marker on map
+      if (!window.userMarker) {
+        window.userMarker = L.marker([lat, lon]).addTo(map).bindPopup('Your Location');
+      }
+      window.userMarker.setLatLng([lat, lon]);
+      
+      // Send to server for notifications
+      sendUserLocationToServer(lat, lon);
+    }, 
+    function(error) {
+      console.log('Geolocation error:', error.message);
+    }, 
+    { 
+      enableHighAccuracy: true,
+      maximumAge: 30000,
+      timeout: 27000
+    }
+  );
+}
 </script>
 </body>
 </html>
