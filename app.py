@@ -15,13 +15,6 @@ def get_db():
         database="RotaryClub_Database"
     )
 
-def get_db():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="shreyash45",
-        database="RotaryClub_Database"
-    )
 # ---------- normal routes sagle hite taka! ----------
 @app.route('/')
 def home():
@@ -356,8 +349,6 @@ def update_bus_location():
  #admin_login data
 
 import bcrypt
-from flask import Flask, render_template, request, jsonify, redirect
-import mysql.connector
 
 @app.route('/admin_login', methods=['POST'])
 def admin_login():
