@@ -204,3 +204,22 @@ body {
     opacity: 0.25;
 }
 }
+.admin-login-link {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+.admin-login-link a {
+    transition: color 0.3s;
+    display: inline-block;
+}
+
+.admin-login-link a:hover {
+    color: #5a52e0 !important;
+    text-decoration: underline !important;
+}
+
+.admin-login-link i {
+    font-size: 14px;
+}
