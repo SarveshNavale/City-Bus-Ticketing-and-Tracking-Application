@@ -52,7 +52,8 @@ def notification():
 def serve_dino_files(filename):
     return send_from_directory('static/games/dino', filename)
   
-@app.route('/view_ticket')
+  
+
 def view_ticket():
     return render_template(
         "view_ticket.html",
@@ -104,7 +105,7 @@ def purchase_pass():
         service_fee = float(data.get('service_fee', 0.50))
         payment_method = data.get('payment_method', 'gpay')
         
-        total_amount = (quantity * amount_per_pass) + (quantity * service_fee)
+        total_amount = (quantity * amount_per_pass) + (quantisty * service_fee)
         
         current_datetime = datetime.now()
         current_date = current_datetime.date()
