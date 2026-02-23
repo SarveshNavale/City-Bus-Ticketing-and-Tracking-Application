@@ -22,6 +22,13 @@ VALUES ('TC918710', 4085);       -- for TC
 INSERT INTO Admin_info (Admin_id, OTP)     -- for complaint checkerr
 VALUES ('ADM918710', 4085);
 
+ CREATE TABLE admin_info (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  admin_username VARCHAR(50) UNIQUE,
+  admin_password VARCHAR(255)
+);
+ ALTER TABLE cust_info
+MODIFY password VARCHAR(255);
 
 CREATE TABLE complaints (
     idc INT AUTO_INCREMENT PRIMARY KEY,   
@@ -47,6 +54,15 @@ VALUES
 INSERT INTO cust_info (cust_name, cust_number, cust_age, cust_email, password)
 VALUES 
 ('Hrishikesh Patil', '9728394991', 20, 'hrishi@gmail.com', 123456);
+ 
+ INSERT INTO cust_info (cust_name, cust_number, cust_age, cust_email, password)
+VALUES (
+  'Shreyash Khot',
+  '8788852145',
+  19,
+  'shreyashkhot2006@gmail.com',
+  '$2b$12$hUskzZ3BAA8j/xZgirYew.O7t8G.NrEekYRZaT2JovsOy0oLkh7s2'
+);
 
 
 CREATE TABLE stops_info (

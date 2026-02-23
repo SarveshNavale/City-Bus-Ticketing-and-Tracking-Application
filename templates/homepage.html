@@ -179,7 +179,10 @@ body {
             </a>
             <a href="/notification">
                 
-                    <img src="static/Assets/images/Bell-icon.png" class="bell">
+                    <div class="bell" style="position: relative; cursor: pointer;" onclick="window.location.href='/notifications'">
+            <img src="static/Assets/images/Bell-icon.png">
+            <span id="notificationCount" style="display: none; position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold;">0</span>
+        </div>
                     
                 </div>
             </a>
@@ -373,6 +376,45 @@ async function handleBuyPassClick() {
         alert('Network error. Please try again.');
     }
 }
+function checkNotificationStatus() {
+    fetch('/check_new_notifications')
+        .then(response => response.json())
+        .then(data => {
+            const dot = document.getElementById('notificationDot');
+            if (dot) {
+                if (data.success && data.new_notifications) {
+                    dot.style.display = 'block';
+                    console.log('🔔 New notifications available!');
+                } else {
+                    dot.style.display = 'none';
+                }
+            }
+        })
+        .catch(error => console.error('Error checking notifications:', error));
+}
+
+// Check every 15 seconds
+setInterval(checkNotificationStatus, 15000);
+checkNotificationStatus(); // Check immediately
+// Check notification count
+function updateNotificationCount() {
+    fetch('/check_new_notifications')
+        .then(response => response.json())
+        .then(data => {
+            const counter = document.getElementById('notificationCount');
+            if (data.success && data.count > 0) {
+                counter.textContent = data.count;
+                counter.style.display = 'flex';
+            } else {
+                counter.style.display = 'none';
+            }
+        })
+        .catch(err => console.error(err));
+}
+
+// Update every 5 seconds
+setInterval(updateNotificationCount, 5000);
+updateNotificationCount();
 </script>
 
 </body>
