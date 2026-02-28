@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TC Login - Rotary Bus</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="static/css/buyPass.css">
+</head>
+<body>
+    <div class="container-fluid p-0">
+        <div class="main-container">
+            <div class="tc-header text-center">
+                <img src="static/Assets/images/Just-circles.png" class="header-corner-img">
+                <a href="/backtohome">
+                    <img src="static/Assets/images/back-button.png" class="header-corner-img-2">
+                </a>
+                <div class="tc-badge">TC LOGIN</div>
+                <h1 class="display-6 fw-bold mb-3">Ticket Checker Portal</h1>
+                <p class="mb-0" style="opacity: 0.9;">Verify passenger passes quickly and easily</p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="container py-4">
+                <div class="pass-card">
+                    <div class="pass-header">
+                        <div class="d-flex align-items-center">
+                            <div class="pass-icon me-3">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div>
+                                <h3 class="mb-1">Search Pass</h3>
+                                <p class="text-muted mb-0">Enter pass number to verify</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="search-container">
+                        <div class="search-label">
+                            <i class="fas fa-ticket-alt me-2"></i>
+                            Enter Pass Number
+                        </div>
+                        
+                        <div class="search-wrapper">
+                            <input type="text" 
+                                id="passNumberInput">
+                            <button id="searchBtn">
+                                <i class="fas fa-search"></i> Verify
+                            </button>
+                        </div>
+                        
+                        <p class="text-muted small mt-2">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Format: PS + Mobile Number + Timestamp + Counter
+                        </p>
+                    </div>
+
+                    <div class="pass-info-card" id="passInfoCard">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="verify-badge">
+                                <i class="fas fa-check-circle me-2"></i>VALID PASS
+                            </div>
+                        </div>
+                        
+                        <div class="pass-detail-row">
+                            <span class="pass-detail-label">Pass Number</span>
+                            <span class="pass-detail-value" id="displayPassNumber"></span>
+                        </div>
+                        
+                        <div class="pass-detail-row">
+                            <span class="pass-detail-label">Pass Holder</span>
+                            <span class="pass-detail-value" id="displayPassHolder"></span>
+                        </div>
+                        
+                        <div class="pass-detail-row">
+                            <span class="pass-detail-label">Mobile Number</span>
+                            <span class="pass-detail-value" id="displayMobile"></span>
+                        </div>
+                        
+                        <div class="pass-detail-row">
+                            <span class="pass-detail-label">Amount Paid</span>
+                            <span class="pass-detail-value" id="displayAmount"></span>
+                        </div>
+                        
+                        <div class="pass-detail-row">
+                            <span class="pass-detail-label">Issue Date</span>
+                            <span class="pass-detail-value" id="displayDate"></span>
+                        </div>
+                        
+                        <div class="pass-detail-row">
+                            <span class="pass-detail-label">Issue Time</span>
+                            <span class="pass-detail-value" id="displayTime"></span>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="action-btn" id="markUsedBtn">
+                                <i class="fas fa-check me-2"></i>Mark as Used
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="no-result" id="noResult">
+                        <i class="fas fa-exclamation-circle fa-3x mb-3"></i>
+                        <h4>Pass Not Found</h4>
+                        <p>The pass number you entered does not exist in our system.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Sample pass data
+        const passDatabase = {
+            'PS9728394991_1700000000_1': {
+                holder: 'Hrishikesh Patil',
+                mobile: '9728394991',
+                amount: '30.00',
+                date: '2024-01-15',
+                time: '14:30:25',
+                valid: true
+            },
+            'PS9763772464_1700000000_1': {
+                holder: 'Sarvesh Navale',
+                mobile: '9763772464',
+                amount: '60.00',
+                date: '2024-01-15',
+                time: '10:15:00',
+                valid: true
+            },
+        };
+
+        function searchPass(passNumber) {
+            const input = document.getElementById('passNumberInput');
+            if (passNumber) {
+                input.value = passNumber;
+            }
+            
+            const searchValue = input.value.trim();
+            const passInfo = document.getElementById('passInfoCard');
+            const noResult = document.getElementById('noResult');
+            
+            if (passDatabase[searchValue]) {
+                const pass = passDatabase[searchValue];
+                
+                document.getElementById('displayPassNumber').textContent = searchValue;
+                document.getElementById('displayPassHolder').textContent = pass.holder;
+                document.getElementById('displayMobile').textContent = pass.mobile;
+                document.getElementById('displayAmount').textContent = `₹${pass.amount}`;
+                document.getElementById('displayDate').textContent = pass.date;
+                document.getElementById('displayTime').textContent = pass.time;
+                
+                passInfo.classList.add('active');
+                noResult.classList.remove('active');
+                
+                console.log('Pass verified:', searchValue);
+            } else {
+                passInfo.classList.remove('active');
+                noResult.classList.add('active');
+            }
+        }
+
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            searchPass();
+        });
+
+        document.getElementById('passNumberInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchPass();
+            }
+        });
+
+        document.getElementById('markUsedBtn').addEventListener('click', function() {
+            alert('Pass marked as used successfully!');
+            document.getElementById('passInfoCard').classList.remove('active');
+        });
+    </script>
+</body>
+</html>
