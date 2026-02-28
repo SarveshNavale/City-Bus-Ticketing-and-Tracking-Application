@@ -209,3 +209,307 @@ body {
     background: var(--primary-blue);
     color: white;
 }
+/*TC login page */
+.tc-header {
+    background: linear-gradient(135deg, var(--primary-blue) 100%, #8A84FF 0%);
+    color: white;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.tc-badge {
+    background: white;
+    color: var(--primary-blue);
+    padding: 0.5rem 1.5rem;
+    border-radius: 0;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.search-container {
+    background: white;
+    border: 2px solid var(--primary-blue);
+    padding: 2rem;
+    margin: 2rem 0;
+}
+
+.search-label {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.search-input-group {
+    display: flex;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.search-input {
+    flex: 1;
+    padding: 1rem;
+    border: 2px solid #eaeaea;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+}
+
+.search-btn {
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 0 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.search-btn:hover {
+    background: #5a52d5;
+}
+
+.pass-info-card {
+    background: #f8f9ff;
+    border: 2px solid var(--primary-blue);
+    padding: 2rem;
+    margin: 2rem 0;
+    display: none;
+}
+
+.pass-info-card.active {
+    display: block;
+}
+
+.pass-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.pass-detail-label {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.pass-detail-value {
+    color: var(--primary-blue);
+    font-weight: 600;
+}
+
+.verify-badge {
+    background: #28a745;
+    color: white;
+    padding: 0.5rem 1rem;
+    display: inline-block;
+    margin-top: 1rem;
+    font-weight: 600;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 1rem;
+    border: 2px solid var(--primary-blue);
+    background: white;
+    color: var(--primary-blue);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.action-btn:hover {
+    background: var(--primary-blue);
+    color: white;
+}
+
+.action-btn.primary {
+    background: var(--primary-blue);
+    color: white;
+}
+
+.action-btn.primary:hover {
+    background: #5a52d5;
+}
+
+.no-result {
+    text-align: center;
+    padding: 3rem;
+    color: #dc3545;
+    font-weight: 600;
+    display: none;
+}
+
+.no-result.active {
+    display: block;
+}
+.search-wrapper {
+    position: relative;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.search-wrapper input {
+    width: 100%;
+    padding: 15px 120px 15px 15px;
+    border: 2px solid #eaeaea;
+    font-size: 1rem;
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+.search-wrapper input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+}
+
+.search-wrapper button {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    bottom: 5px;
+    width: 100px;
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-wrapper button:hover {
+    background: #5a52d5;
+}
+
+.search-wrapper button i {
+    margin-right: 5px;
+}
+
+@media (max-width: 576px) {
+    .search-wrapper input {
+        padding: 12px 100px 12px 12px;
+        font-size: 0.9rem;
+    }
+    
+    .search-wrapper button {
+        width: 85px;
+        font-size: 0.85rem;
+    }
+}
+@media screen and (max-width: 576px) {
+    .tc-header {
+        padding: 1.2rem;
+    }
+
+    .tc-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .tc-header p {
+        font-size: 0.85rem;
+        padding: 0 10px;
+    }
+
+    .tc-badge {
+        padding: 0.3rem 1rem;
+        font-size: 1rem;
+    }
+
+    .pass-card {
+        padding: 1rem !important;
+    }
+
+    .pass-header h3 {
+        font-size: 1.2rem;
+    }
+
+    .pass-header p {
+        font-size: 0.85rem;
+    }
+
+    .pass-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.4rem;
+    }
+
+    .search-label {
+        font-size: 1rem;
+    }
+
+    .search-input {
+        padding: 0.8rem;
+        font-size: 0.95rem;
+    }
+
+    .search-container p.small {
+        font-size: 0.75rem;
+    }
+
+    .pass-info-card {
+        padding: 1.2rem;
+    }
+
+    .verify-badge {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .pass-detail-row {
+        padding: 0.8rem 0;
+        font-size: 0.9rem;
+    }
+
+    .no-result {
+        padding: 2rem 1rem;
+    }
+
+    .no-result h4 {
+        font-size: 1.2rem;
+    }
+
+    .no-result p {
+        font-size: 0.9rem;
+    }
+
+    .row.mt-4 .col-6 {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .row.mt-4 .col-6:last-child {
+        margin-bottom: 0;
+    }
+
+    .fare-display {
+        margin: 0.5rem 0;
+    }
+
+    .header-corner-img {
+        width: 80px;
+    }
+
+    .header-corner-img-2 {
+        width: 50px;
+        height: 50px;
+        top: 15px;
+        left: 10px;
+    }
+}
