@@ -75,6 +75,11 @@ def view_ticket():
         issue_datetime="11/11/2011 | 2:17 AM"
     )
 
+@app.route('/tc_login')
+def tc_login():
+    """TC Login page"""
+    return render_template("tc_login.html")
+
 @app.route('/buy_pass')
 def buy_pass_page():
     db = get_db()
