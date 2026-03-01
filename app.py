@@ -1,6 +1,8 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify, redirect
 from dotenv import load_dotenv
 from groq import Groq
+import random
+import string
 import os
 import mysql.connector
 from datetime import datetime, date, time, timedelta
@@ -100,43 +102,61 @@ def buy_pass_page():
         return redirect('/')
     return render_template("buyPass.html")
 
+def generate_unique_pass_number(cursor):
+    """Generate PS + 5 random characters, ensure uniqueness"""
+    while True:
+        # Generate 5 random alphanumeric characters
+        random_chars = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+        pass_number = f"PS{random_chars}"
+        
+        # Check if this pass number already exists
+        cursor.execute("SELECT id FROM passes_info WHERE pass_number = %s", (pass_number,))
+        if not cursor.fetchone():
+            return pass_number
+
 @app.route('/purchase_pass', methods=['POST'])
 def purchase_pass():
     try:
+        # Get current logged in user
         db = get_db()
         cursor = db.cursor(dictionary=True)
-
+        
+        # Get mobile number from current_login
         cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
         current_login = cursor.fetchone()
-
+        
         if not current_login:
             return jsonify({'success': False, 'error': 'No user logged in'})
-
+        
         mobile_no = current_login['mobile_no']
-
+        
+        # Get user info from cust_info using mobile number
         cursor.execute("SELECT cust_name FROM cust_info WHERE cust_number = %s", (mobile_no,))
         user = cursor.fetchone()
-
+        
         if not user:
             return jsonify({'success': False, 'error': 'User not found in database'})
-
+        
+        # Get data from request
         data = request.get_json()
         quantity = int(data.get('quantity', 1))
         amount_per_pass = float(data.get('amount_per_pass', 30.00))
         service_fee = float(data.get('service_fee', 0.50))
         payment_method = data.get('payment_method', 'gpay')
-
+        
+        # Calculate total amount
         total_amount = (quantity * amount_per_pass) + (quantity * service_fee)
-
-        current_datetime = datetime.now()
-        current_date = current_datetime.date()
-        current_time = current_datetime.time()
-        timestamp = int(current_datetime.timestamp())
-
+        
+        # Get current date and time
+        current_date = datetime.now().date()
+        current_time = datetime.now().time()
+        
+        # For each pass purchased (quantity), insert a record
         passes_created = []
         for i in range(quantity):
-            pass_number = f"PS{mobile_no}_{timestamp}_{i+1}"
-
+            # Generate SHORT unique pass number: PS + 5 random characters
+            pass_number = generate_unique_pass_number(cursor)
+            
             cursor.execute("""
                 INSERT INTO passes_info 
                 (pass_holder, pass_number, amount_paid, mobile_no, issue_date, issue_time)
@@ -149,45 +169,37 @@ def purchase_pass():
                 current_date,
                 current_time
             ))
-
+            
             passes_created.append(pass_number)
-
+        
         db.commit()
-
+        
+        # Get the inserted pass info
         placeholders = ','.join(['%s'] * len(passes_created))
         cursor.execute(f"""
             SELECT * FROM passes_info 
             WHERE pass_number IN ({placeholders})
             ORDER BY id DESC
         """, tuple(passes_created))
-
+        
         passes = cursor.fetchall()
-
+        
+        # Convert to JSON serializable format
         serialized_passes = []
         for pass_item in passes:
-            if isinstance(pass_item.get('issue_time'), type(datetime.now().time())):
-                issue_time_str = str(pass_item['issue_time'])
-            else:
-                issue_time_str = str(pass_item.get('issue_time', ''))
-
-            if isinstance(pass_item.get('issue_date'), type(datetime.now().date())):
-                issue_date_str = str(pass_item['issue_date'])
-            else:
-                issue_date_str = str(pass_item.get('issue_date', ''))
-
             serialized_passes.append({
                 'id': pass_item['id'],
                 'pass_holder': pass_item['pass_holder'],
                 'pass_number': pass_item['pass_number'],
                 'amount_paid': float(pass_item['amount_paid']),
                 'mobile_no': pass_item['mobile_no'],
-                'issue_date': issue_date_str,
-                'issue_time': issue_time_str
+                'issue_date': str(pass_item['issue_date']),
+                'issue_time': str(pass_item['issue_time'])
             })
-
+        
         cursor.close()
         db.close()
-
+        
         return jsonify({
             'success': True,
             'message': f'Successfully purchased {quantity} pass(es)',
@@ -196,11 +208,10 @@ def purchase_pass():
                 'pass_holder': user['cust_name'],
                 'mobile_no': mobile_no,
                 'total_amount': total_amount,
-                'pass_numbers': passes_created,
-                'purchase_time': current_datetime.strftime('%Y-%m-%d %H:%M:%S')
+                'pass_numbers': passes_created
             }
         })
-
+        
     except Exception as e:
         print(f"Pass purchase error: {e}")
         import traceback
@@ -216,10 +227,10 @@ def view_pass():
     try:
         db = get_db()
         cursor = db.cursor(dictionary=True)
-
+        
         cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
         current_login = cursor.fetchone()
-
+        
         if not current_login:
             cursor.close()
             db.close()
@@ -227,39 +238,39 @@ def view_pass():
                 "view_pass.html",
                 total_tickets=5,
                 holder_name="Shreyash Khot",
-                pass_number="PS8011192222",
+                pass_number="PS8K2M9",  # Updated example
                 amount_paid=500,
                 issue_datetime="11/11/2011 | 2:17 AM",
                 actual_user=False
             )
-
+        
         mobile_no = current_login['mobile_no']
-
+        
         cursor.execute("""
             SELECT * FROM passes_info 
             WHERE mobile_no = %s 
             ORDER BY issue_date DESC, issue_time DESC 
             LIMIT 1
         """, (mobile_no,))
-
+        
         pass_data = cursor.fetchone()
-
+        
         cursor.execute("SELECT cust_name FROM cust_info WHERE cust_number = %s", (mobile_no,))
         user = cursor.fetchone()
-
+        
         cursor.close()
         db.close()
-
+        
         if pass_data and user:
             issue_date = pass_data['issue_date']
             issue_time = pass_data['issue_time']
             issue_datetime = f"{issue_date} | {issue_time}"
-
+            
             return render_template(
                 "view_pass.html",
                 total_tickets=1,
                 holder_name=user['cust_name'],
-                pass_number=pass_data['pass_number'],
+                pass_number=pass_data['pass_number'], 
                 amount_paid=pass_data['amount_paid'],
                 issue_datetime=issue_datetime,
                 actual_user=True,
@@ -278,20 +289,68 @@ def view_pass():
                 mobile_no=mobile_no,
                 no_pass=True
             )
-
+            
     except Exception as e:
         print(f"View pass error: {e}")
         return render_template(
             "view_pass.html",
             total_tickets=5,
             holder_name="Shreyash Khot",
-            pass_number="PS8011192222",
+            pass_number="PS8K2M9", 
             amount_paid=500,
             issue_datetime="11/11/2011 | 2:17 AM",
             actual_user=False,
             error=str(e)
         )
 
+@app.route('/verify_pass', methods=['POST'])
+def verify_pass():
+    """Verify if a pass exists in the database"""
+    try:
+        data = request.get_json()
+        pass_number = data.get('pass_number', '').strip().upper()
+        
+        if not pass_number:
+            return jsonify({'success': False, 'error': 'Pass number is required'})
+        
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT * FROM passes_info 
+            WHERE pass_number = %s
+        """, (pass_number,))
+        
+        pass_data = cursor.fetchone()
+        cursor.close()
+        db.close()
+        
+        if pass_data:
+            return jsonify({
+                'success': True,
+                'found': True,
+                'pass': {
+                    'pass_number': pass_data['pass_number'],
+                    'pass_holder': pass_data['pass_holder'],
+                    'mobile_no': pass_data['mobile_no'],
+                    'amount_paid': float(pass_data['amount_paid']),
+                    'issue_date': str(pass_data['issue_date']),
+                    'issue_time': str(pass_data['issue_time'])
+                }
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'found': False,
+                'message': 'Pass not found'
+            })
+            
+    except Exception as e:
+        print(f"Verify pass error: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        })
 
 @app.route('/faqs')
 def faqs():

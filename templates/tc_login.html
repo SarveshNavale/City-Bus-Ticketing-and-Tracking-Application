@@ -371,7 +371,7 @@
                 <div class="input-wrapper">
                     <input type="text" 
                         id="passNumberInput"
-                        placeholder="e.g., PS9728394991_1709123456_1">
+                        placeholder="e.g., PS8K2M9">
                 </div>
 
                 <button id="searchBtn">
@@ -428,52 +428,67 @@
             </div>
         </div>
     </div>
-
     <script>
-    const passDatabase = {
-        'PS9728394991_1709123456_1': {
-            holder: 'Hrishikesh Patil',
-            mobile: '9728394991',
-            amount: '30.00',
-            date: '2024-02-28',
-            time: '14:30:25',
-            valid: true
-        },
-    };
-
-    function searchPass() {
+    function searchPass(passNumber) {
         const input = document.getElementById('passNumberInput');
-        const searchValue = input.value.trim();
+        if (passNumber) {
+            input.value = passNumber;
+        }
+        
+        const searchValue = input.value.trim().toUpperCase();
         const passInfo = document.getElementById('passInfoCard');
         const noResult = document.getElementById('noResult');
         
-        const formatRegex = /^PS\d+_\d+_\d+$/;
+        const formatRegex = /^PS[A-Z0-9]{5}$/;
         if (!formatRegex.test(searchValue)) {
-            alert('Please use format: PS{mobile}_{timestamp}_{counter}');
-            input.focus();
+            alert('Invalid pass number format. Expected: PS followed by 5 characters (e.g., PS8K2M9)');
             return;
         }
         
-        if (passDatabase[searchValue]) {
-            const pass = passDatabase[searchValue];
-            
-            document.getElementById('displayPassNumber').textContent = searchValue;
-            document.getElementById('displayPassHolder').textContent = pass.holder;
-            document.getElementById('displayMobile').textContent = pass.mobile;
-            document.getElementById('displayAmount').textContent = `₹${pass.amount}`;
-            document.getElementById('displayDate').textContent = pass.date;
-            document.getElementById('displayTime').textContent = pass.time;
-            
-            passInfo.classList.add('active');
-            noResult.classList.remove('active');
-            
-        } else {
-            passInfo.classList.remove('active');
-            noResult.classList.add('active');
-        }
+        const searchBtn = document.getElementById('searchBtn');
+        const originalText = searchBtn.innerHTML;
+        searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+        searchBtn.disabled = true;
+        
+        fetch('/verify_pass', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ pass_number: searchValue })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.found) {
+                const pass = data.pass;
+                
+                document.getElementById('displayPassNumber').textContent = pass.pass_number;
+                document.getElementById('displayPassHolder').textContent = pass.pass_holder;
+                document.getElementById('displayMobile').textContent = pass.mobile_no;
+                document.getElementById('displayAmount').textContent = `₹${pass.amount_paid}`;
+                document.getElementById('displayDate').textContent = pass.issue_date;
+                document.getElementById('displayTime').textContent = pass.issue_time;
+                
+                passInfo.classList.add('active');
+                noResult.classList.remove('active');
+            } else {
+                passInfo.classList.remove('active');
+                noResult.classList.add('active');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Network error. Please try again.');
+        })
+        .finally(() => {
+            searchBtn.innerHTML = originalText;
+            searchBtn.disabled = false;
+        });
     }
 
-    document.getElementById('searchBtn').addEventListener('click', searchPass);
+    document.getElementById('searchBtn').addEventListener('click', function() {
+        searchPass();
+    });
 
     document.getElementById('passNumberInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
@@ -483,13 +498,9 @@
 
     document.getElementById('markUsedBtn').addEventListener('click', function() {
         const passNumber = document.getElementById('displayPassNumber').textContent;
-        alert(`Pass ${passNumber} marked as used!`);
+        alert(`Pass ${passNumber} marked as used successfully!`);
         document.getElementById('passInfoCard').classList.remove('active');
     });
-
-    window.addEventListener('load', function() {
-        console.log('Ready to scan passes');
-    });
-    </script>
+</script>
 </body>
 </html>
