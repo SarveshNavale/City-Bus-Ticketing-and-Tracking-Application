@@ -187,13 +187,15 @@ body {
 </div>
 
 <div class="white-card">
-<form action="/search" method="GET" style="position: relative; width: 375px;">
+<form style="position: relative; width: 375px;">
     <img src="static/Assets/images/search.png" alt="search logo" class="search-icon">
-    <input class="search-box" 
-           type="search" 
-           name="q"
+    <input class="search-box"
+           type="search"
+           id="destinationInput"
            placeholder="  Choose your destination"
-           autocomplete="on">
+           list="stopsList"
+           autocomplete="off">
+    <datalist id="stopsList"></datalist>
 </form>
 
 <div class="btn-grid">
@@ -280,6 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error loading user:', error);
         });
 });
+
 let isNavigating = false;
 
 document.addEventListener('click', function(e) {
@@ -333,14 +336,6 @@ async function debugLoginFlow() {
     } catch (error) {
         console.error('User check error:', error);
     }
-    
-    try {
-        const debugResponse = await fetch('/debug_login_status');
-        const debugResult = await debugResponse.json();
-        console.log('2. Debug status:', debugResult);
-    } catch (error) {
-        console.error('Debug check error:', error);
-    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -348,29 +343,6 @@ document.addEventListener('DOMContentLoaded', function() {
     debugLoginFlow();
 });
 
-async function handleBuyPassClick() {
-    console.log('=== BUY PASS CLICK DEBUG ===');
-    
-    await debugLoginFlow();
-    
-    try {
-        const response = await fetch('/get_current_user');
-        const result = await response.json();
-        console.log('Buy Pass click - login check:', result);
-        
-        if (result.success && result.logged_in) {
-            console.log('User IS logged in, navigating to /buy_pass');
-            window.location.href = '/buy_pass';
-        } else {
-            console.log('User is NOT logged in');
-            alert('Please login first. Debug: ' + (result.error || 'Unknown error'));
-            window.location.href = '/';
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Network error. Please try again.');
-    }
-}
 function checkNotificationStatus() {
     fetch('/check_new_notifications')
         .then(response => response.json())
@@ -388,10 +360,9 @@ function checkNotificationStatus() {
         .catch(error => console.error('Error checking notifications:', error));
 }
 
-// Check every 15 seconds
 setInterval(checkNotificationStatus, 15000);
-checkNotificationStatus(); // Check immediately
-// Check notification count
+checkNotificationStatus();
+
 function updateNotificationCount() {
     fetch('/check_new_notifications')
         .then(response => response.json())
@@ -407,9 +378,47 @@ function updateNotificationCount() {
         .catch(err => console.error(err));
 }
 
-// Update every 5 seconds
 setInterval(updateNotificationCount, 5000);
 updateNotificationCount();
+
+// Search stops autocomplete
+const searchInput = document.getElementById('destinationInput');
+const dataList = document.getElementById('stopsList');
+
+searchInput.addEventListener('input', function() {
+    const query = this.value.trim();
+
+    if (query.length === 0) {
+        dataList.innerHTML = "";
+        return;
+    }
+
+    fetch(`/search_stops?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            dataList.innerHTML = "";
+
+            if (data.success) {
+                data.stops.forEach(stop => {
+                    const option = document.createElement("option");
+                    option.value = stop;
+                    dataList.appendChild(option);
+                });
+            }
+        })
+        .catch(error => console.error(error));
+});
+
+// When user selects a stop, just navigate to choose_destination — no DB save here
+searchInput.addEventListener('change', function() {
+    const selected = this.value.trim();
+    if (selected) {
+        const options = Array.from(dataList.options).map(o => o.value);
+        if (options.includes(selected)) {
+            window.location.href = `/choose_destination?destination=${encodeURIComponent(selected)}`;
+        }
+    }
+});
 </script>
 
 </body>

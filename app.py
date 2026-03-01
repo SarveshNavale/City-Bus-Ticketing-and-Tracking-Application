@@ -11,7 +11,7 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="#SAR1807",
+        password="Parth@123",
         database="RotaryClub_Database"
     )
 # ---------- normal routes sagle hite taka! ----------
@@ -206,6 +206,7 @@ def purchase_pass():
             'success': False,
             'error': f'Pass purchase failed: {str(e)}'
         })
+
 @app.route('/view_pass')
 def view_pass():
     try:
@@ -286,6 +287,7 @@ def view_pass():
             actual_user=False,
             error=str(e)
         )
+
 @app.route('/faqs')
 def faqs():
     return render_template("FAQs.html")
@@ -635,7 +637,6 @@ def test_direct_db():
         db = get_db()
         cursor = db.cursor(dictionary=True)
         
-        # Direct query
         cursor.execute("SELECT * FROM current_login")
         result = cursor.fetchall()
         
@@ -692,7 +693,6 @@ def check_bus_proximity():
         mobile_no = current_login['mobile_no']
         print(f"Checking proximity for user: {mobile_no}")
         
-        # Get current user's location
         cursor.execute("""
             SELECT cust_number, latitude, longitude 
             FROM cust_info 
@@ -709,7 +709,6 @@ def check_bus_proximity():
         
         print(f"User location: {user['latitude']}, {user['longitude']}")
         
-        # Get all buses with location (updated in last 5 minutes)
         cursor.execute("""
             SELECT bus_no, latitude, longitude 
             FROM bus_info 
@@ -907,7 +906,6 @@ def test_add_notification():
         db = get_db()
         cursor = db.cursor(dictionary=True)
         
-        # Get current logged in user
         cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
         current_login = cursor.fetchone()
         
@@ -958,13 +956,245 @@ atexit.register(cleanup_on_shutdown)
 start_notification_service()
 
 
+@app.route('/search_stops')
+def search_stops():
+    query = request.args.get('q', '').strip()
+
+    if not query:
+        return jsonify({"success": False, "stops": []})
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute(
+        "SELECT stop_name FROM stops_info WHERE stop_name LIKE %s LIMIT 10",
+        ('%' + query + '%',)
+    )
+
+    results = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    stops = [row[0] for row in results]
+
+    return jsonify({
+        "success": True,
+        "stops": stops
+    })
+
+@app.route('/choose_destination')
+def choose_destination():
+    destination = request.args.get('destination')
+
+    if not destination:
+        return redirect('/home')
+
+    return render_template("Afterchoosingdestinationpage.html", destination=destination)
+
+@app.route('/buy_ticket')
+def buy_ticket():
+    destination = request.args.get('dest')
+    tickets_count = int(request.args.get('count', 1))
+
+    if tickets_count > 5:
+        tickets_count = 5
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+    current = cursor.fetchone()
+
+    if not current:
+        return redirect('/')
+
+    mobile_no = current['mobile_no']
+
+    cursor.execute("SELECT * FROM cust_info WHERE cust_number=%s", (mobile_no,))
+    user = cursor.fetchone()
+
+    if not user:
+        return redirect('/home')
+
+    cursor.execute("SELECT * FROM stops_info ORDER BY id")
+    stops = cursor.fetchall()
+
+    from_index = 0
+    to_index = 0
+
+    for i, stop in enumerate(stops):
+        if stop['stop_name'] == destination:
+            to_index = i
+
+    stops_travelled = abs(to_index - from_index)
+
+    price_per_ticket = stops_travelled * 2.5
+    total_price = price_per_ticket * tickets_count
+
+    cursor.close()
+    db.close()
+
+    return render_template(
+        "confirm_ticket.html",
+        from_stop=stops[from_index]['stop_name'],
+        to_stop=destination,
+        stops_travelled=stops_travelled,
+        tickets_count=tickets_count,
+        total_price=total_price
+    )
+
+@app.route('/pay_ticket', methods=['POST'])
+def pay_ticket():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+    current = cursor.fetchone()
+
+    if not current:
+        return jsonify({"success": False})
+
+    mobile_no = current['mobile_no']
+
+    cursor.execute("SELECT id FROM cust_info WHERE cust_number=%s", (mobile_no,))
+    user = cursor.fetchone()
+
+    cust_id = user['id']
+
+    data = request.get_json()
+    from_stop = data['from_stop']
+    to_stop = data['to_stop']
+    stops_travelled = data['stops_travelled']
+    tickets_count = data['tickets_count']
+    total_price = data['total_price']
+
+    ticket_number = "TC" + mobile_no
+
+    cursor.execute("""
+        INSERT INTO ticket_info 
+        (ticket_number, cust_id, from_stop, to_stop, stops_travelled, tickets_count, amount_paid, issue_datetime)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,NOW())
+    """, (
+        ticket_number,
+        cust_id,
+        from_stop,
+        to_stop,
+        stops_travelled,
+        tickets_count,
+        total_price
+    ))
+
+    db.commit()
+    cursor.close()
+    db.close()
+
+    return jsonify({
+        "success": True,
+        "message": "Payment Successful",
+        "ticket_number": ticket_number
+    })
+
+@app.route('/complaints')
+def complaints():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM complaints")
+    data = cursor.fetchall()
+
+    cursor.close()
+    db.close()
+
+    return render_template("complaints.html", complaints=data)
+
+@app.route('/delete_complaint/<int:complaint_id>', methods=['POST'])
+def delete_complaint(complaint_id):
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("DELETE FROM complaints WHERE id=%s", (complaint_id,))
+    db.commit()
+
+    cursor.close()
+    db.close()
+
+    return jsonify({"success": True})
 
 
+# ---------- NEW: Save ticket when destination is selected ----------
+@app.route('/save_ticket', methods=['POST'])
+def save_ticket():
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
 
-#SHREYASH ROUTES AND LOGIC:
-#admin_login data
+        cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+        current_login = cursor.fetchone()
+
+        if not current_login:
+            return jsonify({'success': False, 'error': 'No user logged in'})
+
+        mobile_no = current_login['mobile_no']
+
+        cursor.execute("SELECT cust_name FROM cust_info WHERE cust_number = %s", (mobile_no,))
+        user = cursor.fetchone()
+
+        if not user:
+            return jsonify({'success': False, 'error': 'User not found'})
+
+        data = request.get_json()
+        start_dest = data.get('start_dest', 'Current Location')
+        final_dest = data.get('final_dest')
+        no_of_tickets = int(data.get('no_of_tickets', 1))
+        amount_paid = float(data.get('amount_paid', 0))
+
+        if not final_dest:
+            return jsonify({'success': False, 'error': 'Destination is required'})
+
+        current_datetime = datetime.now()
+        current_date = current_datetime.date()
+        current_time = current_datetime.time()
+        timestamp = int(current_datetime.timestamp())
+
+        ticket_number = f"TC{mobile_no}_{timestamp}"
+
+        cursor.execute("""
+            INSERT INTO tickets_info 
+            (start_dest, final_dest, no_of_tickets, ticket_holder, mobile_no, ticket_number, amount_paid, issue_date, issue_time)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            start_dest,
+            final_dest,
+            no_of_tickets,
+            user['cust_name'],
+            mobile_no,
+            ticket_number,
+            amount_paid,
+            current_date,
+            current_time
+        ))
+
+        db.commit()
+        cursor.close()
+        db.close()
+
+        print(f"Ticket saved: {ticket_number} | {start_dest} -> {final_dest} | {user['cust_name']}")
+
+        return jsonify({
+            'success': True,
+            'ticket_number': ticket_number,
+            'message': 'Ticket saved successfully'
+        })
+
+    except Exception as e:
+        print(f"Save ticket error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)})
 
 
+# SHREYASH ROUTES AND LOGIC:
+# admin_login data
 
 @app.route('/admin_login', methods=['POST'])
 def admin_login():
