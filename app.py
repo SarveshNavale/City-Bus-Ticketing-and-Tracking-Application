@@ -1,4 +1,6 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify, redirect
+from groq import Groq
+import os
 import mysql.connector
 from datetime import datetime, date, time, timedelta
 import time  # This is the time module for sleep()
@@ -11,7 +13,7 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Parth@123",
+        password="hrishi@123",
         database="RotaryClub_Database"
     )
 # ---------- normal routes sagle hite taka! ----------
@@ -1226,6 +1228,79 @@ def admin_login_page():
 @app.route('/admin_dashboard')
 def admin_dashboard():
     return "tc_login.html"
+
+groq_client = Groq(api_key="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")  # add api key
+
+def get_database_context():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    context = ""
+    
+    try:     
+        cursor.execute("SELECT bus_no, no_plate, route FROM bus_info")
+        buses = cursor.fetchall()
+        if buses:
+            context += "\nBUSES:\n"
+            route_names = {1: "Kokan", 2: "Highway", 3: "Nachane", 4: "Railway"}
+            for b in buses:
+                route = route_names.get(b['route'], 'Unknown')
+                context += f"- Bus {b['bus_no']} ({b['no_plate']}) - Route: {route}\n"
+        
+        cursor.execute("SELECT stop_name, track_no FROM stops_info")
+        stops = cursor.fetchall()
+        if stops:
+            context += "\nSTOPS:\n"
+            for s in stops:
+                context += f"- {s['stop_name']} (Track {s['track_no']})\n"
+        
+        cursor.execute("SELECT notif_heading, notif_date FROM notification_info ORDER BY notif_date DESC LIMIT 3")
+        notifs = cursor.fetchall()
+        if notifs:
+            context += "\nRECENT NOTIFICATIONS:\n"
+            for n in notifs:
+                context += f"- {n['notif_heading']} ({n['notif_date']})\n"
+    
+    except Exception as e:
+        print(f"DB context error: {e}")
+    
+    cursor.close()
+    db.close()
+    return context
+
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    try:
+        data = request.get_json()
+        user_message = data.get('message', '')
+        
+        db_context = get_database_context()
+        
+        system_prompt = f"""You are Tikko Robo, assistant for Rotary Club transport system.
+        
+Current database information:
+{db_context}
+
+IMPORTANT RULES:
+- If users ask about bus timings or schedules, tell them: "Bus timetables are available in the Timetable section. You'll also get notified when your bus is nearby!"
+
+Answer questions using this data. Be helpful and friendly."""
+
+        completion = groq_client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            temperature=0.7,
+            max_tokens=500
+        )
+        
+        response = completion.choices[0].message.content
+        return jsonify({"response": response})
+        
+    except Exception as e:
+        print(f"Chat error: {e}")
+        return jsonify({"response": f"Error: {str(e)}"})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
