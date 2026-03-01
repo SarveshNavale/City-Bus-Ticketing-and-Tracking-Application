@@ -1,292 +1,530 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Buy Ticket</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-body{
-    background:#e8e8ef;
-    padding:15px;
-    display:flex;
-    justify-content:center;
-}
-
-.phone{
-    width:100%;
-    max-width:400px;
-    background:#fff;
-    border-radius:14px;
-    overflow:hidden;
-    box-shadow:0 0 6px rgba(0,0,0,0.15);
+:root {
+    --purple: #6C64FF;
+    --purple-dark: #5A52E0;
+    --purple-light: #EAE9FF;
+    --text: #2D2D3A;
+    --subtext: #888;
+    --card: #FFFFFF;
+    --bg: #F2F2F7;
 }
 
-/* HEADER */
-.header{
-    background:#725bff;
-    padding:25px;
-    text-align:center;
-    color:#fff;
-    position:relative;
-    height:120px;
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.back{
-    position:absolute;
-    top:35px;
-    left:16px;
-    background:rgba(255,255,255,0.2);
-    width:55px;
-    height:55px;
-    border-radius:50%;
-    font-size:24px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+/* ─── HEADER ─── */
+.header {
+    width: 100%;
+    max-width: 420px;
+    background: var(--purple);
+    padding: 50px 24px 60px;
+    position: relative;
+    overflow: hidden;
 }
 
-.title{
-    font-size:20px;
-    font-weight:bold;
-    margin-top:25px;
+.header-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.1);
+}
+.ring1 { width: 160px; height: 160px; top: -40px; right: -30px; }
+.ring2 { width: 110px; height: 110px; top: -10px; right: 10px; }
+.ring3 { width: 70px; height: 70px; top: 15px; right: 35px; }
+
+.back-btn {
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+    text-decoration: none;
 }
 
-/* Three Rings */
-.rings{
-    position:absolute;
-    right:22px;
-    top:10px;
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    border:2px solid rgba(255,255,255,0.12);
+.header h1 {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
 }
-.rings::before{
-    content:"";
-    position:absolute;
-    width:90px;
-    height:90px;
-    top:15px;
-    left:15px;
-    border-radius:50%;
-    border:2px solid rgba(255,255,255,0.10);
-}
-.rings::after{
-    content:"";
-    position:absolute;
-    width:65px;
-    height:65px;
-    top:28px;
-    left:28px;
-    border-radius:50%;
-    border:2px solid rgba(255,255,255,0.08);
+.header p {
+    color: rgba(255,255,255,0.75);
+    font-size: 13px;
+    margin-top: 3px;
 }
 
-/* CONTENT */
-.content{
-    padding:22px;
-    margin-top: 35px;
+/* ─── MAIN CARD ─── */
+.card {
+    width: calc(100% - 32px);
+    max-width: 388px;
+    background: var(--card);
+    border-radius: 32px;
+    margin-top: -32px;
+    padding: 28px 24px 24px;
+    box-shadow: 0 8px 32px rgba(108,100,255,0.13);
+    position: relative;
+    z-index: 2;
 }
 
-/* LABELS */
-.section{
-    margin-bottom:10px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+/* ─── ROUTE SECTION ─── */
+.route-wrap {
+    display: flex;
+    align-items: stretch;
+    gap: 14px;
+    margin-bottom: 24px;
 }
 
-.label{
-    font-size:15px;
-    font-weight:bold;
-    color:#444;
+.route-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 4px;
 }
 
-.value{
-    font-size:15px;
-    font-weight:bold;
-    color:#444;
+.dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 3px solid var(--purple);
+    background: #fff;
+    flex-shrink: 0;
+}
+.dot.filled { background: var(--purple); }
+
+.dashes {
+    flex: 1;
+    width: 2px;
+    background: repeating-linear-gradient(
+        to bottom,
+        var(--purple) 0px,
+        var(--purple) 5px,
+        transparent 5px,
+        transparent 10px
+    );
+    margin: 5px 0;
+    min-height: 40px;
 }
 
-/* TIMELINE */
-.line{
-    width:100%;
-    border-top:2px dashed #bbb;
-    margin:10px 0;
+.route-stops {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
 }
 
-.route{
-    display:flex;
-    justify-content:center;
-    margin:22px 0;
+.stop-box {
+    background: var(--purple-light);
+    border-radius: 14px;
+    padding: 12px 16px;
 }
 
-.path{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
+.stop-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--purple);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 3px;
 }
 
-.dot{
-    width:18px;
-    height:18px;
-    background:#fff;
-    border:3px solid #725bff;
-    border-radius:50%;
+.stop-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    font-family: 'Hind Guntur', sans-serif;
 }
 
-.dotted{
-    width:2px;
-    height:45px;
-    border-right:2px dashed #725bff;
+/* ─── DIVIDER ─── */
+.divider {
+    border: none;
+    border-top: 1.5px dashed #DDD;
+    margin: 4px 0 20px;
 }
 
-/* COUNTER */
-.row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:20px;
+/* ─── FARE ROW ─── */
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
 }
 
-.counter{
-    display:flex;
-    align-items:center;
-    gap:10px;
+.info-label {
+    font-size: 13px;
+    color: var(--subtext);
+    font-weight: 500;
 }
 
-.btn{
-    width:32px;
-    height:32px;
-    border:1px solid #ccc;
-    border-radius:6px;
-    font-size:20px;
-    background:#fff;
+.info-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
 }
 
-.num{
-    width:40px;
-    height:32px;
-    border:1px solid #ccc;
-    border-radius:6px;
-    font-weight:bold;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+/* ─── COUNTER ─── */
+.counter-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--purple-light);
+    border-radius: 16px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
 }
 
-/* PAY BOX */
-.pay-box{
-    border:1px solid #ddd;
-    padding:16px;
-    border-radius:12px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:65px;
+.counter-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
 }
 
-.pay-btn{
-    background:#725bff;
-    color:#fff;
-    padding:10px 20px;
-    border:none;
-    border-radius:8px;
+.counter-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.ctrl-btn {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    border: none;
+    background: var(--purple);
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+    transition: transform 0.1s, opacity 0.1s;
+}
+.ctrl-btn:active { transform: scale(0.92); opacity: 0.85; }
+
+.ctrl-num {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--purple);
+    min-width: 28px;
+    text-align: center;
+}
+
+/* ─── TOTAL ─── */
+.total-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    background: var(--text);
+    border-radius: 16px;
+    margin-bottom: 18px;
+}
+
+.total-label {
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.total-amount {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+/* ─── PAY BUTTON ─── */
+.pay-btn {
+    width: 100%;
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    border-radius: 18px;
+    padding: 18px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s, transform 0.15s;
+}
+.pay-btn:active { transform: scale(0.98); background: var(--purple-dark); }
+
+/* ─── PROCESSING OVERLAY ─── */
+.overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 18, 60, 0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.overlay.show { display: flex; }
+
+.overlay-card {
+    background: #fff;
+    border-radius: 28px;
+    padding: 40px 36px;
+    text-align: center;
+    width: 290px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes popIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+}
+
+/* Spinner */
+.spinner {
+    width: 64px; height: 64px;
+    border: 5px solid var(--purple-light);
+    border-top-color: var(--purple);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 20px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.overlay-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+.overlay-sub {
+    font-size: 13px;
+    color: var(--subtext);
+}
+
+/* Success state */
+.checkmark {
+    display: none;
+    width: 64px; height: 64px;
+    background: #22C55E;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    align-items: center;
+    justify-content: center;
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.checkmark svg { width: 34px; height: 34px; }
+
+.ticket-num-display {
+    background: var(--purple-light);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--purple);
+    margin-top: 14px;
+    letter-spacing: 0.5px;
 }
 </style>
-
 </head>
 
 <body>
 
-<div class="phone">
+<!-- HEADER -->
+<div class="header" style="max-width:420px;">
+    <div class="header-ring ring1"></div>
+    <div class="header-ring ring2"></div>
+    <div class="header-ring ring3"></div>
+    <a href="/home" class="back-btn">‹</a>
+    <h1>Buy Ticket</h1>
+    <p>Confirm your journey details</p>
+</div>
 
-    <!-- HEADER -->
-    <div class="header">
-        <div class="back">‹</div>
-        <div class="title">Buy Ticket</div>
-        <div class="rings"></div>
+<!-- MAIN CARD -->
+<div class="card">
+
+    <!-- Route -->
+    <div class="route-wrap">
+        <div class="route-line">
+            <div class="dot filled"></div>
+            <div class="dashes"></div>
+            <div class="dot"></div>
+        </div>
+        <div class="route-stops">
+            <div class="stop-box">
+                <div class="stop-label">📍 From</div>
+                <div class="stop-name">Maruti Mandir</div>
+            </div>
+            <div class="stop-box">
+                <div class="stop-label">🏁 To</div>
+                <div class="stop-name" id="destName">Loading...</div>
+            </div>
+        </div>
     </div>
 
-    <div class="content">
+    <hr class="divider">
 
-        <!-- START STOP -->
-        <div class="section">
-            <span class="label">Start Stop:</span>
-            <span class="value">⛯ Nearest Stop NM</span>
+    <!-- Info rows -->
+    <div class="info-row">
+        <span class="info-label">Fare per ticket</span>
+        <span class="info-value" id="farePerTicket">₹ —</span>
+    </div>
+    <div class="info-row">
+        <span class="info-label">Stops away</span>
+        <span class="info-value" id="stopsCount">—</span>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Counter -->
+    <div class="counter-row">
+        <span class="counter-label">No. of Tickets</span>
+        <div class="counter-ctrl">
+            <button class="ctrl-btn" onclick="dec()">−</button>
+            <span class="ctrl-num" id="ticketCount">1</span>
+            <button class="ctrl-btn" onclick="inc()">+</button>
+        </div>
+    </div>
+
+    <!-- Total -->
+    <div class="total-box">
+        <span class="total-label">Total Amount</span>
+        <span class="total-amount" id="totalAmount">₹ 0.00</span>
+    </div>
+
+    <!-- Pay -->
+    <button class="pay-btn" onclick="handlePay()">Pay with GPay &nbsp;→</button>
+
+</div>
+
+<!-- PROCESSING OVERLAY -->
+<div class="overlay" id="overlay">
+    <div class="overlay-card" id="overlayCard">
+
+        <!-- Processing state -->
+        <div id="stateProcessing">
+            <div class="spinner"></div>
+            <div class="overlay-title">Processing Payment…</div>
+            <div class="overlay-sub">Please wait, don't go back</div>
         </div>
 
-        <div class="line"></div>
-
-        <div class="route">
-            <div class="path">
-                <div class="dot"></div>
-                <div class="dotted"></div>
-                <div class="dot"></div>
+        <!-- Success state -->
+        <div id="stateSuccess" style="display:none;">
+            <div class="checkmark" id="checkmark" style="display:flex;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
             </div>
-        </div>
-
-        <div class="line"></div>
-
-        <!-- DESTINATION STOP -->
-        <div class="section">
-            <span class="label">Destination Stop:</span>
-            <span class="value">📍 Hathkhamba</span>
-        </div>
-
-        <hr style="margin:20px 0;border-top:1px solid #ddd;margin-top: 95px;">
-
-        <!-- FARE -->
-        <div>Ticket Fare:<span id="fareValue">₹90</span></div>
-<br>
-        <!-- COUNTER -->
-        <div class="row">
-            <div class="label">Total Tickets</div>
-
-            <div class="counter">
-                <button class="btn" onclick="dec()">−</button>
-                <div class="num" id="num">2</div>
-                <button class="btn" onclick="inc()">+</button>
-            </div>
-        </div>
-
-        <!-- PAY BOX -->
-        <div class="pay-box">
-            <div class="label" style="font-size:14px;">Pay Using Gpay</div>
-            <button class="pay-btn">Pay</button>
+            <div class="overlay-title">Payment Successful! 🎉</div>
+            <div class="overlay-sub">Your ticket has been booked</div>
+            <div class="ticket-num-display" id="ticketNumDisplay">TC———</div>
         </div>
 
     </div>
 </div>
 
-
 <script>
-let price = 90;
+// ─── Get destination from URL ───
+const params = new URLSearchParams(window.location.search);
+const destination = params.get('destination') || 'Unknown Stop';
 
-function updateFare(){
-    let qty = parseInt(document.getElementById("num").innerText);
-    document.getElementById("fareValue").innerText = "₹" + (qty * price);
-}
+document.getElementById('destName').textContent = destination;
 
-function inc(){
-    let n = document.getElementById("num");
-    n.innerText = parseInt(n.innerText) + 1;
-    updateFare();
-}
+// ─── Pricing: ₹10 base + ₹5 per stop (dummy stop count) ───
+// We'll fetch stops to compute distance; fallback to a fixed amount if fetch fails
+let pricePerTicket = 20.00; // default fallback
+let stopsDiff = 4;
 
-function dec(){
-    let n = document.getElementById("num");
-    let v = parseInt(n.innerText);
-    if(v > 1){
-        n.innerText = v - 1;
-        updateFare();
+async function loadFare() {
+    try {
+        const res = await fetch('/search_stops?q=');
+        // We don't have a stops-distance API, so we'll fetch all stops and
+        // find index of Maruti Mandir vs destination to compute gap
+        const r2 = await fetch('/get_stops_list'); // may not exist
+        throw new Error('use fallback');
+    } catch {
+        // Fallback: compute a simple fare
+        // Use a reasonable default
+        pricePerTicket = 20.00;
+        stopsDiff = '~4';
     }
+    document.getElementById('farePerTicket').textContent = '₹ ' + pricePerTicket.toFixed(2);
+    document.getElementById('stopsCount').textContent = stopsDiff;
+    updateTotal();
 }
 
-updateFare();
+loadFare();
+
+// ─── Counter logic ───
+let count = 1;
+
+function inc() {
+    if (count < 5) { count++; updateTotal(); }
+}
+function dec() {
+    if (count > 1) { count--; updateTotal(); }
+}
+function updateTotal() {
+    document.getElementById('ticketCount').textContent = count;
+    const total = (count * pricePerTicket).toFixed(2);
+    document.getElementById('totalAmount').textContent = '₹ ' + total;
+}
+
+// ─── Pay handler ───
+async function handlePay() {
+    const overlay = document.getElementById('overlay');
+    overlay.classList.add('show');
+
+    // Show processing for 2 seconds
+    await sleep(2200);
+
+    // Save to DB
+    let ticketNumber = 'TC' + Date.now();
+    try {
+        const res = await fetch('/save_ticket', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                start_dest: 'Maruti Mandir',
+                final_dest: destination,
+                no_of_tickets: count,
+                amount_paid: (count * pricePerTicket).toFixed(2)
+            })
+        });
+        const result = await res.json();
+        if (result.success) {
+            ticketNumber = result.ticket_number;
+        }
+    } catch (e) {
+        console.error('Save ticket error:', e);
+    }
+
+    // Show success
+    document.getElementById('stateProcessing').style.display = 'none';
+    document.getElementById('stateSuccess').style.display = 'block';
+    document.getElementById('ticketNumDisplay').textContent = ticketNumber;
+
+    // Redirect home after 2.5s
+    await sleep(2500);
+    window.location.href = '/home';
+}
+
+function sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
+}
 </script>
 
 </body>

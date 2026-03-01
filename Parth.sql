@@ -9,6 +9,8 @@ INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Aadis
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Finolex', 1, 17.0116948, 73.3353763);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Jambhul Phata', 1, 17.0173015, 73.3356863);
 
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('MARUTI MANDIR', 0, 16.9914520, 73.2950390);
+
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('City Bus Stand', 2, 16.9914520, 73.2950390);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Malnaka', 2, 16.9906412, 73.3059455);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Maruti Mandir (Main Highway)', 2, 16.9904574, 73.3130624);
