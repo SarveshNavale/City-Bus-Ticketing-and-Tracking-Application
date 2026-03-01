@@ -663,8 +663,7 @@ def haversine_distance(lat1, lon1, lat2, lon2):
         print(f"Distance calculation error: {e}")
         return float('inf')
 
-
-# ── Notification background service ──────────────────────────────────────────
+#Notification background service
 def check_bus_proximity():
     db = None
     try:
@@ -675,9 +674,12 @@ def check_bus_proximity():
         current_login = cursor.fetchone()
 
         if not current_login:
+            print("No user logged in")
             return
 
         mobile_no = current_login['mobile_no']
+        print(f"\n{'='*50}")
+        print(f"Checking proximity for user: {mobile_no}")
 
         cursor.execute("""
             SELECT cust_number, latitude, longitude 
@@ -690,27 +692,84 @@ def check_bus_proximity():
         user = cursor.fetchone()
 
         if not user:
+            print(f"User {mobile_no} has no location data")
             return
+        
+        print(f"User location: {user['latitude']}, {user['longitude']}")
 
         cursor.execute("""
-            SELECT bus_no, latitude, longitude 
+            SELECT final_dest FROM tickets_info 
+            WHERE mobile_no = %s 
+            ORDER BY issue_date DESC, issue_time DESC 
+            LIMIT 1
+        """, (mobile_no,))
+        
+        ticket = cursor.fetchone()
+        
+        if not ticket:
+            print(f"User {mobile_no} has no recent tickets")
+            return
+            
+        final_destination = ticket['final_dest']
+        print(f"User's destination: {final_destination}")
+        
+        route_number = None
+        
+        cursor.execute("""
+            SELECT track_no FROM stops_info 
+            WHERE stop_name LIKE %s 
+            LIMIT 1
+        """, (f'%{final_destination}%',))
+        
+        stop = cursor.fetchone()
+        
+        if stop:
+            route_number = stop['track_no']
+            print(f"Route number for destination: {route_number}")
+        else:
+            print(f"Destination '{final_destination}' not found in stops_info")
+            return
+       
+        cursor.execute("""
+            SELECT COUNT(*) as total FROM bus_info 
+            WHERE route = %s
+        """, (route_number,))
+        total_route_buses = cursor.fetchone()['total']
+        print(f"Total buses on route {route_number}: {total_route_buses}")
+        
+        cursor.execute("""
+            SELECT COUNT(*) as recent FROM bus_info 
+            WHERE route = %s
+            AND last_seen >= NOW() - INTERVAL 30 MINUTE
+        """, (route_number,))
+        recent_route_buses = cursor.fetchone()['recent']
+        print(f"Buses on route {route_number} with recent location: {recent_route_buses}")
+        
+        cursor.execute("""
+            SELECT bus_no, no_plate, latitude, longitude, last_seen 
             FROM bus_info 
-            WHERE latitude IS NOT NULL 
+            WHERE route = %s
+            AND latitude IS NOT NULL 
             AND longitude IS NOT NULL
-            AND last_seen >= NOW() - INTERVAL 5 MINUTE
-        """)
+            AND last_seen >= NOW() - INTERVAL 30 MINUTE
+        """, (route_number,))
 
         buses = cursor.fetchall()
+        print(f"Found {len(buses)} active buses on route {route_number}")
 
         now = datetime.now()
         current_date = now.date()
         current_time = now.time()
+
+        notifications_added = 0
 
         for bus in buses:
             distance = haversine_distance(
                 user['latitude'], user['longitude'],
                 bus['latitude'], bus['longitude']
             )
+
+            print(f"Bus {bus['bus_no']} ({bus['no_plate']}) (Route {route_number}) is {distance:.2f}KM away")
 
             if distance <= 1.0:
                 cursor.execute("""
@@ -721,8 +780,8 @@ def check_bus_proximity():
                 """, (f'%Bus {bus["bus_no"]}%', mobile_no))
 
                 if not cursor.fetchone():
-                    heading = f"Bus {bus['bus_no']} nearby!"
-                    description = f"Bus {bus['bus_no']} is within {distance:.2f}KM of your location at {current_time.strftime('%I:%M %p')}."
+                    heading = f"Bus {bus['bus_no']} ({bus['no_plate']}) to {final_destination} nearby!"
+                    description = f"Bus {bus['bus_no']} ({bus['no_plate']}) heading to {final_destination} is within {distance:.2f}KM of your location at {current_time.strftime('%I:%M %p')}."
 
                     cursor.execute("""
                         INSERT INTO notification_info 
@@ -731,6 +790,15 @@ def check_bus_proximity():
                     """, (current_date, current_time, heading, description, mobile_no, 'bus_proximity'))
 
                     db.commit()
+                    notifications_added += 1
+                    print(f"✅ NOTIFICATION ADDED: Bus {bus['bus_no']} ({bus['no_plate']})")
+
+        if notifications_added > 0:
+            print(f"Added {notifications_added} new notifications")
+        else:
+            print("No new notifications added")
+            
+        print(f"{'='*50}\n")
 
     except Exception as e:
         print(f"Error in check_bus_proximity: {e}")
@@ -783,6 +851,7 @@ def show_notifications():
             return redirect('/')
 
         mobile_no = current_login['mobile_no']
+        print(f"Fetching notifications for user: {mobile_no}")
 
         cursor.execute("""
             SELECT * FROM notification_info 
@@ -792,6 +861,11 @@ def show_notifications():
         """, (mobile_no,))
 
         notifications = cursor.fetchall()
+        print(f"Found {len(notifications)} notifications for user {mobile_no}")
+        
+        # Print first notification for debugging
+        if notifications:
+            print(f"First notification: {notifications[0]}")
 
         cursor.close()
         db.close()
@@ -800,8 +874,9 @@ def show_notifications():
 
     except Exception as e:
         print(f"Notification error: {e}")
+        import traceback
+        traceback.print_exc()
         return render_template("simple_notifications.html", notifications=[])
-
 
 @app.route('/check_new_notifications')
 def check_new_notifications():

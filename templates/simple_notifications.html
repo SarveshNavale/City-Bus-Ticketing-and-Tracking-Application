@@ -166,6 +166,15 @@
             margin: 10px 0;
             color: #333;
         }
+        
+        .debug-info {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #666;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -187,14 +196,11 @@
 </div>
 
 <div class="content">
-    
-    <div style="text-align: right;">
-        <button class="refresh-btn" onclick="location.reload()">
-            <i class="fas fa-sync-alt"></i> Refresh
-        </button>
-    </div>
 
     {% if notifications and notifications|length > 0 %}
+        <div class="debug-info" style="background: #e0f0e0;">
+            <strong>Success:</strong> Displaying {{ notifications|length }} notifications
+        </div>
         {% for notification in notifications %}
         <div class="notification-card">
             <div class="notification-strip">
@@ -206,21 +212,27 @@
             </div>
 
             <div class="notification-details">
-                <div class="notification-heading">
-                    {{ notification.notif_heading }}
-                </div>
-                
-                <div class="notification-description">
-                    {{ notification.notif_description }}
-                </div>
-                
-                <div class="notification-time">
-                    <i class="far fa-calendar-alt"></i>
-                    {{ notification.notif_date.strftime('%d %b %Y') if notification.notif_date else '' }}
-                    <i class="far fa-clock ms-3"></i>
-                    {{ notification.notif_time.strftime('%I:%M %p') if notification.notif_time else '' }}
-                </div>
-            </div>
+    <div class="notification-heading">
+        {{ notification.notif_heading }}
+    </div>
+    
+    <div class="notification-description">
+        {{ notification.notif_description }}
+    </div>
+    
+    <div class="notification-time">
+        <i class="far fa-calendar-alt"></i>
+        {{ notification.notif_date }}
+        <i class="far fa-clock ms-3"></i>
+        {{ notification.notif_time }}
+    </div>
+    
+    {% if 'MH08' in notification.notif_description %}
+    <div style="margin-top: 5px; font-size: 11px; color: #6C64FF;">
+        <i class="fas fa-check-circle"></i> Has number plate
+    </div>
+    {% endif %}
+</div>
         </div>
         {% endfor %}
     {% else %}
@@ -232,24 +244,15 @@
     {% endif %}
 
 </div>
-
-{% if notifications %}
-<div id="notifications-data" 
-     data-count="{{ notifications|length }}"
-     style="display:none;">
-</div>
-{% endif %}
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const dataElement = document.getElementById('notifications-data');
-    if (dataElement) {
-        console.log('Notifications loaded:', dataElement.dataset.count);
-    }
+    console.log('Notifications page loaded');
     
-    setTimeout(function() {
-        location.reload();
-    }, 30000);
+    const debugDiv = document.getElementById('debug-info');
+    if (debugDiv) {
+        const count = debugDiv.dataset.count;
+        console.log('Notifications count from data:', count);
+    }
 });
 </script>
 
