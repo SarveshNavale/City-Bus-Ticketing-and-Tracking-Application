@@ -4,114 +4,122 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rotary Bus - Buy Pass</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for icons -->
+    
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="static/css/buyPass.css">
 </head>
 <body>
-    <div class="container-fluid p-0">
-        <div class="main-container">
-            <!-- Header -->
-            <header class="header-gradient text-center">
-                <img src="static/Assets/images/Just-circles.png" class="header-corner-img">
-                <img src="static/Assets/images/back-button.png" class="header-corner-img-2">
-                <h1 class="display-7 fw-bold mb-4">Buy Pass</h1>
-            </header>
-            <!-- Main Content -->
-            <div class="container py-4">
-                <!-- Pass Selection Card -->
-                <div class="pass-card">
-                    <div class="pass-header">
-                        <div class="d-flex align-items-center">
-                            <div class="pass-icon me-3">
-                                <i class="fas fa-ticket-alt"></i>
-                            </div>
-                            <div>
-                                <h3 class="mb-1">Buy One Day Pass</h3>
-                                <p class="text-muted mb-0">Unlimited travel for 24 hours</p>
-                                <p class="text-muted mb-0">(Most Popular)</p>
-                            </div>
+
+<div class="bluebg">
+    <a href="/backtohome" style="text-decoration:none;color:inherit;">
+        <div class="backbutton">
+            <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+            <p style="font-size:22px;font-weight:600;color:white;">
+                Buy<br>Pass
+            </p>
+        </div>
+    </a>
+
+    <div class="topcircles">
+        <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" style="width:150px;">
+    </div>
+</div>
+
+<div class="content">
+
+    <div class="pass-card">
+        <div class="pass-strip">
+            <h2>ONE DAY PASS</h2>
+            
+            <div class="bus-icon">
+                <i class="fas fa-bus"></i>
+            </div>
+        </div>
+
+        <div class="pass-details">
+            <div class="info-text">
+                Unlimited travel for 24 hours • Valid till 11:59 AM
+            </div>
+
+            <div class="quantity-section">
+                <div class="quantity-label">Number of Passes</div>
+                <div class="quantity-controls">
+                    <button class="quantity-btn" id="decreaseQty">-</button>
+                    <span class="quantity-display" id="quantityDisplay">1</span>
+                    <button class="quantity-btn" id="increaseQty">+</button>
+                </div>
+            </div>
+
+            <div class="payment-section">
+                <div class="payment-option selected" data-payment="gpay">
+                    <div style="display: flex; align-items: center;">
+                        <div class="payment-icon">
+                            <i class="fab fa-google-pay"></i>
+                        </div>
+                        <div class="payment-details">
+                            <h5>Google Pay</h5>
+                            <p>Fast and secure payment</p>
                         </div>
                     </div>
-                    <!-- Fare Display -->
-                    <div class="fare-display">
-                        <div class="fare-amount">₹30.00</div>
-                        <div class="fare-label">Pass Fare: maximum of any stop</div>
-                        <p class="text-muted mt-2 mb-0">Valid for unlimited rides across all city routes for 24 hours (Note: valid till 11:59AM)</p>
-                    </div>
-                    <!-- Quantity Selector -->
-                    <div class="text-center mb-4">
-                        <h4 class="mb-3">Total Passes</h4>
-                        <div class="quantity-selector">
-                            <button class="quantity-btn" id="decreaseQty">-</button>
-                            <div class="quantity-display" id="quantityDisplay">1</div>
-                            <button class="quantity-btn" id="increaseQty">+</button>
+                </div>
+
+                <div class="payment-option" data-payment="wallet">
+                    <div style="display: flex; align-items: center;">
+                        <div class="payment-icon">
+                            <i class="fas fa-wallet"></i>
                         </div>
-                        <p class="text-muted mt-2">Select number of passes to purchase</p>
-                    </div>
-                    <!-- Payment Options -->
-                    <h4 class="mb-3">Pay Using</h4>
-                    <div class="payment-option selected" data-payment="gpay">
-                        <div class="d-flex align-items-center">
-                            <div class="payment-icon">
-                                <i class="fab fa-google-pay"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Google Pay</h5>
-                                <p class="text-muted mb-0">Fast and secure payment</p>
-                            </div>
+                        <div class="payment-details">
+                            <h5>Digital Wallet</h5>
+                            <p>Paytm, PhonePe, and more</p>
                         </div>
-                    </div>
-                     <div class="payment-option" data-payment="wallet">
-                        <div class="d-flex align-items-center">
-                            <div class="payment-icon">
-                                <i class="fas fa-wallet"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Digital Wallet</h5>
-                                <p class="text-muted mb-0">Paytm, PhonePe, and more</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Total Calculation -->
-                    <div class="total-display">
-                        <div class="total-row">
-                            <span>Pass Price (x<span id="totalQuantity">1</span>)</span>
-                            <span>₹<span id="subtotal">30.00</span></span>
-                        </div>
-                        <div class="total-row">
-                            <span>Service Fee</span>
-                            <span>₹<span id="serviceFee">0.50</span></span>
-                        </div>
-                        <div class="total-row" style="border-bottom: none; padding-bottom: 0;">
-                            <span><strong>Total Amount</strong></span>
-                            <span class="total-amount">₹<span id="totalAmount">30.50</span></span>
-                        </div>
-                    </div>
-                    <!-- Pay Button -->
-                    <button class="btn btn-primary-custom" id="payButton">
-                        <i class="fas fa-lock me-2"></i>Pay Now - ₹<span id="payAmount">30.50</span>
-                    </button>
-                    <!-- Advertisement Section -->
-                    <div class="ad-section">
-                        <h3 class="ad-title">Advertise With Us</h3>
-                        <p class="ad-content">
-                            Reach thousands of daily commuters. Display your ads on our buses and mobile app.
-                            Contact us for advertising opportunities and special packages.
-                        </p>
-                        <button class="ad-btn">
-                            <i class="fas fa-bullhorn me-2"></i>Learn More
-                        </button>
                     </div>
                 </div>
             </div>
+
+            <div class="total-display">
+                <div class="total-row">
+                    <span>Pass Price (₹30.00 × <span id="totalQuantity">1</span>)</span>
+                    <span>₹<span id="subtotal">30.00</span></span>
+                </div>
+                <div class="total-row">
+                    <span>Service Fee (₹0.50 × <span id="totalQuantity2">1</span>)</span>
+                    <span>₹<span id="serviceFee">0.50</span></span>
+                </div>
+                <div class="total-row">
+                    <span><strong>Total Amount</strong></span>
+                    <span class="total-amount">₹<span id="totalAmount">30.50</span></span>
+                </div>
+            </div>
+
+            <button class="pay-btn" id="payButton">
+                <i class="fas fa-lock"></i>
+                Pay ₹<span id="payAmount">30.50</span>
+            </button>
+
+            <div class="ad-section">
+                <div class="ad-title">Advertise With Us</div>
+                <div class="ad-content">
+                    Reach thousands of daily commuters. Display your ads on our buses and mobile app.
+                    Contact us for advertising opportunities and special packages.
+                </div>
+                <button class="ad-btn">
+                    <i class="fas fa-bullhorn me-2"></i>Learn More
+                </button>
+            </div>
         </div>
     </div>
+</div>
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="static/js/buyPass.js"></script>
+<div class="modal" id="paymentModal">
+    <div class="modal-content">
+        <div class="modal-icon" id="modalIcon">
+            <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <div class="modal-title" id="modalTitle">Processing Payment</div>
+        <div class="modal-text" id="modalText">Please wait...</div>
+    </div>
+</div>
+<script src="static/js/buyPass.js"></script>
 </body>
 </html>

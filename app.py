@@ -1,9 +1,16 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify, redirect
+from dotenv import load_dotenv
+from groq import Groq
+import random
+import string
+import os
 import mysql.connector
 from datetime import datetime, date, time, timedelta
 import time  # This is the time module for sleep()
 import threading
 from math import radians, sin, cos, sqrt, atan2
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -95,43 +102,61 @@ def buy_pass_page():
         return redirect('/')
     return render_template("buyPass.html")
 
+def generate_unique_pass_number(cursor):
+    """Generate PS + 5 random characters, ensure uniqueness"""
+    while True:
+        # Generate 5 random alphanumeric characters
+        random_chars = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+        pass_number = f"PS{random_chars}"
+        
+        # Check if this pass number already exists
+        cursor.execute("SELECT id FROM passes_info WHERE pass_number = %s", (pass_number,))
+        if not cursor.fetchone():
+            return pass_number
+
 @app.route('/purchase_pass', methods=['POST'])
 def purchase_pass():
     try:
+        # Get current logged in user
         db = get_db()
         cursor = db.cursor(dictionary=True)
-
+        
+        # Get mobile number from current_login
         cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
         current_login = cursor.fetchone()
-
+        
         if not current_login:
             return jsonify({'success': False, 'error': 'No user logged in'})
-
+        
         mobile_no = current_login['mobile_no']
-
+        
+        # Get user info from cust_info using mobile number
         cursor.execute("SELECT cust_name FROM cust_info WHERE cust_number = %s", (mobile_no,))
         user = cursor.fetchone()
-
+        
         if not user:
             return jsonify({'success': False, 'error': 'User not found in database'})
-
+        
+        # Get data from request
         data = request.get_json()
         quantity = int(data.get('quantity', 1))
         amount_per_pass = float(data.get('amount_per_pass', 30.00))
         service_fee = float(data.get('service_fee', 0.50))
         payment_method = data.get('payment_method', 'gpay')
-
+        
+        # Calculate total amount
         total_amount = (quantity * amount_per_pass) + (quantity * service_fee)
-
-        current_datetime = datetime.now()
-        current_date = current_datetime.date()
-        current_time = current_datetime.time()
-        timestamp = int(current_datetime.timestamp())
-
+        
+        # Get current date and time
+        current_date = datetime.now().date()
+        current_time = datetime.now().time()
+        
+        # For each pass purchased (quantity), insert a record
         passes_created = []
         for i in range(quantity):
-            pass_number = f"PS{mobile_no}_{timestamp}_{i+1}"
-
+            # Generate SHORT unique pass number: PS + 5 random characters
+            pass_number = generate_unique_pass_number(cursor)
+            
             cursor.execute("""
                 INSERT INTO passes_info 
                 (pass_holder, pass_number, amount_paid, mobile_no, issue_date, issue_time)
@@ -144,45 +169,37 @@ def purchase_pass():
                 current_date,
                 current_time
             ))
-
+            
             passes_created.append(pass_number)
-
+        
         db.commit()
-
+        
+        # Get the inserted pass info
         placeholders = ','.join(['%s'] * len(passes_created))
         cursor.execute(f"""
             SELECT * FROM passes_info 
             WHERE pass_number IN ({placeholders})
             ORDER BY id DESC
         """, tuple(passes_created))
-
+        
         passes = cursor.fetchall()
-
+        
+        # Convert to JSON serializable format
         serialized_passes = []
         for pass_item in passes:
-            if isinstance(pass_item.get('issue_time'), type(datetime.now().time())):
-                issue_time_str = str(pass_item['issue_time'])
-            else:
-                issue_time_str = str(pass_item.get('issue_time', ''))
-
-            if isinstance(pass_item.get('issue_date'), type(datetime.now().date())):
-                issue_date_str = str(pass_item['issue_date'])
-            else:
-                issue_date_str = str(pass_item.get('issue_date', ''))
-
             serialized_passes.append({
                 'id': pass_item['id'],
                 'pass_holder': pass_item['pass_holder'],
                 'pass_number': pass_item['pass_number'],
                 'amount_paid': float(pass_item['amount_paid']),
                 'mobile_no': pass_item['mobile_no'],
-                'issue_date': issue_date_str,
-                'issue_time': issue_time_str
+                'issue_date': str(pass_item['issue_date']),
+                'issue_time': str(pass_item['issue_time'])
             })
-
+        
         cursor.close()
         db.close()
-
+        
         return jsonify({
             'success': True,
             'message': f'Successfully purchased {quantity} pass(es)',
@@ -191,11 +208,10 @@ def purchase_pass():
                 'pass_holder': user['cust_name'],
                 'mobile_no': mobile_no,
                 'total_amount': total_amount,
-                'pass_numbers': passes_created,
-                'purchase_time': current_datetime.strftime('%Y-%m-%d %H:%M:%S')
+                'pass_numbers': passes_created
             }
         })
-
+        
     except Exception as e:
         print(f"Pass purchase error: {e}")
         import traceback
@@ -211,10 +227,10 @@ def view_pass():
     try:
         db = get_db()
         cursor = db.cursor(dictionary=True)
-
+        
         cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
         current_login = cursor.fetchone()
-
+        
         if not current_login:
             cursor.close()
             db.close()
@@ -222,39 +238,39 @@ def view_pass():
                 "view_pass.html",
                 total_tickets=5,
                 holder_name="Shreyash Khot",
-                pass_number="PS8011192222",
+                pass_number="PS8K2M9",  # Updated example
                 amount_paid=500,
                 issue_datetime="11/11/2011 | 2:17 AM",
                 actual_user=False
             )
-
+        
         mobile_no = current_login['mobile_no']
-
+        
         cursor.execute("""
             SELECT * FROM passes_info 
             WHERE mobile_no = %s 
             ORDER BY issue_date DESC, issue_time DESC 
             LIMIT 1
         """, (mobile_no,))
-
+        
         pass_data = cursor.fetchone()
-
+        
         cursor.execute("SELECT cust_name FROM cust_info WHERE cust_number = %s", (mobile_no,))
         user = cursor.fetchone()
-
+        
         cursor.close()
         db.close()
-
+        
         if pass_data and user:
             issue_date = pass_data['issue_date']
             issue_time = pass_data['issue_time']
             issue_datetime = f"{issue_date} | {issue_time}"
-
+            
             return render_template(
                 "view_pass.html",
                 total_tickets=1,
                 holder_name=user['cust_name'],
-                pass_number=pass_data['pass_number'],
+                pass_number=pass_data['pass_number'], 
                 amount_paid=pass_data['amount_paid'],
                 issue_datetime=issue_datetime,
                 actual_user=True,
@@ -273,20 +289,68 @@ def view_pass():
                 mobile_no=mobile_no,
                 no_pass=True
             )
-
+            
     except Exception as e:
         print(f"View pass error: {e}")
         return render_template(
             "view_pass.html",
             total_tickets=5,
             holder_name="Shreyash Khot",
-            pass_number="PS8011192222",
+            pass_number="PS8K2M9", 
             amount_paid=500,
             issue_datetime="11/11/2011 | 2:17 AM",
             actual_user=False,
             error=str(e)
         )
 
+@app.route('/verify_pass', methods=['POST'])
+def verify_pass():
+    """Verify if a pass exists in the database"""
+    try:
+        data = request.get_json()
+        pass_number = data.get('pass_number', '').strip().upper()
+        
+        if not pass_number:
+            return jsonify({'success': False, 'error': 'Pass number is required'})
+        
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT * FROM passes_info 
+            WHERE pass_number = %s
+        """, (pass_number,))
+        
+        pass_data = cursor.fetchone()
+        cursor.close()
+        db.close()
+        
+        if pass_data:
+            return jsonify({
+                'success': True,
+                'found': True,
+                'pass': {
+                    'pass_number': pass_data['pass_number'],
+                    'pass_holder': pass_data['pass_holder'],
+                    'mobile_no': pass_data['mobile_no'],
+                    'amount_paid': float(pass_data['amount_paid']),
+                    'issue_date': str(pass_data['issue_date']),
+                    'issue_time': str(pass_data['issue_time'])
+                }
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'found': False,
+                'message': 'Pass not found'
+            })
+            
+    except Exception as e:
+        print(f"Verify pass error: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        })
 
 @app.route('/faqs')
 def faqs():
@@ -599,8 +663,7 @@ def haversine_distance(lat1, lon1, lat2, lon2):
         print(f"Distance calculation error: {e}")
         return float('inf')
 
-
-# ── Notification background service ──────────────────────────────────────────
+#Notification background service
 def check_bus_proximity():
     db = None
     try:
@@ -611,9 +674,12 @@ def check_bus_proximity():
         current_login = cursor.fetchone()
 
         if not current_login:
+            print("No user logged in")
             return
 
         mobile_no = current_login['mobile_no']
+        print(f"\n{'='*50}")
+        print(f"Checking proximity for user: {mobile_no}")
 
         cursor.execute("""
             SELECT cust_number, latitude, longitude 
@@ -626,21 +692,76 @@ def check_bus_proximity():
         user = cursor.fetchone()
 
         if not user:
+            print(f"User {mobile_no} has no location data")
             return
+        
+        print(f"User location: {user['latitude']}, {user['longitude']}")
 
         cursor.execute("""
-            SELECT bus_no, latitude, longitude 
-            FROM bus_info 
-            WHERE latitude IS NOT NULL 
-            AND longitude IS NOT NULL
-            AND last_seen >= NOW() - INTERVAL 5 MINUTE
-        """)
-
-        buses = cursor.fetchall()
-
+            SELECT final_dest FROM tickets_info 
+            WHERE mobile_no = %s 
+            ORDER BY issue_date DESC, issue_time DESC 
+            LIMIT 1
+        """, (mobile_no,))
+        
+        ticket = cursor.fetchone()
+        
+        if not ticket:
+            print(f"User {mobile_no} has no recent tickets")
+            return
+            
+        final_destination = ticket['final_dest']
+        print(f"User's destination: {final_destination}")
+        
+        route_number = None
+        
+        cursor.execute("""
+            SELECT track_no FROM stops_info 
+            WHERE stop_name LIKE %s 
+            LIMIT 1
+        """, (f'%{final_destination}%',))
+        
+        stop = cursor.fetchone()
+        
+        if stop:
+            route_number = stop['track_no']
+            print(f"Route number for destination: {route_number}")
+        else:
+            print(f"Destination '{final_destination}' not found in stops_info")
+            return
+       
         now = datetime.now()
         current_date = now.date()
         current_time = now.time()
+        
+        cursor.execute("""
+            SELECT COUNT(*) as total FROM bus_info 
+            WHERE route = %s
+        """, (route_number,))
+        total_route_buses = cursor.fetchone()['total']
+        print(f"Total buses on route {route_number}: {total_route_buses}")
+        
+        cursor.execute("""
+            SELECT COUNT(*) as recent FROM bus_info 
+            WHERE route = %s
+            AND last_seen >= NOW() - INTERVAL 30 MINUTE
+        """, (route_number,))
+        recent_route_buses = cursor.fetchone()['recent']
+        print(f"Buses on route {route_number} with recent location: {recent_route_buses}")
+        
+        cursor.execute("""
+            SELECT bus_no, no_plate, latitude, longitude, last_seen 
+            FROM bus_info 
+            WHERE route = %s
+            AND latitude IS NOT NULL 
+            AND longitude IS NOT NULL
+            AND last_seen >= NOW() - INTERVAL 30 MINUTE
+        """, (route_number,))
+
+        buses = cursor.fetchall()
+        print(f"Found {len(buses)} active buses on route {route_number}")
+
+        notifications_added = 0
 
         for bus in buses:
             distance = haversine_distance(
@@ -648,25 +769,39 @@ def check_bus_proximity():
                 bus['latitude'], bus['longitude']
             )
 
+            print(f"Bus {bus['bus_no']} ({bus['no_plate']}) (Route {route_number}) is {distance:.2f}KM away")
+
             if distance <= 1.0:
+                # to avoid duplicates
                 cursor.execute("""
                     SELECT id FROM notification_info 
-                    WHERE notif_heading LIKE %s
-                    AND user_mobile = %s
-                    AND notif_time >= NOW() - INTERVAL 2 MINUTE
-                """, (f'%Bus {bus["bus_no"]}%', mobile_no))
+                    WHERE user_mobile = %s
+                    AND notif_heading LIKE %s
+                    AND notif_heading LIKE %s
+                    AND notif_date = CURDATE()
+                    AND notif_time >= NOW() - INTERVAL 30 MINUTE
+                """, (mobile_no, f'%Bus {bus["bus_no"]}%', f'%{final_destination}%'))
 
                 if not cursor.fetchone():
-                    heading = f"Bus {bus['bus_no']} nearby!"
-                    description = f"Bus {bus['bus_no']} is within {distance:.2f}KM of your location at {current_time.strftime('%I:%M %p')}."
+                    heading = f"Bus {bus['bus_no']} ({bus['no_plate']}) to {final_destination} nearby!"
+                    description = f"Bus {bus['bus_no']} ({bus['no_plate']}) heading to {final_destination} is within {distance:.2f}KM of your location at {current_time.strftime('%I:%M %p')}."
 
                     cursor.execute("""
                         INSERT INTO notification_info 
-                        (notif_date, notif_time, notif_heading, notif_description, user_mobile, notification_type)
-                        VALUES (%s, %s, %s, %s, %s, %s)
-                    """, (current_date, current_time, heading, description, mobile_no, 'bus_proximity'))
+                        (notif_date, notif_time, notif_heading, notif_description, user_mobile, notification_type, is_read)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    """, (current_date, current_time, heading, description, mobile_no, 'bus_proximity', False))
 
                     db.commit()
+                    notifications_added += 1
+                    print(f"✅ NOTIFICATION ADDED: Bus {bus['bus_no']} ({bus['no_plate']})")
+
+        if notifications_added > 0:
+            print(f"Added {notifications_added} new notifications")
+        else:
+            print("No new notifications added")
+            
+        print(f"{'='*50}\n")
 
     except Exception as e:
         print(f"Error in check_bus_proximity: {e}")
@@ -719,6 +854,15 @@ def show_notifications():
             return redirect('/')
 
         mobile_no = current_login['mobile_no']
+        print(f"Fetching notifications for user: {mobile_no}")
+
+        cursor.execute("""
+            UPDATE notification_info 
+            SET is_read = TRUE 
+            WHERE user_mobile = %s AND (is_read = FALSE OR is_read IS NULL)
+        """, (mobile_no,))
+        db.commit()
+        print(f"Marked notifications as read for user {mobile_no}")
 
         cursor.execute("""
             SELECT * FROM notification_info 
@@ -728,6 +872,7 @@ def show_notifications():
         """, (mobile_no,))
 
         notifications = cursor.fetchall()
+        print(f"Found {len(notifications)} notifications for user {mobile_no}")
 
         cursor.close()
         db.close()
@@ -736,8 +881,9 @@ def show_notifications():
 
     except Exception as e:
         print(f"Notification error: {e}")
+        import traceback
+        traceback.print_exc()
         return render_template("simple_notifications.html", notifications=[])
-
 
 @app.route('/check_new_notifications')
 def check_new_notifications():
@@ -751,20 +897,24 @@ def check_new_notifications():
         if not current_login:
             return jsonify({'success': False, 'new_notifications': False, 'count': 0})
 
+        # Check for unread notifications (is_read = FALSE or NULL)
         cursor.execute("""
             SELECT COUNT(*) as new_count 
             FROM notification_info 
             WHERE user_mobile = %s
-            AND notif_time >= NOW() - INTERVAL 5 MINUTE
+            AND (is_read = FALSE OR is_read IS NULL)
         """, (current_login['mobile_no'],))
 
         result = cursor.fetchone()
         cursor.close()
         db.close()
 
+        has_new = result['new_count'] > 0
+        print(f"User {current_login['mobile_no']} has {result['new_count']} unread notifications")
+
         return jsonify({
             'success': True,
-            'new_notifications': result['new_count'] > 0,
+            'new_notifications': has_new,
             'count': result['new_count']
         })
 
@@ -1308,6 +1458,83 @@ atexit.register(cleanup_on_shutdown)
 # START
 # ─────────────────────────────────────────────────────────────────────────────
 start_notification_service()
+
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+if not GROQ_API_KEY:
+    raise ValueError("GROQ_API_KEY not found in .env file")
+
+groq_client = Groq(api_key=GROQ_API_KEY)
+
+def get_database_context():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    context = ""
+    
+    try:     
+        cursor.execute("SELECT bus_no, no_plate, route FROM bus_info")
+        buses = cursor.fetchall()
+        if buses:
+            context += "\nBUSES:\n"
+            route_names = {1: "Kokan", 2: "Highway", 3: "Nachane", 4: "Railway"}
+            for b in buses:
+                route = route_names.get(b['route'], 'Unknown')
+                context += f"- Bus {b['bus_no']} ({b['no_plate']}) - Route: {route}\n"
+        
+        cursor.execute("SELECT stop_name, track_no FROM stops_info")
+        stops = cursor.fetchall()
+        if stops:
+            context += "\nSTOPS:\n"
+            for s in stops:
+                context += f"- {s['stop_name']} (Track {s['track_no']})\n"
+        
+        cursor.execute("SELECT notif_heading, notif_date FROM notification_info ORDER BY notif_date DESC LIMIT 3")
+        notifs = cursor.fetchall()
+        if notifs:
+            context += "\nRECENT NOTIFICATIONS:\n"
+            for n in notifs:
+                context += f"- {n['notif_heading']} ({n['notif_date']})\n"
+    
+    except Exception as e:
+        print(f"DB context error: {e}")
+    
+    cursor.close()
+    db.close()
+    return context
+
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    try:
+        data = request.get_json()
+        user_message = data.get('message', '')
+        
+        db_context = get_database_context()
+        
+        system_prompt = f"""You are Tikko Robo, assistant for Rotary Club transport system.
+        
+Current database information:
+{db_context}
+
+IMPORTANT RULES:
+- If users ask about bus timings or schedules, tell them: "Bus timetables are available in the Timetable section. You'll also get notified when your bus is nearby!"
+
+Answer questions using this data. Be helpful and friendly."""
+
+        completion = groq_client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            temperature=0.7,
+            max_tokens=500
+        )
+        
+        response = completion.choices[0].message.content
+        return jsonify({"response": response})
+        
+    except Exception as e:
+        print(f"Chat error: {e}")
+        return jsonify({"response": f"Error: {str(e)}"})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

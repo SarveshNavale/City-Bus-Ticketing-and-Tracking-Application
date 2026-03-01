@@ -1,515 +1,339 @@
-:root {
-    --primary-blue: #6C64FF;
-    --text-color: #636263;
-    --light-bg: #f8f9fa;
-}
 body {
-    background-color: var(--light-bg);
-    color: var(--text-color);
-    font-family: 'Hind Guntur', sans-serif;
     margin: 0;
-    padding: 0; 
+    font-family: 'Hind Guntur', sans-serif;
+    background: #ffffff;
+    color: #333;
 }
-.main-container {
-    max-width: 1080px;
-    min-height: 100vh;
-    background-color: white;
-    border-radius: 0px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    margin: 0 auto;
-}
-/* Header */
-.header-gradient {
-    background: linear-gradient(135deg, var(--primary-blue) 100%, #8A84FF 0%);
-    color: white;
-    padding: 2.5rem 2rem;
+
+.bluebg {
+    background-color: #6C64FF;
+    height: 220px;
+    width: 100%;
     position: relative;
-    overflow: hidden;
-    font-size: 20px;
 }
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+
+.backbutton {
+    position: absolute;
+    top: 45px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 49px;
 }
-/* Main Content */
+
+.topcircles {
+    position: absolute;
+    right: 5px;
+    top: 0;
+}
+
+.content {
+    padding: 30px 18px 40px;
+    max-width: 420px;
+    margin: auto;
+}
+
 .pass-card {
-    background: white;
-    border: 1px solid #eaeaea;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    padding: 2rem;
-    margin-bottom: 2rem;
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1px solid #e8e8f0;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(108,100,255,0.08);
+    animation: slideUp .35s ease both;
+    margin-bottom: 20px;
 }
-.pass-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
-.pass-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, var(--primary-blue), #8A84FF);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.8rem;
-}
-.fare-display {
-    background: #f8f9ff;
-    padding: 1.5rem;
-    border: 2px solid var(--primary-blue);
-    border-radius: 0;
-    margin: 1.5rem 0;
+
+.pass-strip {
+    background: linear-gradient(135deg, #6C64FF, #8f89ff);
+    padding: 25px 18px 55px;
     text-align: center;
+    color: white;
+    position: relative;
 }
-.fare-amount {
-    font-size: 22px;
-    font-weight: bold;
-    color: var(--primary-blue);
-    margin-bottom: 0.5rem;
-}
-.fare-label {
-    color: var(--text-color);
+
+.pass-strip h2 {
+    margin: 0;
     font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
-.quantity-selector {
+
+.bus-icon {
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffffff;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    margin: 2rem 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
+
+.bus-icon i {
+    color: #6C64FF;
+    font-size: 35px;
+}
+
+.pass-details {
+    padding: 60px 18px 25px;
+}
+
+.info-text {
+    text-align: center;
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.quantity-section {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.quantity-label {
+    font-size: 14px;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
 .quantity-btn {
     width: 40px;
     height: 40px;
-    border: 2px solid var(--primary-blue);
+    border-radius: 50%;
+    border: 1px solid #6C64FF;
     background: white;
-    color: var(--primary-blue);
-    font-size: 22px;;
-    font-weight: bold;
+    color: #6C64FF;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
 }
+
 .quantity-btn:hover {
-    background: var(--primary-blue);
+    background: #6C64FF;
     color: white;
 }
+
+.quantity-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .quantity-display {
-    font-size: 20px;
-    font-weight: bold;
-    min-width: 50px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    min-width: 40px;
     text-align: center;
 }
+
+.payment-section {
+    margin-bottom: 25px;
+}
+
 .payment-option {
-    background: white;
-    border: 2px solid #eaeaea;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
+    background: #f8f8f8;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 10px;
     cursor: pointer;
-    transition: all 0.3s;
-    font-size: 14px;
+    transition: all 0.2s;
+    border: 2px solid transparent;
 }
-.payment-option:hover, .payment-option.selected {
-    border-color: var(--primary-blue);
-    background: #f8f9ff;
-}
-.payment-icon {
-    font-size: 2rem;
-    margin-right: 1rem;
-    color: var(--primary-blue);
-}
-.btn-primary-custom {
-    background-color: var(--primary-blue);
-    border-color: var(--primary-blue);
-    color: white;
-    padding: 1rem;
-    font-weight: 600;
-    font-size: 16px;
-    border-radius: 0;
-    width: 100%;
-    margin-top: 1rem;
-}
-.btn-primary-custom:hover {
-    background-color: #6C64FF;
+
+.payment-option.selected {
     border-color: #6C64FF;
+    background: #f0f0ff;
 }
-.header-corner-img {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 120px;    
-    opacity: 1;
-    pointer-events: none;
+
+.payment-option:hover {
+    background: #f0f0f0;
 }
-.header-corner-img-2 {
-    position: absolute;
-    top: 27px;
-    left: 20px;
-    width: 80px;
-    height: 80px;    
-    opacity: 0.8;
-    pointer-events: none;
+
+.payment-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #6C64FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
 }
+
+.payment-icon i {
+    color: white;
+    font-size: 20px;
+}
+
+.payment-details h5 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+}
+
+.payment-details p {
+    margin: 0;
+    font-size: 13px;
+    color: #888;
+}
+
 .total-display {
-    background: #f8f9ff;
-    padding: 1.5rem;
-    margin: 2rem 0;
-    border: 2px solid var(--primary-blue);
+    background: #f8f8f8;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
 }
 
 .total-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #eaeaea;
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.total-row:last-child {
+    border-bottom: none;
 }
 
 .total-amount {
-    font-size: 20px;
-    font-weight: bold;
-    color: var(--primary-blue);
+    color: #6C64FF;
+    font-weight: 700;
+    font-size: 18px;
 }
-.ad-section {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    padding: 2rem;
-    margin-top: 2rem;
-    text-align: center;
-    border: 2px dashed #dee2e6;
-}
-.ad-title {
-    color: var(--primary-blue);
+
+.pay-btn {
+    width: 100%;
+    padding: 15px;
+    background: #6C64FF;
+    color: white;
+    border: none;
+    border-radius: 44px;
+    font-size: 18px;
     font-weight: 600;
-    margin-bottom: 1rem;
-    font-size: 22px;
+    font-family: 'Hind Guntur', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
+
+.pay-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(108,100,255,0.3);
+}
+
+.pay-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ad-section {
+    background: #f0f0f0;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+.ad-title {
+    color: #333;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
 .ad-content {
-    font-size: 1.1rem;
-    color: var(--text-color);
-    margin-bottom: 1.5rem;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 15px;
 }
+
 .ad-btn {
     background: white;
-    border: 2px solid var(--primary-blue);
-    color: var(--primary-blue);
-    padding: 0.8rem 2rem;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 44px;
+    padding: 10px 25px;
+    font-family: 'Hind Guntur', sans-serif;
     font-weight: 600;
-    border-radius: 0;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
 }
+
 .ad-btn:hover {
-    background: var(--primary-blue);
-    color: white;
-}
-/*TC login page */
-.tc-header {
-    background: linear-gradient(135deg, var(--primary-blue) 100%, #8A84FF 0%);
-    color: white;
-    padding: 2rem;
-    position: relative;
-    overflow: hidden;
+    background: #e0e0e0;
 }
 
-.tc-badge {
-    background: white;
-    color: var(--primary-blue);
-    padding: 0.5rem 1.5rem;
-    border-radius: 0;
-    font-weight: 600;
-    display: inline-block;
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-}
-
-.search-container {
-    background: white;
-    border: 2px solid var(--primary-blue);
-    padding: 2rem;
-    margin: 2rem 0;
-}
-
-.search-label {
-    color: var(--text-color);
-    font-weight: 600;
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-}
-
-.search-input-group {
-    display: flex;
-    gap: 1rem;
-    margin: 1.5rem 0;
-}
-
-.search-input {
-    flex: 1;
-    padding: 1rem;
-    border: 2px solid #eaeaea;
-    font-size: 1.1rem;
-    transition: all 0.3s;
-}
-
-.search-input:focus {
-    outline: none;
-    border-color: var(--primary-blue);
-}
-
-.search-btn {
-    background: var(--primary-blue);
-    color: white;
-    border: none;
-    padding: 0 1rem;
-    font-weight: 600;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.search-btn:hover {
-    background: #5a52d5;
-}
-
-.pass-info-card {
-    background: #f8f9ff;
-    border: 2px solid var(--primary-blue);
-    padding: 2rem;
-    margin: 2rem 0;
+.modal {
     display: none;
-}
-
-.pass-info-card.active {
-    display: block;
-}
-
-.pass-detail-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 1rem 0;
-    border-bottom: 1px solid #eaeaea;
-}
-
-.pass-detail-label {
-    font-weight: 600;
-    color: var(--text-color);
-}
-
-.pass-detail-value {
-    color: var(--primary-blue);
-    font-weight: 600;
-}
-
-.verify-badge {
-    background: #28a745;
-    color: white;
-    padding: 0.5rem 1rem;
-    display: inline-block;
-    margin-top: 1rem;
-    font-weight: 600;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 1rem;
-    margin: 2rem 0;
-}
-
-.action-btn {
-    flex: 1;
-    padding: 1rem;
-    border: 2px solid var(--primary-blue);
-    background: white;
-    color: var(--primary-blue);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.action-btn:hover {
-    background: var(--primary-blue);
-    color: white;
-}
-
-.action-btn.primary {
-    background: var(--primary-blue);
-    color: white;
-}
-
-.action-btn.primary:hover {
-    background: #5a52d5;
-}
-
-.no-result {
-    text-align: center;
-    padding: 3rem;
-    color: #dc3545;
-    font-weight: 600;
-    display: none;
-}
-
-.no-result.active {
-    display: block;
-}
-.search-wrapper {
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    margin: 20px 0;
-}
-
-.search-wrapper input {
-    width: 100%;
-    padding: 15px 120px 15px 15px;
-    border: 2px solid #eaeaea;
-    font-size: 1rem;
-    transition: all 0.3s;
-    box-sizing: border-box;
-}
-
-.search-wrapper input:focus {
-    outline: none;
-    border-color: var(--primary-blue);
-}
-
-.search-wrapper button {
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    bottom: 5px;
-    width: 100px;
-    background: var(--primary-blue);
-    color: white;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
     align-items: center;
     justify-content: center;
 }
 
-.search-wrapper button:hover {
-    background: #5a52d5;
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 300px;
+    text-align: center;
+    animation: slideUp 0.3s ease;
 }
 
-.search-wrapper button i {
-    margin-right: 5px;
+.modal-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #6C64FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
 }
 
-@media (max-width: 576px) {
-    .search-wrapper input {
-        padding: 12px 100px 12px 12px;
-        font-size: 0.9rem;
-    }
-    
-    .search-wrapper button {
-        width: 85px;
-        font-size: 0.85rem;
-    }
+.modal-icon i {
+    color: white;
+    font-size: 40px;
 }
-@media screen and (max-width: 576px) {
-    .tc-header {
-        padding: 1.2rem;
-    }
 
-    .tc-header h1 {
-        font-size: 1.5rem;
-    }
+.modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
 
-    .tc-header p {
-        font-size: 0.85rem;
-        padding: 0 10px;
-    }
-
-    .tc-badge {
-        padding: 0.3rem 1rem;
-        font-size: 1rem;
-    }
-
-    .pass-card {
-        padding: 1rem !important;
-    }
-
-    .pass-header h3 {
-        font-size: 1.2rem;
-    }
-
-    .pass-header p {
-        font-size: 0.85rem;
-    }
-
-    .pass-icon {
-        width: 45px;
-        height: 45px;
-        font-size: 1.4rem;
-    }
-
-    .search-label {
-        font-size: 1rem;
-    }
-
-    .search-input {
-        padding: 0.8rem;
-        font-size: 0.95rem;
-    }
-
-    .search-container p.small {
-        font-size: 0.75rem;
-    }
-
-    .pass-info-card {
-        padding: 1.2rem;
-    }
-
-    .verify-badge {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.9rem;
-    }
-
-    .pass-detail-row {
-        padding: 0.8rem 0;
-        font-size: 0.9rem;
-    }
-
-    .no-result {
-        padding: 2rem 1rem;
-    }
-
-    .no-result h4 {
-        font-size: 1.2rem;
-    }
-
-    .no-result p {
-        font-size: 0.9rem;
-    }
-
-    .row.mt-4 .col-6 {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-
-    .row.mt-4 .col-6:last-child {
-        margin-bottom: 0;
-    }
-
-    .fare-display {
-        margin: 0.5rem 0;
-    }
-
-    .header-corner-img {
-        width: 80px;
-    }
-
-    .header-corner-img-2 {
-        width: 50px;
-        height: 50px;
-        top: 15px;
-        left: 10px;
-    }
+.modal-text {
+    color: #666;
+    margin-bottom: 20px;
 }
