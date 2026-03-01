@@ -1311,7 +1311,7 @@ atexit.register(cleanup_on_shutdown)
 # ─────────────────────────────────────────────────────────────────────────────
 start_notification_service()
 
-groq_client = Groq(api_key="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")  # add api key
+groq_client = Groq(api_key="")  # add api key
 
 def get_database_context():
     db = get_db()
