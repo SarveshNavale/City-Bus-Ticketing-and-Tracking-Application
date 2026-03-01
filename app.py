@@ -11,7 +11,7 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="hrishi@123",
+        password="#SAR1807",
         database="RotaryClub_Database"
     )
 # ---------- normal routes sagle hite taka! ----------
@@ -42,6 +42,12 @@ def profile():
 @app.route('/map')
 def map():
     return render_template("map.html")
+
+
+
+@app.route('/routestime')
+def routestime():
+    return render_template("Timetable.html")
 
 @app.route('/dino')
 def dino():
