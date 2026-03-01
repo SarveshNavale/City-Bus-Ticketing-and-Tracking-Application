@@ -730,6 +730,10 @@ def check_bus_proximity():
             print(f"Destination '{final_destination}' not found in stops_info")
             return
        
+        now = datetime.now()
+        current_date = now.date()
+        current_time = now.time()
+        
         cursor.execute("""
             SELECT COUNT(*) as total FROM bus_info 
             WHERE route = %s
@@ -757,10 +761,6 @@ def check_bus_proximity():
         buses = cursor.fetchall()
         print(f"Found {len(buses)} active buses on route {route_number}")
 
-        now = datetime.now()
-        current_date = now.date()
-        current_time = now.time()
-
         notifications_added = 0
 
         for bus in buses:
@@ -772,12 +772,15 @@ def check_bus_proximity():
             print(f"Bus {bus['bus_no']} ({bus['no_plate']}) (Route {route_number}) is {distance:.2f}KM away")
 
             if distance <= 1.0:
+                # to avoid duplicates
                 cursor.execute("""
                     SELECT id FROM notification_info 
-                    WHERE notif_heading LIKE %s
-                    AND user_mobile = %s
-                    AND notif_time >= NOW() - INTERVAL 2 MINUTE
-                """, (f'%Bus {bus["bus_no"]}%', mobile_no))
+                    WHERE user_mobile = %s
+                    AND notif_heading LIKE %s
+                    AND notif_heading LIKE %s
+                    AND notif_date = CURDATE()
+                    AND notif_time >= NOW() - INTERVAL 30 MINUTE
+                """, (mobile_no, f'%Bus {bus["bus_no"]}%', f'%{final_destination}%'))
 
                 if not cursor.fetchone():
                     heading = f"Bus {bus['bus_no']} ({bus['no_plate']}) to {final_destination} nearby!"
@@ -785,9 +788,9 @@ def check_bus_proximity():
 
                     cursor.execute("""
                         INSERT INTO notification_info 
-                        (notif_date, notif_time, notif_heading, notif_description, user_mobile, notification_type)
-                        VALUES (%s, %s, %s, %s, %s, %s)
-                    """, (current_date, current_time, heading, description, mobile_no, 'bus_proximity'))
+                        (notif_date, notif_time, notif_heading, notif_description, user_mobile, notification_type, is_read)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    """, (current_date, current_time, heading, description, mobile_no, 'bus_proximity', False))
 
                     db.commit()
                     notifications_added += 1
@@ -854,6 +857,14 @@ def show_notifications():
         print(f"Fetching notifications for user: {mobile_no}")
 
         cursor.execute("""
+            UPDATE notification_info 
+            SET is_read = TRUE 
+            WHERE user_mobile = %s AND (is_read = FALSE OR is_read IS NULL)
+        """, (mobile_no,))
+        db.commit()
+        print(f"Marked notifications as read for user {mobile_no}")
+
+        cursor.execute("""
             SELECT * FROM notification_info 
             WHERE user_mobile = %s
             ORDER BY notif_date DESC, notif_time DESC
@@ -862,10 +873,6 @@ def show_notifications():
 
         notifications = cursor.fetchall()
         print(f"Found {len(notifications)} notifications for user {mobile_no}")
-        
-        # Print first notification for debugging
-        if notifications:
-            print(f"First notification: {notifications[0]}")
 
         cursor.close()
         db.close()
@@ -890,20 +897,24 @@ def check_new_notifications():
         if not current_login:
             return jsonify({'success': False, 'new_notifications': False, 'count': 0})
 
+        # Check for unread notifications (is_read = FALSE or NULL)
         cursor.execute("""
             SELECT COUNT(*) as new_count 
             FROM notification_info 
             WHERE user_mobile = %s
-            AND notif_time >= NOW() - INTERVAL 5 MINUTE
+            AND (is_read = FALSE OR is_read IS NULL)
         """, (current_login['mobile_no'],))
 
         result = cursor.fetchone()
         cursor.close()
         db.close()
 
+        has_new = result['new_count'] > 0
+        print(f"User {current_login['mobile_no']} has {result['new_count']} unread notifications")
+
         return jsonify({
             'success': True,
-            'new_notifications': result['new_count'] > 0,
+            'new_notifications': has_new,
             'count': result['new_count']
         })
 
