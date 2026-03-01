@@ -134,4 +134,17 @@ INSERT INTO stops_info (stop_name, track_no, latitude, longitude)
 VALUES ('City Bus Stand', 0, 16.99145200, 73.29503900);
 
 
+DROP TABLE IF EXISTS admin_info;
+create table admin_info(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    admin_username varchar(100) not null,
+    admin_password varchar(15)
+
+);
+
+insert into admin_info(admin_username, admin_password)
+values('admin', '123456')
+
+
+
 

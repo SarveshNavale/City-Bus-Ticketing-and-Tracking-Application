@@ -31,6 +31,10 @@ def play():
 def backtohome():
     return render_template("homepage.html")
 
+@app.route('/admin_login')
+def admin():
+    return render_template("admin_login.html")
+
 @app.route('/backtohome')
 def backtohomee():
     return render_template("homepage.html")
@@ -952,5 +956,46 @@ def cleanup_on_shutdown():
 atexit.register(cleanup_on_shutdown)
 
 start_notification_service()
+
+
+
+
+
+#SHREYASH ROUTES AND LOGIC:
+#admin_login data
+
+
+
+@app.route('/admin_login', methods=['POST'])
+def admin_login():
+
+    username = request.form.get('admin_id')
+    password = request.form.get('password')
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute(
+        "SELECT * FROM admin_info WHERE admin_username=%s",
+        (username,)
+    )
+    admin = cursor.fetchone()
+
+    cursor.close()
+    db.close()
+
+    if admin and admin['admin_password'] == password:
+        return redirect('/tc_login')
+    else:
+        return "Invalid admin login ❌"
+    
+@app.route('/admin_login', methods=['GET'])
+def admin_login_page():
+    return render_template("admin_login.html")
+ 
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    return "tc_login.html"
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
