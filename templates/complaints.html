@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>View Complaints</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+
+/* ───────── GLOBAL ───────── */
+body{
+  margin:0;
+  font-family:'Hind Guntur', sans-serif;
+  background:#ffffff;
+  color:#333;
+}
+
+/* HEADER */
+.bluebg{
+  background-color:#6C64FF;
+  height:220px;
+  width:100%;
+  position:relative;
+}
+
+.backbutton{
+  position:absolute;
+  top:45px;
+  left:20px;
+  display:flex;
+  align-items:center;
+  gap:49px;
+}
+
+.topcircles{
+  position:absolute;
+  right:5px;
+  top:0;
+}
+
+/* CONTENT */
+.content{
+  padding:30px 18px 40px;
+  max-width:420px;
+  margin:auto;
+}
+
+.refresh-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.section-label{
+  font-size:18px;
+  color:#636363;
+  font-weight:600;
+}
+
+.refresh-btn{
+  border:none;
+  background:#f0f0ff;
+  color:#6C64FF;
+  padding:6px 14px;
+  border-radius:20px;
+  cursor:pointer;
+  font-family:'Hind Guntur';
+}
+
+/* CARD (UNCHANGED FROM TICKETS) */
+.ticket-card{
+  background:#ffffff;
+  border-radius:18px;
+  border:1px solid #e8e8f0;
+  margin-bottom:16px;
+  overflow:hidden;
+  box-shadow:0 2px 12px rgba(108,100,255,0.06);
+  animation:slideUp .35s ease both;
+}
+
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* TOP STRIP SAME COLOR */
+.route-strip{
+  background:linear-gradient(135deg,#6C64FF,#8f89ff);
+  padding:16px 18px;
+  text-align:center;
+}
+
+.stop-pill .label{
+  font-size:10px;
+  color:rgba(255,255,255,.7);
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  font-weight:600;
+}
+
+.stop-pill .name{
+  font-size:14px;
+  font-weight:700;
+  color:white;
+  margin-top:2px;
+}
+
+/* DETAILS */
+.ticket-details{
+  padding:14px 18px;
+}
+
+.detail-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.detail-item .d-label{
+  font-size:10px;
+  text-transform:uppercase;
+  color:#888;
+  font-weight:600;
+}
+
+.detail-item .d-value{
+  font-size:13px;
+  font-weight:600;
+  margin-top:2px;
+}
+
+.detail-item.full{
+  grid-column:1 / -1;
+}
+
+/* TICK BUTTON */
+.tick-btn{
+  width:90%;
+  margin:12px auto 16px;
+  display:block;
+  border:none;
+  background:#6C64FF;
+  color:white;
+  padding:10px;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.tick-btn:hover{
+  opacity:.9;
+}
+
+/* spinner */
+.spinner{
+  width:24px;
+  height:24px;
+  border:3px solid #ddd;
+  border-top-color:#6C64FF;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin:40px auto;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="bluebg">
+
+<a href="/select" style="text-decoration:none;color:inherit;">
+<div class="backbutton">
+    <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+    <p style="font-size:22px;font-family:'Hind Guntur';font-weight:600;color:white;">
+        View <br>
+        complaints
+    </p>
+</div>
+</a>
+
+<div class="topcircles">
+<img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}">
+</div>
+
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<div class="refresh-row">
+<span class="section-label">Complaints</span>
+<button class="refresh-btn" onclick="init()">Refresh</button>
+</div>
+
+<div id="complaints-container">
+<div class="spinner"></div>
+</div>
+
+</div>
+
+<script>
+
+/* ===== DUMMY DATA ===== */
+
+const complaints = [
+{
+ id:1,
+ comp_generator:"Sarvesh Navale",
+ comp_gen_no:"9763772464",
+ comp_time:"10:25 AM",
+ comp_status:"Pending"
+},
+{
+ id:2,
+ comp_generator:"Hrishikesh Patil",
+ comp_gen_no:"9728394991",
+ comp_time:"11:40 AM",
+ comp_status:"Checking"
+},
+{
+ id:3,
+ comp_generator:"Amit Sharma",
+ comp_gen_no:"9876543210",
+ comp_time:"01:15 PM",
+ comp_status:"Resolved"
+}
+];
+
+/* ───────── RENDER ───────── */
+
+function renderComplaints(list){
+
+ const container=document.getElementById('complaints-container');
+
+ container.innerHTML=list.map(c=>`
+
+ <div class="ticket-card">
+
+   <div class="route-strip">
+     <div class="stop-pill">
+       <div class="label">Complaint Status</div>
+       <div class="name">${c.comp_status}</div>
+     </div>
+   </div>
+
+   <div class="ticket-details">
+     <div class="detail-grid">
+
+       <div class="detail-item">
+         <div class="d-label">Complainant</div>
+         <div class="d-value">${c.comp_generator}</div>
+       </div>
+
+       <div class="detail-item">
+         <div class="d-label">Mobile</div>
+         <div class="d-value">${c.comp_gen_no}</div>
+       </div>
+
+       <div class="detail-item full">
+         <div class="d-label">Complaint Time</div>
+         <div class="d-value">${c.comp_time}</div>
+       </div>
+
+     </div>
+   </div>
+
+   <button class="tick-btn">✔ Mark Checked</button>
+
+ </div>
+
+ `).join('');
+}
+
+/* INIT */
+
+function init(){
+ document.getElementById('complaints-container').innerHTML='<div class="spinner"></div>';
+
+ setTimeout(()=>{
+   renderComplaints(complaints);
+ },500);
+}
+
+init();
+
+</script>
+
+</body>
+</html>
