@@ -7,36 +7,146 @@
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
-    html, body 
-    { margin:0; padding:0; font-family: 'Hind Guntur', sans-serif; }
-    .bluebg { background-color: #6C64FF; height: 190px; width: 100%; position: relative; }
-    .backbutton { position: absolute; top: 45px; left: 20px; display:flex; align-items:center; gap:49px; }
-    .topcircles { position:absolute; right:5px; top:0px; }
-    #map { width:100%; height: calc(100vh - 190px); }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
+
+    /* ── HEADER ── */
+    .bluebg {
+        background: linear-gradient(135deg, #6C64FF 0%, #8B84FF 100%);
+        height: 180px;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .circle1 {
+        position: absolute;
+        width: 190px; height: 190px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.10);
+        top: -55px; right: -45px;
+    }
+    .circle2 {
+        position: absolute;
+        width: 115px; height: 115px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.07);
+        top: 45px; right: 25px;
+    }
+
+    .backbutton {
+        position: absolute;
+        top: 45px;
+        left: 20px;
+        display: flex;
+        align-items: center;
+        gap: 49px;
+    }
+
+    .backbutton img {
+        width: 72px; height: 72px;
+        object-fit: contain;
+        display: block;
+    }
+
+    /* ── MAP ── */
+    #map { width: 100%; height: calc(100vh - 180px - 86px); }
 
     /* bus rectangle */
-    .bus-div{ background:#2ecc71; color:#fff; padding:3px 6px; border-radius:4px; font-weight:700; font-size:12px; text-align:center; border:1px solid rgba(0,0,0,0.15); }
+    .bus-div { background:#2ecc71; color:#fff; padding:3px 6px; border-radius:4px; font-weight:700; font-size:12px; text-align:center; border:1px solid rgba(0,0,0,0.15); }
+
+    /* ── NAV BAR ── */
+    .navwrap {
+        width: calc(100% - 32px);
+        height: 70px;
+        background: #6C64FF;
+        position: fixed;
+        bottom: 16px;
+        left: 16px;
+        border-radius: 24px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        box-shadow: 0 8px 30px rgba(108,100,255,0.35);
+        z-index: 999;
+    }
+
+    .navitem {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        color: rgba(255,255,255,0.65);
+        cursor: pointer;
+        text-decoration: none;
+        padding: 6px 14px;
+        border-radius: 16px;
+        transition: background 0.2s;
+    }
+
+    .navitem.active {
+        color: #fff;
+        background: rgba(255,255,255,0.18);
+    }
+
+    .navitem i {
+        font-size: 20px;
+        color: rgba(255,255,255,0.65);
+    }
+
+    .navitem.active i { color: #fff; }
   </style>
 </head>
 <body>
 
 <div class="bluebg">
-<a href="/backtohome" style="text-decoration: none; color: inherit;">
-  <div class="backbutton">
-    <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
-    <p style="font-size:22px; font-weight:600; color:white;">Map</p>
-  </div>
-</a>
+    <div class="circle1"></div>
+    <div class="circle2"></div>
 
-  <div class="topcircles">
-    <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" style="width:150px;">
-  </div>
+    <a href="/backtohome" style="text-decoration:none;color:inherit;outline:none;-webkit-tap-highlight-color:transparent;">
+        <div class="backbutton">
+            <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+            <p style="font-size:22px;font-weight:600;color:white;">Map</p>
+        </div>
+    </a>
 </div>
 
 <div id="map"></div>
+
+<!-- NAV BAR -->
+<div class="navwrap">
+
+    <a href="/backtohome" style="text-decoration: none; color: inherit;">
+        <div class="navitem">
+            <i class="fa-solid fa-house"></i>
+            <div>Home</div>
+        </div>
+    </a>
+
+    <div class="navitem active">
+        <i class="fa-solid fa-location-dot"></i>
+        <div>Map</div>
+    </div>
+
+    <a href="/play" style="text-decoration: none; color: inherit;">
+        <div class="navitem">
+            <i class="fa-solid fa-gamepad"></i>
+            <div>Play</div>
+        </div>
+    </a>
+
+    <div class="navitem" onclick="window.location.href='/faqs'">
+        <i class="fa-solid fa-circle-question"></i>
+        <div>FAQs</div>
+    </div>
+
+</div>
 
 <script>
 /* --------------- map setup --------------- */
@@ -99,15 +209,14 @@ var ROUTE_4 = [
 
 /* --------------- bus-stop icons: only shown at zoom >= 15 --------------- */
 var busStopIcon = L.icon({
-  iconUrl:'static/Assets/images/bus-stop.png', // simple relative path
+  iconUrl:'static/Assets/images/bus-stop.png',
   iconSize: [28,28],
   iconAnchor: [14,28],
   popupAnchor: [0,-26]
 });
 
-var stopMarkers = []; // keep references so we can add/remove depending on zoom
+var stopMarkers = [];
 
-// list of all stops (re-using your list) for showing icons when zoomed
 var stopsList = [
   {name:"City Bus Stand", lat:16.991452, lon:73.295039},
   {name:"Malnaka", lat:16.99064125770783, lon:73.30594553525175},
@@ -152,7 +261,7 @@ function updateStopMarkersVisibility() {
   }
 }
 map.on('zoomend', updateStopMarkersVisibility);
-updateStopMarkersVisibility(); // initial
+updateStopMarkersVisibility();
 
 /* --------------- Bus icon creation (small rectangle) --------------- */
 function makeBusDivIcon(busNo){
@@ -166,16 +275,13 @@ function makeBusDivIcon(busNo){
 }
 
 /* --------------- map: load buses from server and simulate --------------- */
-var buses = []; // runtime bus objects
+var buses = [];
 
-// helper: map route int (DB) or bus_no to route array - enforce strict mapping
 function routeArrayFor(dbRoute, busNo) {
-  // enforce bus_no rule first
   if (parseInt(busNo) === 101) return ROUTE_1;
   if (parseInt(busNo) === 102) return ROUTE_2;
   if (parseInt(busNo) === 103) return ROUTE_3;
   if (parseInt(busNo) === 98)  return ROUTE_4;
-  // fallback: if DB route provided (1..4), map those
   if (dbRoute === 1) return ROUTE_1;
   if (dbRoute === 2) return ROUTE_2;
   if (dbRoute === 3) return ROUTE_3;
@@ -183,11 +289,9 @@ function routeArrayFor(dbRoute, busNo) {
   return ROUTE_1;
 }
 
-// load buses once from server
 fetch('/get_buses').then(r=>r.json()).then(rows=>{
   rows.forEach(rw=>{
     var arr = routeArrayFor(rw.route, rw.bus_no);
-    // spawn index randomly on a route segment (point index)
     var spawnIdx = Math.floor(Math.random() * (arr.length - 1));
     var latlng = arr[spawnIdx];
 
@@ -196,13 +300,13 @@ fetch('/get_buses').then(r=>r.json()).then(rows=>{
       bus_no: rw.bus_no,
       no_plate: rw.no_plate,
       routeArr: arr,
-      idx: spawnIdx,      // current point index (we will move toward next)
-      progress: 0,        // 0..1 progress between idx and idx+1
-      forward: true,      // direction along route
+      idx: spawnIdx,
+      progress: 0,
+      forward: true,
       waiting: false,
-      speed: 0.002 + Math.random()*0.002, // movement per tick
+      speed: 0.002 + Math.random()*0.002,
       marker: L.marker(latlng, { icon: makeBusDivIcon(rw.bus_no) }).addTo(map),
-      lastPostAt: 0      // timestamp of last POST to server
+      lastPostAt: 0
     };
     bus.marker.bindPopup("Bus: " + bus.bus_no + "<br>Plate: " + bus.no_plate);
     buses.push(bus);
@@ -210,8 +314,8 @@ fetch('/get_buses').then(r=>r.json()).then(rows=>{
 });
 
 /* --------------- Simulation loop --------------- */
-var tickMs = 120; // movement tick
-var postIntervalMs = 5000; // POST updates to DB every 5 seconds
+var tickMs = 120;
+var postIntervalMs = 5000;
 
 setInterval(function(){
   var now = Date.now();
@@ -219,13 +323,9 @@ setInterval(function(){
     var arr = b.routeArr;
     if (!arr || arr.length < 2) return;
 
-    // compute next index depending on direction
     var nextIdx = b.forward ? b.idx + 1 : b.idx - 1;
 
-    // handle bounds: if next out of range, flip direction but stay on last point and wait
     if (nextIdx >= arr.length) {
-      // reached final destination (end)
-      // ensure marker fixed at end, then flip direction for return
       b.idx = arr.length - 1;
       b.forward = false;
       b.progress = 0;
@@ -236,7 +336,6 @@ setInterval(function(){
       return;
     }
     if (nextIdx < 0) {
-      // reached start again
       b.idx = 0;
       b.forward = true;
       b.progress = 0;
@@ -248,8 +347,6 @@ setInterval(function(){
     }
 
     if (b.waiting) {
-      // still waiting at a stop
-      // but we might want to send periodic DB updates while waiting too (respect 5s rule)
       if (now - b.lastPostAt >= postIntervalMs) {
         postBusLocation(b);
         b.lastPostAt = now;
@@ -257,36 +354,25 @@ setInterval(function(){
       return;
     }
 
-    // move fractionally between arr[b.idx] and arr[nextIdx]
     var a = arr[b.idx];
     var c = arr[nextIdx];
 
     b.progress += b.speed;
     if (b.progress >= 1) {
-      // arrive at nextIdx exactly
       b.idx = nextIdx;
       b.progress = 0;
-
-      // set marker exact position
       b.marker.setLatLng([c[0], c[1]]);
-
-      // pause at this stop for 20-30s
       b.waiting = true;
       setTimeout(()=>{ b.waiting = false; }, 20000 + Math.random()*10000);
-
-      // send DB update immediately upon arrive (but still respect 5s throttle)
       if (now - b.lastPostAt >= postIntervalMs) {
         postBusLocation(b);
         b.lastPostAt = now;
       }
       return;
     } else {
-      // interpolated position
       var lat = a[0] + (c[0] - a[0]) * b.progress;
       var lon = a[1] + (c[1] - a[1]) * b.progress;
       b.marker.setLatLng([lat, lon]);
-
-      // send periodic updates only every postIntervalMs
       if (now - b.lastPostAt >= postIntervalMs) {
         postBusLocation(b);
         b.lastPostAt = now;
@@ -309,27 +395,17 @@ function postBusLocation(bus) {
   }).catch(()=>{ /* ignore network errors */ });
 }
 
-
 function sendUserLocationToServer(lat, lon) {
     fetch('/update_user_location_from_map', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            latitude: lat,
-            longitude: lon
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ latitude: lat, longitude: lon })
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            console.log('📍 Location sent for notifications');
-        }
+        if (data.success) { console.log('📍 Location sent for notifications'); }
     })
-    .catch(error => {
-        console.error('Error sending location:', error);
-    });
+    .catch(error => { console.error('Error sending location:', error); });
 }
 
 if ("geolocation" in navigator) {
@@ -337,24 +413,14 @@ if ("geolocation" in navigator) {
     function(position) {
       var lat = position.coords.latitude;
       var lon = position.coords.longitude;
-      
-      // Update marker on map
       if (!window.userMarker) {
         window.userMarker = L.marker([lat, lon]).addTo(map).bindPopup('Your Location');
       }
       window.userMarker.setLatLng([lat, lon]);
-      
-      // Send to server for notifications
       sendUserLocationToServer(lat, lon);
-    }, 
-    function(error) {
-      console.log('Geolocation error:', error.message);
-    }, 
-    { 
-      enableHighAccuracy: true,
-      maximumAge: 30000,
-      timeout: 27000
-    }
+    },
+    function(error) { console.log('Geolocation error:', error.message); },
+    { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 }
   );
 }
 </script>
