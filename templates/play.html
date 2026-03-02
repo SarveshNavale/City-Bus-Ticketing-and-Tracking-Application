@@ -1,26 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@600&display=swap" rel="stylesheet">
 <title>Play</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
+* { box-sizing: border-box; }
 
-html, body {
+body {
     margin: 0;
     padding: 0;
+    font-family: "Nunito", sans-serif;
+    background: #F0F2FF;
+    min-height: 100vh;
 }
 
-/* HEADER BACKGROUND */
+/* ── HEADER ── */
 .bluebg {
-    background-color: #6C64FF;
-    height: 220px;
+    background: linear-gradient(135deg, #6C64FF 0%, #8B84FF 100%);
+    height: 180px;
     width: 100%;
     position: relative;
+    overflow: hidden;
 }
 
-/* BACK BUTTON */
+.circle1 {
+    position: absolute;
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.10);
+    top: -55px;
+    right: -45px;
+}
+.circle2 {
+    position: absolute;
+    width: 115px;
+    height: 115px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    top: 45px;
+    right: 25px;
+}
+
+/* exact same as notifications page */
 .backbutton {
     position: absolute;
     top: 45px;
@@ -31,55 +56,193 @@ html, body {
 }
 
 .backbutton img {
-    width: 32px;
-    height: 32px;
+    width: 72px;
+    height: 72px;
     object-fit: contain;
-    display: block;   /* ✅ FIXED */
+    display: block;
 }
 
-/* CIRCLES IMAGE */
-.topcircles {
-    position: absolute;
-    right: 5px;
-    top: 0px;
+/* ── SLIDE UP ANIMATION ── */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
-/* GAME BOX */
-.smallgamebox {
-    width: 120px;
-    height: 120px;
-    background-color: #d1d1d1;
-    border-radius: 4px;
+.content {
+    margin: -28px 16px 100px 16px;
+    position: relative;
+    z-index: 10;
+}
+
+.header-tagline {
+    font-size: 23px;
+    font-weight: 800;
+    color: #333;
+    margin: 24px 4px 6px 4px;
+    animation: slideUp 0.4s ease both;
+}
+
+.section-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #AAAACC;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0 4px 14px 4px;
+    animation: slideUp 0.4s ease 0.05s both;
+}
+
+/* ── GAME GRID ── */
+.game-grid {
     display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.smallgamebox img {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-}
-
-/* AD BOX */
-.advertisebig {
-    background-color: #d1d1d1;
-    height: 230px;
-    width: 350px;
-    max-width: 90%;
-    margin: 0 auto;
-    border-radius: 4px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 28px;
 }
 
 .gamecard {
     text-decoration: none;
-    color: black;
-    margin-right: 15px;
+    color: #333;
+    width: calc(50% - 7px);
+    animation: slideUp 0.4s ease both;
 }
 
+.gamecard:nth-child(1) { animation-delay: 0.10s; }
+.gamecard:nth-child(2) { animation-delay: 0.17s; }
+.gamecard:nth-child(3) { animation-delay: 0.24s; }
+.gamecard:nth-child(4) { animation-delay: 0.31s; }
+
+.smallgamebox {
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: 0 4px 18px rgba(108,100,255,0.10);
+    height: 130px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.15s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.smallgamebox:active { transform: scale(0.96); }
+
+.game-live-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #6C64FF;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 20px;
+    letter-spacing: 0.4px;
+    font-family: "Nunito", sans-serif;
+}
+
+.game-soon-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #FFB443;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 20px;
+    letter-spacing: 0.4px;
+    font-family: "Nunito", sans-serif;
+}
+
+.game-name {
+    font-size: 14px;
+    font-weight: 800;
+    margin: 10px 0 2px 4px;
+    color: #333;
+}
+
+.game-desc {
+    font-size: 11px;
+    font-weight: 600;
+    color: #AAAACC;
+    margin: 0 0 0 4px;
+}
+
+/* ── AD BOX ── */
+.advertise-card {
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: 0 4px 18px rgba(108,100,255,0.10);
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    animation: slideUp 0.4s ease 0.38s both;
+}
+
+.advertise-card i {
+    font-size: 32px;
+    color: #DDD;
+}
+
+.advertise-card p {
+    font-size: 14px;
+    font-weight: 800;
+    color: #CCCCCC;
+    margin: 0;
+}
+
+.sponsor-label {
+    animation: slideUp 0.4s ease 0.35s both;
+}
+
+/* ── NAV BAR ── */
+.navwrap {
+    width: calc(100% - 32px);
+    height: 70px;
+    background: #6C64FF;
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    border-radius: 24px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 8px 30px rgba(108,100,255,0.35);
+    z-index: 999;
+}
+
+.navitem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.65);
+    cursor: pointer;
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 16px;
+    transition: background 0.2s;
+}
+
+.navitem.active {
+    color: #fff;
+    background: rgba(255,255,255,0.18);
+}
+
+.navitem i {
+    font-size: 20px;
+    color: rgba(255,255,255,0.65);
+}
+
+.navitem.active i { color: #fff; }
 </style>
 </head>
 
@@ -87,64 +250,112 @@ html, body {
 
 <!-- HEADER -->
 <div class="bluebg">
+    <div class="circle1"></div>
+    <div class="circle2"></div>
 
-<a href="/backtohome" style="text-decoration:none;color:inherit;outline:none;-webkit-tap-highlight-color:transparent;">
-<div class="backbutton">
-    <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
-    <p style="font-size:22px;font-family:'Hind Guntur';font-weight:600;color:white;">
-        Play
-    </p>
-</div>
-</a>
-
-<div class="topcircles">
-    <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" style="width:150px;">
-</div>
-
+    <a href="/backtohome" style="text-decoration:none;color:inherit;outline:none;-webkit-tap-highlight-color:transparent;">
+        <div class="backbutton">
+            <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+            <p style="font-size:22px;font-weight:600;color:white;">Play</p>
+        </div>
+    </a>
 </div>
 
 <!-- CONTENT -->
-<div style="padding-left:20px; padding-top:20px;">
+<div class="content">
+    <br><br>
+    <p class="header-tagline">Make your wait fun!</p>
+    <p class="section-label">Games</p>
 
-<p style="font-family:'Hind Guntur'; color:#636363; font-size:20px;">
-Make your waiting time more enjoyable!
-</p>
+    <div class="game-grid">
 
-<p style="font-family:'Hind Guntur'; color:#636363; margin-top:25px;">
-Play Interesting games:
-</p>
+        <!-- Dino Rush — LIVE -->
+        <a href="{{ url_for('dino') }}" class="gamecard">
+            <div class="smallgamebox">
+                <img src="{{ url_for('static', filename='games/dino/icon.png') }}" style="width:80px; height:80px; object-fit:contain;">
+                <span class="game-live-badge">LIVE</span>
+            </div>
+            <p class="game-name">Dino Rush</p>
+            <p class="game-desc">Endless runner</p>
+        </a>
 
-<div style="display:flex; margin-top:10px;">
+        <!-- Maze Runner — coming soon -->
+        <div class="gamecard" onclick="mazeAlert()" style="cursor:pointer;">
+            <div class="smallgamebox">
+                <i class="fa-solid fa-border-all" style="font-size:40px; color:#D0CEFF;"></i>
+                <span class="game-soon-badge">SOON</span>
+            </div>
+            <p class="game-name">Maze Runner</p>
+            <p class="game-desc">Find your way out</p>
+        </div>
 
-<a href="{{ url_for('dino') }}" class="gamecard">
-    <div class="smallgamebox">
-        <img src="{{ url_for('static', filename='games/dino/icon.png') }}">
+        <!-- Word Scramble — coming soon -->
+        <div class="gamecard" onclick="comingSoon()" style="cursor:pointer;">
+            <div class="smallgamebox">
+                <i class="fa-solid fa-font" style="font-size:40px; color:#D0CEFF;"></i>
+                <span class="game-soon-badge">SOON</span>
+            </div>
+            <p class="game-name">Word Scramble</p>
+            <p class="game-desc">Unscramble letters</p>
+        </div>
+
+        <!-- Tap Frenzy — coming soon -->
+        <div class="gamecard" onclick="comingSoon()" style="cursor:pointer;">
+            <div class="smallgamebox">
+                <i class="fa-solid fa-bolt" style="font-size:40px; color:#D0CEFF;"></i>
+                <span class="game-soon-badge">SOON</span>
+            </div>
+            <p class="game-name">Tap Frenzy</p>
+            <p class="game-desc">Speed challenge</p>
+        </div>
+
     </div>
-    <p style="font-family:'Hind Guntur'; font-size:14px; margin:5px 0;">
-        Dino Rush
-    </p>
-</a>
 
-<div onclick="mazeAlert()" style="cursor:pointer;">
-    <div class="smallgamebox"></div>
-    <p style="font-family:'Hind Guntur'; font-size:14px; margin:5px 0;">
-        Maze Runner
-    </p>
-</div>
+    <p class="section-label sponsor-label">Sponsor</p>
+
+    <!-- AD BOX -->
+    <div class="advertisebig advertise-card">
+        <i class="fa-regular fa-rectangle-ad"></i>
+        <p>Advertise Here</p>
+    </div>
 
 </div>
 
-<div class="advertisebig" style="margin-top:40px;">
-<p style="font-family:'Hind Guntur'; font-weight:600; color:#1c1c1c;">
-Advertise
-</p>
-</div>
+<!-- NAV BAR -->
+<div class="navwrap">
+
+    <a href="/backtohome" style="text-decoration: none; color: inherit;">
+        <div class="navitem">
+            <i class="fa-solid fa-house"></i>
+            <div>Home</div>
+        </div>
+    </a>
+
+    <a href="/map" style="text-decoration: none; color: inherit;">
+        <div class="navitem">
+            <i class="fa-solid fa-location-dot"></i>
+            <div>Map</div>
+        </div>
+    </a>
+
+    <div class="navitem active">
+        <i class="fa-solid fa-gamepad"></i>
+        <div>Play</div>
+    </div>
+
+    <div class="navitem" onclick="window.location.href='/faqs'">
+        <i class="fa-solid fa-circle-question"></i>
+        <div>FAQs</div>
+    </div>
 
 </div>
 
 <script>
-function mazeAlert(){
+function mazeAlert() {
     alert("🚧 Game is in progress. Coming soon!");
+}
+function comingSoon() {
+    alert("🚧 Coming soon! Stay tuned.");
 }
 </script>
 
