@@ -1,226 +1,318 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>FAQs</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
-  :root{
-    --blue:#6C64FF;
-    --white:#fff;
-    --grey:#e4e4e4;
-    --text:#333;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{
-    background:#ffffff;     
-    font-family:"Poppins",sans-serif;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #F0F2FF;
+    font-family: "Nunito", sans-serif;
+    min-height: 100vh;
   }
 
-  .page{
-    width:100%;              
-    max-width:100%;
-  }
-
-   /* header */
-    .bluebg {
-    background-color: #6C64FF;
-    height: 220px;
+  /* ── HEADER ── */
+  .bluebg {
+    background: linear-gradient(135deg, #6C64FF 0%, #8B84FF 100%);
+    height: 180px;
     width: 100%;
     position: relative;
-}
+    overflow: hidden;
+  }
 
-.backbutton {
+  .circle1 {
+    position: absolute;
+    width: 190px; height: 190px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.10);
+    top: -55px; right: -45px;
+  }
+  .circle2 {
+    position: absolute;
+    width: 115px; height: 115px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    top: 45px; right: 25px;
+  }
+
+  .backbutton {
     position: absolute;
     top: 45px;
     left: 20px;
     display: flex;
     align-items: center;
-    gap: 49px;   
-}
+    gap: 49px;
+  }
 
-.backbutton img {
-    width: 100%;
-    height: 100%;
+  .backbutton img {
+    width: 42px; height: 42px;
     object-fit: contain;
-    display: flaot;   
-}
-
-.topcircles {
-    position: absolute;
-    right: 5px;
-    top: 0px;
-}
-
-  /* CONTENT */
-  .content{
-    background:var(--white);
-    margin-top:-20px;
-    padding:30px 20px;
-    border-radius:18px 18px 0 0;
-    min-height:100vh;          
+    display: block;
   }
 
-  .faq-list{
-    display:grid;
-    gap:14px;
-    max-width:900px;         
-    margin:0 auto;               
+  /* ── CONTENT ── */
+  .content {
+    margin: -20px 16px 100px 16px;
+    position: relative;
+    z-index: 10;
   }
 
-  .faq-item{
-    background:#fff;
-    border:1px solid #ddd;
-    border-radius:12px;
-    padding:16px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.06);
+  /* ── SLIDE UP ANIMATION ── */
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
-  .faq-q{
-    display:flex;
-    justify-content:space-between;
-    font-weight:600;
-    color:#333;
-    cursor:pointer;
+  /* ── FAQ ITEMS ── */
+  .faq-item {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(108,100,255,0.08);
+    padding: 18px 18px;
+    margin-bottom: 12px;
+    animation: slideUp 0.35s ease both;
   }
 
-  .faq-a{
-    margin-top:10px;
-    color:#555;
-    line-height:1.6;
-    display:none;
+  .faq-q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 800;
+    color: #333;
+    cursor: pointer;
+    gap: 12px;
   }
 
-  .faq-a.show{
-    display:block;
+  .faq-q .toggle-icon {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: #F0F2FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+    color: #6C64FF;
+    font-weight: 900;
+    transition: background 0.2s, transform 0.2s;
   }
-</style>
 
+  .faq-q.open .toggle-icon {
+    background: #6C64FF;
+    color: #fff;
+    transform: rotate(45deg);
+  }
+
+  .faq-a {
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #777;
+    line-height: 1.7;
+    display: none;
+    padding-top: 10px;
+    border-top: 1px dashed #EEEEEE;
+  }
+
+  .faq-a.show { display: block; }
+
+  /* ── NAV BAR ── */
+  .navwrap {
+    width: calc(100% - 32px);
+    height: 70px;
+    background: #6C64FF;
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    border-radius: 24px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 8px 30px rgba(108,100,255,0.35);
+    z-index: 999;
+  }
+
+  .navitem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.65);
+    cursor: pointer;
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 16px;
+    transition: background 0.2s;
+  }
+
+  .navitem.active {
+    color: #fff;
+    background: rgba(255,255,255,0.18);
+  }
+
+  .navitem i {
+    font-size: 20px;
+    color: rgba(255,255,255,0.65);
+  }
+
+  .navitem.active i { color: #fff; }
+  </style>
 </head>
 
 <body>
-  <div class="page">
 
-    <!-- HEADER -->
-     <div class="bluebg">
-    <a href="/backtohome" style="text-decoration: none; color: inherit; outline: none; -webkit-tap-highlight-color: transparent;">
+<!-- HEADER -->
+<div class="bluebg">
+  <div class="circle1"></div>
+  <div class="circle2"></div>
+
+  <a href="/backtohome" style="text-decoration:none;color:inherit;outline:none;-webkit-tap-highlight-color:transparent;">
     <div class="backbutton">
-        <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
-        <p style="font-size: 22px; font-family: 'Hind Guntur'; font-weight:600; color:white;"> FAQs</p>
+      <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+      <p style="font-size:22px;font-weight:600;color:white;">FAQs</p>
     </div>
-    </a>
+  </a>
+</div>
 
-    <div class="topcircles">
-        <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" style="width:150px;">
+<!-- CONTENT -->
+<div class="content">
+  <div class="faq-list" id="faqList" style="margin-top: 24px;"></div>
+</div>
+
+<!-- NAV BAR -->
+<div class="navwrap">
+
+  <a href="/backtohome" style="text-decoration: none; color: inherit;">
+    <div class="navitem">
+      <i class="fa-solid fa-house"></i>
+      <div>Home</div>
     </div>
+  </a>
+
+  <a href="/map" style="text-decoration: none; color: inherit;">
+    <div class="navitem">
+      <i class="fa-solid fa-location-dot"></i>
+      <div>Map</div>
+    </div>
+  </a>
+
+  <a href="/play" style="text-decoration: none; color: inherit;">
+    <div class="navitem">
+      <i class="fa-solid fa-gamepad"></i>
+      <div>Play</div>
+    </div>
+  </a>
+
+  <div class="navitem active">
+    <i class="fa-solid fa-circle-question"></i>
+    <div>FAQs</div>
+  </div>
 
 </div>
 
+<script>
+const faqs = [
+  {
+    q: "How do I register on the app?",
+    a: "Go to the Registration page, enter your name, age, phone number, email, and password. You can also sign in using Google."
+  },
+  {
+    q: "How do I login if I already have an account?",
+    a: "On the Registration page, tap 'Login' at the bottom and enter your registered phone number or email."
+  },
+  {
+    q: "How do I track a bus location?",
+    a: "Tap 'Track Bus' from the Home Page, select your route, and the app will show live GPS movement of the bus on the map."
+  },
+  {
+    q: "How do I buy a ticket?",
+    a: "From the Home Page, select 'Buy Ticket', choose your start stop and destination stop, enter number of tickets, and pay using UPI or card."
+  },
+  {
+    q: "Where can I view my purchased tickets?",
+    a: "Go to 'View Ticket' from the Home Page bottom navigation bar. All valid tickets appear there."
+  },
+  {
+    q: "What information is shown on a ticket?",
+    a: "Each ticket includes: From stop, To stop, Number of tickets, Ticket number, Amount paid, Issue date & time, and QR/Barcode for verification."
+  },
+  {
+    q: "How do I buy a pass?",
+    a: "From the Home Page, select 'Buy Pass', choose pass type (Daily / Weekly / Monthly), enter number of members, confirm details, and pay."
+  },
+  {
+    q: "How do I view my pass after buying?",
+    a: "Go to 'View Pass' from the bottom menu. Your active pass will show with pass holder details, validity, and QR code."
+  },
+  {
+    q: "Why is bus tracking delayed or inaccurate sometimes?",
+    a: "Tracking may be slow due to weak GPS on the bus or network issues. Refresh after 10–20 seconds or check signal strength."
+  },
+  {
+    q: "How do I file a complaint?",
+    a: "Open Complaint page, enter your issue and submit. TC (Ticket Checker) can scan your ticket barcode and verify your complaint."
+  },
+  {
+    q: "How do I check complaint status?",
+    a: "Go to 'Complaint View' to see complaint date, bus number, route, and status (Pending / In-progress / Closed)."
+  },
+  {
+    q: "What payment methods are supported?",
+    a: "UPI, Debit Card, Credit Card, Net Banking, and Wallets are supported."
+  },
+  {
+    q: "What if payment fails but money is deducted?",
+    a: "Your ticket will auto-generate once payment confirms. If not, the amount will be refunded within 2–5 days."
+  },
+  {
+    q: "Do I need internet for this app?",
+    a: "Internet is required for buying tickets, tracking buses, viewing complaints, and updating profile. Downloaded tickets and passes can be shown offline."
+  },
+  {
+    q: "Is my data safe?",
+    a: "Yes. Your data is encrypted and securely stored. Only authorized transport staff can verify your QR ticket or pass."
+  }
+];
 
-    <!-- CONTENT -->
-    <div class="content">
-      <div class="faq-list" id="faqList"></div>
+const faqList = document.getElementById("faqList");
+
+faqs.forEach((item, i) => {
+  const box = document.createElement("div");
+  box.className = "faq-item";
+  box.style.animationDelay = (i * 0.04) + "s";
+
+  box.innerHTML = `
+    <div class="faq-q" data-i="${i}">
+      <span>${item.q}</span>
+      <span class="toggle-icon">+</span>
     </div>
+    <div class="faq-a" id="ans-${i}">${item.a}</div>
+  `;
 
-  </div>
+  faqList.appendChild(box);
+});
 
-  <script>
-  const faqs = [
-    {
-      q: "How do I register on the app?",
-      a: "Go to the Registration page, enter your name, age, phone number, email, and password. You can also sign in using Google."
-    },
-    {
-      q: "How do I login if I already have an account?",
-      a: "On the Registration page, tap “Login” at the bottom and enter your registered phone number or email."   
-   },
-     {
-      q: "How do I track a bus location?",
-      a: "Tap “Track Bus” from the Home Page, select your route, and the app will show live GPS movement of the bus on the map."
-    },
-    {
-      q: "How do I buy a ticket?",
-      a: "From the Home Page, select “Buy Ticket”, choose your start stop and destination stop, enter number of tickets, and pay using UPI or card."
-    },
-    {
-      q: "Where can I view my purchased tickets?",
-      a: "Go to “View Ticket” from the Home Page bottom navigation bar. All valid tickets appear there."
-    },
-    {
-      q: "What information is shown on a ticket?",
-      a: "Each ticket includes: From stop, To stop, Number of tickets, Ticket number, Amount paid, Issue date & time, and QR/Barcode for verification."
-    },
-    {
-      q: "How do I buy a pass?",
-      a: "From the Home Page, select “Buy Pass”, choose pass type (Daily / Weekly / Monthly), enter number of members, confirm details, and pay."
-    },
-    {
-      q: "How do I view my pass after buying?",
-      a: "Go to “View Pass” from the bottom menu. Your active pass will show with pass holder details, validity, and QR code."
-    },
-    
-    {
-      q: "Why is bus tracking delayed or inaccurate sometimes?",
-      a: "Tracking may be slow due to weak GPS on the bus or network issues. Refresh after 10–20 seconds or check signal strength."
-    },
-    {
-      q: "How do I file a complaint?",
-      a: "Open Complaint page, enter your issue and submit. TC (Ticket Checker) can scan your ticket barcode and verify your complaint."
-    },
-    {
-      q: "How do I check complaint status?",
-      a: "Go to “Complaint View” to see complaint date, bus number, route, and status (Pending / In-progress / Closed)."
-    },
-    {
-      q: "What payment methods are supported?",
-      a: "UPI, Debit Card, Credit Card, Net Banking, and Wallets are supported."
-    },
-    {
-      q: "What if payment fails but money is deducted?",
-      a: "Your ticket will auto-generate once payment confirms. If not, the amount will be refunded within 2–5 days."
-    },
-    
-    {
-      q: "Do I need internet for this app?",
-      a: "Internet is required for buying tickets, tracking buses, viewing complaints, and updating profile. Downloaded tickets and passes can be shown offline."
-    },
-    {
-      q: "Is my data safe?",
-      a: "Yes. Your data is encrypted and securely stored. Only authorized transport staff can verify your QR ticket or pass."
-    }
-  ];
+faqList.addEventListener("click", e => {
+  const q = e.target.closest(".faq-q");
+  if (!q) return;
 
-    const faqList = document.getElementById("faqList");
+  const i = q.dataset.i;
+  const ans = document.getElementById("ans-" + i);
+  const icon = q.querySelector(".toggle-icon");
 
-    faqs.forEach((item,i)=>{
-      const box = document.createElement("div");
-      box.className = "faq-item";
+  ans.classList.toggle("show");
+  q.classList.toggle("open");
+  icon.textContent = ans.classList.contains("show") ? "×" : "+";
+});
+</script>
 
-      box.innerHTML = `
-        <div class="faq-q" data-i="${i}">
-          <span>${item.q}</span>
-          <span>+</span>
-        </div>
-        <div class="faq-a" id="ans-${i}">${item.a}</div>
-      `;
-
-      faqList.appendChild(box);
-    });
-
-    faqList.addEventListener("click", e=>{
-      const q = e.target.closest(".faq-q");
-      if(!q) return;
-
-      const i = q.dataset.i;
-      const ans = document.getElementById("ans-"+i);
-      const sign = q.querySelector("span:last-child");
-
-      ans.classList.toggle("show");
-      sign.textContent = ans.classList.contains("show") ? "−" : "+";
-    });
-  </script>
 </body>
 </html>
