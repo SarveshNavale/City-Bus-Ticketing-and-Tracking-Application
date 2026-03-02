@@ -4,157 +4,416 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rotary Bus - Register</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: "Nunito", sans-serif;
+    background: #F0F2FF;
+    min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.header-gradient {
+    background: linear-gradient(135deg, #6C64FF 0%, #8B84FF 100%);
+    padding: 48px 24px 80px 24px;
+    border-radius: 0 0 36px 36px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+.circle1 {
+    position: absolute;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.10);
+    top: -60px; right: -50px;
+}
+.circle2 {
+    position: absolute;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    top: 50px; right: 30px;
+}
+
+.bus-animation {
+    font-size: 42px;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 12px;
+}
+
+.header-gradient h1 {
+    font-size: 28px;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.header-gradient p {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.75);
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+/* ── PANELS ── */
+.content {
+    margin: -36px 16px 40px 16px;
+    position: relative;
+    z-index: 10;
+}
+
+.panel {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 4px 24px rgba(108,100,255,0.12);
+    padding: 28px 22px;
+    margin-bottom: 16px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: #333;
+    margin-bottom: 22px;
+}
+
+/* ── FORM INPUTS ── */
+.form-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #555;
+    display: block;
+    margin-bottom: 7px;
+}
+
+.form-control {
+    width: 100%;
+    height: 50px;
+    background: #F0F2FF;
+    border: none;
+    border-radius: 14px;
+    padding: 0 16px;
+    font-size: 14px;
+    font-family: "Nunito", sans-serif;
+    font-weight: 600;
+    color: #333;
+    outline: none;
+    margin-bottom: 16px;
+    transition: box-shadow 0.2s;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 3px rgba(108,100,255,0.2);
+}
+
+.form-control::placeholder { color: #BBBBBB; }
+
+/* ── BUTTONS ── */
+.btn-primary-custom {
+    width: 100%;
+    height: 52px;
+    background: linear-gradient(135deg, #6C64FF, #8B84FF);
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    font-size: 15px;
+    font-family: "Nunito", sans-serif;
+    font-weight: 800;
+    cursor: pointer;
+    margin-bottom: 14px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 18px rgba(108,100,255,0.30);
+}
+
+.btn-primary-custom:active {
+    transform: scale(0.98);
+}
+
+.btn-google {
+    width: 100%;
+    height: 52px;
+    background: #fff;
+    color: #444;
+    border: 2px solid #E8E8F0;
+    border-radius: 16px;
+    font-size: 15px;
+    font-family: "Nunito", sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-google i { color: #EA4335; }
+
+/* ── DIVIDER ── */
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 4px 0 14px 0;
+    color: #CCCCCC;
+    font-size: 13px;
+    font-weight: 700;
+}
+.divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #EEEEEE;
+}
+
+/* ── LOGIN TOGGLE ── */
+.login-link {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #888;
+    margin-top: 4px;
+}
+.login-link a {
+    color: #6C64FF;
+    text-decoration: none;
+    font-weight: 800;
+}
+
+/* ── LOGIN TYPE SELECTOR ── */
+.login-type-selector {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.login-type-btn {
+    flex: 1;
+    height: 44px;
+    border-radius: 12px;
+    border: 2px solid #E8E8F0;
+    background: #fff;
+    font-family: "Nunito", sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.login-type-btn.active {
+    border-color: #6C64FF;
+    background: #F0F2FF;
+    color: #6C64FF;
+}
+
+/* ── FEATURES ── */
+.features-panel {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 4px 24px rgba(108,100,255,0.10);
+    padding: 28px 22px;
+    margin-bottom: 16px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #F0F2FF;
+}
+.feature-item:last-child { border-bottom: none; }
+
+.feature-icon-wrap {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: #F0F2FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 17px;
+    color: #6C64FF;
+}
+
+.feature-item h5 {
+    font-size: 14px;
+    font-weight: 800;
+    color: #333;
+    margin-bottom: 3px;
+}
+
+.feature-item p {
+    font-size: 12px;
+    font-weight: 600;
+    color: #AAAACC;
+    margin: 0;
+}
+
+/* ── TC LINK ── */
+.tc-link {
+    text-align: right;
+    padding: 0 20px 24px 0;
+    opacity: 0.4;
+    transition: opacity 0.3s;
+}
+.tc-link:hover { opacity: 1; }
+.tc-link span {
+    color: #6C64FF;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.d-none { display: none; }
+</style>
 </head>
 <body>
-    <div class="container-fluid p-0">
-        <div class="main-container">
-            <header class="header-gradient text-center">
-                <img src="static/Assets/images/Just-circles.png" class="header-corner-img" alt="">
-                <div class="bus-animation">
-                    <i class="fas fa-bus"></i>
-                </div>
-                <h1 class="display-5 fw-bold mb-3" style="color: white;">Rotary Bus</h1>
-                <p class="mb-0 mx-auto" style="max-width: 700px; color: white; font-size: 1.1rem;">
-                    Register for real-time bus tracking, digital ticketing, and seamless city travel
-                </p>
-            </header>
-            
-            <div class="row g-0">
-                <div class="container py-4">
-                    <div class="registration-panel" id="registrationPanel">
-                        <h2 class="section-title mb-4">Create Account</h2>
-                        <form id="registrationForm">
-                            <div class="mb-4">
-                                <label for="name" class="form-label fw-semibold">Full Name</label>
-                                <input type="text" class="form-control" id="name" placeholder="Enter your full name" required>
-                            </div>
-                            <div class="mb-4">
-                                <label for="mobile" class="form-label fw-semibold">Mobile Number</label>
-                                <input type="tel" class="form-control" id="mobile" placeholder="Enter your mobile number" required>
-                            </div>
-                            <div class="mb-4">
-                                <label for="age" class="form-label fw-semibold">Age</label>
-                                <input type="number" class="form-control" id="age" placeholder="Enter your age" min="12" max="100" required>
-                            </div>
-                            <div class="mb-4">
-                                <label for="email" class="form-label fw-semibold">Email Address</label>
-                                <input type="email" class="form-control" id="email" placeholder="Enter your email address" required>
-                            </div>
-                            <div class="mb-4">
-                                <label for="password" class="form-label fw-semibold">Password</label>
-                                <input type="password" class="form-control" id="password" placeholder="Create a password (min 6 characters)" required>
-                            </div>>
-                            <button type="submit" class="btn btn-primary-custom w-100 mb-3">Create Account</button>
-                            <div class="divider">
-                                <span>or</span>
-                            </div>
-                            <button type="button" class="btn btn-google mb-4 w-100">
-                                <i class="fab fa-google me-2"></i> Continue with Google
-                            </button>
-                            <div class="login-link">
-                                Already a user? <a href="#" id="showLogin">Log In</a>
-                            </div>
-                        </form>
-                    </div>
 
-                    <div class="login-panel" id="loginLink">
-                        <h2 class="section-title mb-4">Log In</h2>
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">Select Login Method</label>
-                            <div class="login-type-selector d-flex justify-content-around">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="loginMethod" id="mobileLogin" checked>
-                                    <label class="form-check-label" for="mobileLogin">
-                                        Mobile
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="loginMethod" id="emailLogin">
-                                    <label class="form-check-label" for="emailLogin">
-                                        Email
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-4" id="mobileLoginSection">
-                            <label for="loginMobile" class="form-label fw-semibold">Mobile Number</label>
-                            <input type="tel" class="form-control" id="loginMobile" placeholder="Enter your registered mobile number">
-                        </div>
-                        <div class="mb-4 d-none" id="emailLoginSection">
-                            <label for="loginEmail" class="form-label fw-semibold">Email Address</label>
-                            <input type="email" class="form-control" id="loginEmail" placeholder="Enter your registered email address">
-                        </div>
-                        <div class="mb-4">
-                            <label for="loginPassword" class="form-label fw-semibold">Password</label>
-                            <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password">
-                        </div>
-                        <button class="btn btn-primary-custom w-100 mb-4" id="loginBtn">Log In</button>
-                        <div class="divider">
-                            <span>or</span>
-                        </div>
-                        <button type="button" class="btn btn-primary-custom w-100 mb-3" id="showRegister">Create Account</button>
-                    </div>
-                    
-                    <div class="features-panel">
-                        <h2 class="section-title mb-4">Why Register with Rotary Bus?</h2>
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <div class="feature-item">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="fas fa-map-marker-alt feature-icon me-3"></i>
-                                        <h5 class="mb-0">Real-time tracking</h5>
-                                    </div>
-                                    <p class="text-muted mb-0">Track buses with live GPS updates and accurate arrival predictions.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="feature-item">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="fas fa-route feature-icon me-3"></i>
-                                        <h5 class="mb-0">Route planning</h5>
-                                    </div>
-                                    <p class="text-muted mb-0">Fastest routes with real-time traffic updates.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="feature-item">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="fas fa-ticket-alt feature-icon me-3"></i>
-                                        <h5 class="mb-0">Digital ticketing</h5>
-                                    </div>
-                                    <p class="text-muted mb-0">Store digital tickets and mobile passes securely.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="feature-item">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="fas fa-bell feature-icon me-3"></i>
-                                        <h5 class="mb-0">Notifications</h5>
-                                    </div>
-                                    <p class="text-muted mb-0">Alerts for arrivals, delays, and updates.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<!-- HEADER -->
+<div class="header-gradient">
+    <div class="circle1"></div>
+    <div class="circle2"></div>
+    <div class="bus-animation"><i class="fas fa-bus"></i></div>
+    <h1>Rotary Bus</h1>
+    <p>Register for real-time bus tracking, digital ticketing, and seamless city travel</p>
+</div>
+
+<div class="content">
+
+    <!-- REGISTER PANEL -->
+    <div class="panel" id="registrationPanel">
+        <p class="section-title">Create Account</p>
+        <form id="registrationForm">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Enter your full name" required>
+
+            <label class="form-label">Mobile Number</label>
+            <input type="tel" class="form-control" id="mobile" placeholder="Enter your mobile number" required>
+
+            <label class="form-label">Age</label>
+            <input type="number" class="form-control" id="age" placeholder="Enter your age" min="12" max="100" required>
+
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter your email address" required>
+
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Create a password (min 6 characters)" required>
+
+            <button type="submit" class="btn-primary-custom">Create Account</button>
+
+            <div class="divider"><span>or</span></div>
+
+            <button type="button" class="btn-google">
+                <i class="fab fa-google"></i> Continue with Google
+            </button>
+
+            <div class="login-link">
+                Already a user? <a href="#" id="showLogin">Log In</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- LOGIN PANEL -->
+    <div class="panel d-none" id="loginLink">
+        <p class="section-title">Log In</p>
+
+        <label class="form-label">Select Login Method</label>
+        <div class="login-type-selector">
+            <button class="login-type-btn active" id="mobileLoginBtn" onclick="switchLogin('mobile')">Mobile</button>
+            <button class="login-type-btn" id="emailLoginBtn" onclick="switchLogin('email')">Email</button>
+        </div>
+
+        <!-- hidden radios kept for backend compatibility -->
+        <input type="radio" name="loginMethod" id="mobileLogin" checked style="display:none;">
+        <input type="radio" name="loginMethod" id="emailLogin" style="display:none;">
+
+        <div id="mobileLoginSection">
+            <label class="form-label">Mobile Number</label>
+            <input type="tel" class="form-control" id="loginMobile" placeholder="Enter your registered mobile number">
+        </div>
+
+        <div class="d-none" id="emailLoginSection">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="loginEmail" placeholder="Enter your registered email address">
+        </div>
+
+        <label class="form-label">Password</label>
+        <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password">
+
+        <button class="btn-primary-custom" id="loginBtn">Log In</button>
+
+        <div class="divider"><span>or</span></div>
+
+        <button type="button" class="btn-primary-custom" id="showRegister">Create Account</button>
+    </div>
+
+    <!-- FEATURES PANEL -->
+    <div class="features-panel">
+        <p class="section-title">Why Rotary Bus?</p>
+
+        <div class="feature-item">
+            <div class="feature-icon-wrap"><i class="fas fa-map-marker-alt"></i></div>
+            <div>
+                <h5>Real-time Tracking</h5>
+                <p>Track buses with live GPS updates and accurate arrival predictions.</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon-wrap"><i class="fas fa-route"></i></div>
+            <div>
+                <h5>Route Planning</h5>
+                <p>Fastest routes with real-time traffic updates.</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon-wrap"><i class="fas fa-ticket-alt"></i></div>
+            <div>
+                <h5>Digital Ticketing</h5>
+                <p>Store digital tickets and mobile passes securely.</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon-wrap"><i class="fas fa-bell"></i></div>
+            <div>
+                <h5>Notifications</h5>
+                <p>Alerts for arrivals, delays, and updates.</p>
             </div>
         </div>
     </div>
 
-    <div style="text-align: right; margin: 10px 30px;">
-        <span style="color: #6C64FF; font-size: 0.8rem; cursor: pointer;" 
-            onclick="window.location.href='/admin_login'"
-            onmouseover="this.style.opacity='1'"
-            onmouseout="this.style.opacity='0.4'"
-            style="transition: opacity 0.3s;">
-            <i class="fas fa-lock" style="color: #636263; font-size: 0.7rem;"></i> TC
-        </span>
-        </div>
+</div>
 
-    <script src="static/js/script.js"></script>
+<!-- TC LINK -->
+<div class="tc-link" onclick="window.location.href='/admin_login'">
+    <span><i class="fas fa-lock" style="font-size:11px; color:#636263;"></i> TC</span>
+</div>
+
+<script src="static/js/script.js"></script>
+<script>
+function switchLogin(type) {
+    if (type === 'mobile') {
+        document.getElementById('mobileLoginSection').classList.remove('d-none');
+        document.getElementById('emailLoginSection').classList.add('d-none');
+        document.getElementById('mobileLoginBtn').classList.add('active');
+        document.getElementById('emailLoginBtn').classList.remove('active');
+        document.getElementById('mobileLogin').checked = true;
+    } else {
+        document.getElementById('emailLoginSection').classList.remove('d-none');
+        document.getElementById('mobileLoginSection').classList.add('d-none');
+        document.getElementById('emailLoginBtn').classList.add('active');
+        document.getElementById('mobileLoginBtn').classList.remove('active');
+        document.getElementById('emailLogin').checked = true;
+    }
+}
+</script>
 </body>
 </html>
