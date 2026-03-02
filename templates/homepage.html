@@ -78,15 +78,36 @@ body {
 
 .notification-dot {
     position: absolute;
-    top: 9px;
-    right: 9px;
-    width: 9px;
-    height: 9px;
+    top: 8px;
+    right: 8px;
+    width: 10px;
+    height: 10px;
     background: #FF4444;
     border-radius: 50%;
-    border: 2px solid #7B74FF;
+    border: 2px solid white;
     display: none;
+    z-index: 10;
 }
+
+/* ── SLIDE UP ANIMATION ── */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.search-wrapper {
+    animation: slideUp 0.4s ease 0.05s both;
+}
+
+.section-label {
+    animation: slideUp 0.4s ease 0.10s both;
+}
+
+.card-btn:nth-child(1) { animation: slideUp 0.4s ease 0.12s both; }
+.card-btn:nth-child(2) { animation: slideUp 0.4s ease 0.18s both; }
+.card-btn:nth-child(3) { animation: slideUp 0.4s ease 0.24s both; }
+.card-btn:nth-child(4) { animation: slideUp 0.4s ease 0.30s both; }
+.card-btn:nth-child(5) { animation: slideUp 0.4s ease 0.36s both; }
 
 /* ── SEARCH ── */
 .search-wrapper {
@@ -460,6 +481,9 @@ function checkNotificationStatus() {
             const dot = document.getElementById('notificationDot');
             if (dot) {
                 if (data.success && data.new_notifications) {
+                    if (dot.style.display === 'none' || dot.style.display === '') {
+                        playBusHorn();
+                    }
                     dot.style.display = 'block';
                     console.log('🔔 New notifications available!');
                 } else {
@@ -468,6 +492,26 @@ function checkNotificationStatus() {
             }
         })
         .catch(error => console.error('Error checking notifications:', error));
+}
+
+function playBusHorn() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        function beep(freq, start, duration, gain) {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.connect(g); g.connect(ctx.destination);
+            o.type = 'sawtooth';
+            o.frequency.setValueAtTime(freq, ctx.currentTime + start);
+            g.gain.setValueAtTime(gain, ctx.currentTime + start);
+            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + duration);
+            o.start(ctx.currentTime + start);
+            o.stop(ctx.currentTime + start + duration);
+        }
+        beep(220, 0,    0.18, 0.3);
+        beep(180, 0.20, 0.22, 0.25);
+        beep(220, 0.44, 0.14, 0.2);
+    } catch(e) {}
 }
 
 setInterval(checkNotificationStatus, 15000);
