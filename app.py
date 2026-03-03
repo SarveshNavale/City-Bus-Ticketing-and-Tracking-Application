@@ -1,4 +1,7 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify, redirect
+import mysql.connector
+from datetime import datetime
+
 #from dotenv import load_dotenv
 # from groq import Groq
 import random
@@ -19,7 +22,8 @@ def get_db():
         host="localhost",
         user="root",
         password="Parth@123",
-        database="RotaryClub_Database"
+        database="RotaryClub_Database",
+        #database="Parth"
     )
 
 # ---------- normal routes ----------
@@ -1122,16 +1126,6 @@ def complaints():
     return render_template("Complaint page.html", complaints=data)
 
 
-@app.route('/delete_complaint/<int:complaint_id>', methods=['POST'])
-def delete_complaint(complaint_id):
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("DELETE FROM complaints WHERE id=%s", (complaint_id,))
-    db.commit()
-    cursor.close()
-    db.close()
-    return jsonify({"success": True})
-
 
 @app.route('/save_ticket', methods=['POST'])
 def save_ticket():
@@ -1538,3 +1532,59 @@ Answer questions using this data. Be helpful and friendly."""
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+
+
+
+#to store complaints 
+
+
+
+@app.route("/add_complaint", methods=["POST"])
+def add_complaint():
+    data = request.get_json()
+    text = data["complaint"]
+
+    now = datetime.now()
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO complaint (comp_text, comp_time, comp_date)
+        VALUES (%s, %s, %s)
+    """, (text, now.strftime("%H:%M:%S"), now.strftime("%Y-%m-%d")))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return jsonify({"success":True})
+
+
+@app.route("/get_complaints")
+def get_complaints():
+
+    conn = get_db()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM complaint ORDER BY id DESC")
+    data = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify(data)
+
+@app.route("/delete_complaint/<int:id>", methods=["DELETE"])
+def delete_complaint(id):
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM complaint WHERE id=%s", (id,))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({"success":True})

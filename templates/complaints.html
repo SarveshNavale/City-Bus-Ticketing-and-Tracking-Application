@@ -177,16 +177,21 @@ body{
 
 <a href="/select" style="text-decoration:none;color:inherit;">
 <div class="backbutton">
-    <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+
+    <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}"
+         style="width:55px; cursor:pointer;">
+
     <p style="font-size:22px;font-family:'Hind Guntur';font-weight:600;color:white;">
-        View <br>
+        View 
         complaints
     </p>
+
 </div>
 </a>
 
 <div class="topcircles">
-<img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}">
+    <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}"
+         style="width:150px;">
 </div>
 
 </div>
@@ -209,29 +214,18 @@ body{
 
 /* ===== DUMMY DATA ===== */
 
-const complaints = [
-{
- id:1,
- comp_generator:"Sarvesh Navale",
- comp_gen_no:"9763772464",
- comp_time:"10:25 AM",
- comp_status:"Pending"
-},
-{
- id:2,
- comp_generator:"Hrishikesh Patil",
- comp_gen_no:"9728394991",
- comp_time:"11:40 AM",
- comp_status:"Checking"
-},
-{
- id:3,
- comp_generator:"Amit Sharma",
- comp_gen_no:"9876543210",
- comp_time:"01:15 PM",
- comp_status:"Resolved"
+function init(){
+
+  document.getElementById('complaints-container').innerHTML =
+  '<div class="spinner"></div>';
+
+  fetch("/get_complaints")
+  .then(res=>res.json())
+  .then(data=>{
+      renderComplaints(data);
+  });
+
 }
-];
 
 /* ───────── RENDER ───────── */
 
@@ -271,25 +265,31 @@ function renderComplaints(list){
      </div>
    </div>
 
-   <button class="tick-btn">✔ Mark Checked</button>
+   <button class="tick-btn" onclick="markChecked(${c.id})">
+✔ Mark Checked
+</button>
 
  </div>
 
  `).join('');
 }
 
-/* INIT */
+function markChecked(id){
 
-function init(){
- document.getElementById('complaints-container').innerHTML='<div class="spinner"></div>';
+  fetch(`/delete_complaint/${id}`,{
+    method:"DELETE"
+  })
+  .then(res=>res.json())
+  .then(data=>{
+    if(data.success){
+      init(); // reload page
+    }
+  });
 
- setTimeout(()=>{
-   renderComplaints(complaints);
- },500);
 }
 
-init();
 
+init();
 </script>
 
 </body>
