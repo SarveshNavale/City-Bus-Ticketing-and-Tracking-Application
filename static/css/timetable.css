@@ -1,0 +1,103 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Hind Guntur', sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#f3f5ff;
+}
+
+/* SAME BLUE HEADER */
+.bluebg{
+    background:linear-gradient(135deg,#725bff,#5a43e0);
+    height:180px;
+    padding:20px;
+    position:relative;
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius:30px;
+}
+
+.backbutton{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.backbutton img{
+    width:55px;
+}
+
+.backbutton p{
+    font-size:22px;
+    font-weight:600;
+    color:white;
+    line-height:22px;
+}
+
+.topcircles{
+    position:absolute;
+    right:20px;
+    top:20px;
+}
+
+.topcircles img{
+    width:150px;
+}
+
+/* CONTENT CARD AREA */
+.content{
+    padding:20px;
+    margin: top - 40px;
+}
+
+/* ROUTE CARD EXACT BUY PASS STYLE */
+.route-card{
+    background:white;
+    border-radius:25px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+    margin-bottom:30px;
+    overflow:hidden;
+    transition:0.3s;
+}
+
+.route-card:hover{
+    transform:translateY(-5px);
+}
+
+/* TITLE STRIP */
+.route-title{
+    background:#725bff;
+    color:white;
+    padding:15px;
+    font-size:18px;
+    font-weight:600;
+}
+
+/* TABLE */
+.route-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.route-table th{
+    background:#f4f5ff;
+    padding:12px;
+    text-align:left;
+    font-size:14px;
+}
+
+.route-table td{
+    padding:12px;
+    border-bottom:1px solid #eee;
+    font-size:14px;
+}
+
+.route-table tr:hover{
+    background:#f9f9ff;
+}
