@@ -231,8 +231,12 @@ function init(){
 
 function renderComplaints(list){
 
- const container=document.getElementById('complaints-container');
 
+ const container=document.getElementById('complaints-container');
+if(list.length === 0){
+  container.innerHTML = "<p style='text-align:center;color:gray;'>No complaints found</p>";
+  return;
+}
  container.innerHTML=list.map(c=>`
 
  <div class="ticket-card">
@@ -247,18 +251,18 @@ function renderComplaints(list){
    <div class="ticket-details">
      <div class="detail-grid">
 
-       <div class="detail-item">
-         <div class="d-label">Complainant</div>
-         <div class="d-value">${c.comp_generator}</div>
-       </div>
-
-       <div class="detail-item">
-         <div class="d-label">Mobile</div>
-         <div class="d-value">${c.comp_gen_no}</div>
-       </div>
-
        <div class="detail-item full">
-         <div class="d-label">Complaint Time</div>
+         <div class="d-label">Complaint</div>
+         <div class="d-value">${c.comp_text}</div>
+       </div>
+
+       <div class="detail-item">
+         <div class="d-label">Date</div>
+         <div class="d-value">${c.comp_date}</div>
+       </div>
+
+       <div class="detail-item">
+         <div class="d-label">Time</div>
          <div class="d-value">${c.comp_time}</div>
        </div>
 
@@ -266,14 +270,13 @@ function renderComplaints(list){
    </div>
 
    <button class="tick-btn" onclick="markChecked(${c.id})">
-✔ Mark Checked
+✔ Mark Solved
 </button>
 
  </div>
 
  `).join('');
 }
-
 function markChecked(id){
 
   fetch(`/delete_complaint/${id}`,{

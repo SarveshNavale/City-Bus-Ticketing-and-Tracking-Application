@@ -40,3 +40,13 @@ INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Shiva
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Salvi', 4, 16.9940142, 73.3273839);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('JK Files', 4, 16.9955833, 73.3309237);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Railway Station', 4, 16.9980804, 73.3578163);
+
+CREATE TABLE complaint (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    comp_text TEXT,
+    comp_time TIME,
+    comp_date DATE,
+    comp_status VARCHAR(50) DEFAULT 'Pending'
+);
+
+

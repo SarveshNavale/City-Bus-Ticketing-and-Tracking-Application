@@ -1116,14 +1116,14 @@ def pay_ticket():
 
 
 @app.route('/complaints')
-def complaints():
+def complaint():
     db = get_db()
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM complaints")
+    cursor.execute("SELECT * FROM complaint")
     data = cursor.fetchall()
     cursor.close()
     db.close()
-    return render_template("Complaint page.html", complaints=data)
+    return render_template("Complaint page.html", complaint=data)
 
 
 
@@ -1530,8 +1530,6 @@ Answer questions using this data. Be helpful and friendly."""
         print(f"Chat error: {e}")
         return jsonify({"response": f"Error: {str(e)}"})
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
 
 
 
@@ -1541,13 +1539,14 @@ if __name__ == "__main__":
 
 @app.route("/add_complaint", methods=["POST"])
 def add_complaint():
-    data = request.get_json()
-    text = data["complaint"]
 
-    now = datetime.now()
+    data = request.get_json()
+    text = data.get("complaint")
 
     conn = get_db()
     cursor = conn.cursor()
+
+    now = datetime.now()
 
     cursor.execute("""
         INSERT INTO complaint (comp_text, comp_time, comp_date)
@@ -1558,7 +1557,7 @@ def add_complaint():
     cursor.close()
     conn.close()
 
-    return jsonify({"success":True})
+    return jsonify({"success": True})
 
 
 @app.route("/get_complaints")
@@ -1566,25 +1565,39 @@ def get_complaints():
 
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM complaint")
+    complaints = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM complaint ORDER BY id DESC")
-    data = cursor.fetchall()
+    # 🔥 Convert time and date to string
+    for c in complaints:
+        if c["comp_time"]:
+            c["comp_time"] = str(c["comp_time"])
+        if c["comp_date"]:
+            c["comp_date"] = str(c["comp_date"])
 
     cursor.close()
     conn.close()
 
-    return jsonify(data)
+    return jsonify(complaints)
+
 
 @app.route("/delete_complaint/<int:id>", methods=["DELETE"])
 def delete_complaint(id):
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
 
-    conn = get_db()
-    cursor = conn.cursor()
+        cursor.execute("DELETE FROM complaint WHERE id = %s", (id,))
+        conn.commit()
 
-    cursor.execute("DELETE FROM complaint WHERE id=%s", (id,))
-    conn.commit()
+        cursor.close()
+        conn.close()
 
-    cursor.close()
-    conn.close()
+        return jsonify({"success": True})
 
-    return jsonify({"success":True})
+    except Exception as e:
+        print("Delete Error:", e)
+        return jsonify({"success": False})
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)

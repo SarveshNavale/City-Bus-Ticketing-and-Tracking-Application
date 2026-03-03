@@ -76,7 +76,7 @@ body {
 /* Textarea Box */
 
 .top-area {
-        background-color: #6C64FF;
+      background: linear-gradient(135deg, #6C64FF 0%, #8B84FF 100%);
     padding: 28px 24px 70px 24px;
     border-radius: 0 0 36px 36px;
 }
@@ -145,7 +145,15 @@ body {
 
     <div class="complaint-box">
 
-        <textarea id="complaintText" placeholder="Describe your issue..."></textarea>
+        <textarea id="complaintText" 
+          placeholder="Describe your issue..."
+          oninput="checkWordLimit()"></textarea>
+        <p style="font-size:12px;color:gray;">
+        Maximum 100 words allowed
+        </p>
+        <p id="wordCount" style="font-size:12px;color:#888;margin-bottom:10px;">
+        0 / 100 words
+        </p>
 
         <button onclick="sendComplaint()">Submit Complaint</button>
 
@@ -153,12 +161,33 @@ body {
 
 </div>
 <script>
+function checkWordLimit(){
+  const textarea = document.getElementById("complaintText");
+  const words = textarea.value.trim().split(/\s+/);
+
+  let wordCount = words[0] === "" ? 0 : words.length;
+
+  if(wordCount > 100){
+      textarea.value = words.slice(0,100).join(" ");
+      wordCount = 100;
+  }
+
+  document.getElementById("wordCount").innerText =
+  wordCount + " / 100 words";
+}
 function sendComplaint(){
 
-  const text = document.getElementById("complaintText").value;
+  const text = document.getElementById("complaintText").value.trim();
 
-  if(text.trim() === ""){
+  if(text === ""){
     alert("Please enter complaint");
+    return;
+  }
+
+  // ✅ Word limit check
+  const words = text.split(/\s+/);
+  if(words.length > 100){
+    alert("Complaint must be maximum 100 words");
     return;
   }
 
