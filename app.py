@@ -1,5 +1,5 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify, redirect
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 # from groq import Groq
 import random
 import string
@@ -10,7 +10,7 @@ import time  # This is the time module for sleep()
 import threading
 from math import radians, sin, cos, sqrt, atan2
 
-load_dotenv()
+#load_dotenv()
 
 app = Flask(__name__)
 
@@ -18,7 +18,7 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="#SAR1807",
+        password="Parth@123",
         database="RotaryClub_Database"
     )
 
@@ -357,24 +357,24 @@ def faqs():
     return render_template("FAQs.html")
 
 
-@app.route('/update_location', methods=['POST'])
-def update_location():
-    data = request.get_json()
-    user_id = data["user_id"]
-    lat = data["latitude"]
-    lon = data["longitude"]
+# @app.route('/update_location', methods=['POST'])
+# def update_location():
+#     data = request.get_json()
+#     user_id = data["user_id"]
+#     lat = data["latitude"]
+#     lon = data["longitude"]
 
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute(
-        "UPDATE cust_info SET latitude=%s, longitude=%s, last_seen=%s WHERE id=%s",
-        (lat, lon, datetime.now(), user_id)
-    )
-    db.commit()
-    cursor.close()
-    db.close()
+#     db = get_db()
+#     cursor = db.cursor()
+#     cursor.execute(
+#         "UPDATE cust_info SET latitude=%s, longitude=%s, last_seen=%s WHERE id=%s",
+#         (lat, lon, datetime.now(), user_id)
+#     )
+#     db.commit()
+#     cursor.close()
+#     db.close()
 
-    return jsonify({"status": "success"})
+#     return jsonify({"status": "success"})
 
 
 @app.route('/get_location/<int:user_id>')

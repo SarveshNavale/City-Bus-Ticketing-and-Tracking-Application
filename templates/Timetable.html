@@ -1,151 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Time table</title>
+    <meta charset="UTF-8">
+    <title>Rotary Bus - Timetable</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+    <!-- Same font as Buy Pass -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@400;600&display=swap" rel="stylesheet">
 
-body{
-    background:#e8e8ef;
-    padding:15px;
-    display:flex;
-    justify-content:center;
-}
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-.phone{
-    width:100%;
-    max-width:400px;
-    background:#fff;
-    border-radius:14px;
-    overflow:hidden;
-    box-shadow:0 0 6px rgba(0,0,0,0.15);
-}
-
-/* HEADER */
-.header{
-    background:#725bff;
-    padding:25px;
-    text-align:center;
-    color:#fff;
-    position:relative;
-    height:120px;
-}
-
-.back{
-    position:absolute;
-    top:35px;
-    left:16px;
-    background:rgba(255,255,255,0.2);
-    width:55px;
-    height:55px;
-    border-radius:50%;
-    font-size:24px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.title{
-    font-size:20px;
-    font-weight:bold;
-    margin-top:25px;
-}
-
-/* Three Rings */
-.rings{
-    position:absolute;
-    right:22px;
-    top:10px;
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    border:2px solid rgba(255,255,255,0.12);
-}
-.rings::before{
-    content:"";
-    position:absolute;
-    width:90px;
-    height:90px;
-    top:15px;
-    left:15px;
-    border-radius:50%;
-    border:2px solid rgba(255,255,255,0.10);
-}
-.rings::after{
-    content:"";
-    position:absolute;
-    width:65px;
-    height:65px;
-    top:28px;
-    left:28px;
-    border-radius:50%;
-    border:2px solid rgba(255,255,255,0.08);
-}
-.simple-title{
-    font-size:20px;
-    font-weight:600;
-    color:#f9f8f8;
-    letter-spacing:0.5px;
-    padding:4px 10px;
-    background-color: #8877f8;
-    border-radius: 30px;
-}
-.route-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:15px;
-    box-shadow:0 0 8px rgba(0,0,0,0.15);
-    border-radius:10px;
-    overflow:hidden;
-    background:#fff;
-}
-
-.route-table th{
-    background:#725bff;
-    color:white;
-    padding:10px;
-    font-size:16px;
-}
-
-.route-table td{
-    padding:10px;
-    border-bottom:1px solid #ddd;
-    font-size:14px;
-}
-hr{
-    border:0;
-    height:3px;
-    background:linear-gradient(90deg, #e9d7ff, #c9a8ff, #e9d7ff);
-    border-radius:50px;
-    margin:20px 0;
-}
-
-</style>
-
+    <!-- NEW CSS FILE -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/timetable.css') }}">
 </head>
-
 <body>
 
-<div class="phone">
+<!-- SAME HEADER STYLE AS BUY PASS -->
+<div class="bluebg">
 
-    <!-- HEADER -->
-    <div class="header">
-        <div class="back">‹</div>
-        <div class="title">Bus Timetable</div>
-        <div class="rings"></div>
+    <a href="/backtohome" style="text-decoration:none;color:inherit;">
+        <div class="backbutton">
+            <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+            <p>
+                Bus<br>Timetable
+            </p>
+        </div>
+    </a>
+
+    <div class="topcircles">
+        <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}">
     </div>
-    <br>
-    <div class="content">
-        <span class="simple-title">Railway Station Route</span>
+
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+    <!-- ROUTE CARD START -->
+    <div class="route-card">
+        <div class="route-title">Railway Station Route</div>
 
         <table class="route-table">
-            <tr>
-                <th>Stop</th>
-                <th>Time</th>
-            </tr>
+            <tr><th>Stop</th><th>Time</th></tr>
 
             <tr><td>City Bus Stand</td><td>7.00am, 8.00am, 9.00am, 12.00pm, 2.00pm, 4.00pm, 6.00pm, 7.00pm, 8.00pm</td></tr>
             <tr><td>Malnaka</td><td>7.05am, 8.05am, 9.05am, 12.05pm, 2.05pm, 4.05pm, 6.05pm, 7.05pm, 8.05pm</td></tr>
@@ -156,9 +53,12 @@ hr{
             <tr><td>Railway Station</td><td>7.45am, 8.45am, 9.45am, 12.45pm, 2.45pm, 4.45pm, 6.45pm, 7.45pm, 8.45pm</td></tr>
         </table>
     </div>
-    <hr>
-    <div class="content">
-        <span class="simple-title">Salvi Stop Route</span>
+
+    <!-- COPY YOUR OTHER ROUTES SAME WAY (NO DATA CHANGED) -->
+     
+    
+        <div class="route-card">
+        <div class="route-title">Salvi Stop Route</div>
         <table class="route-table">
             <tr><th>Stop</th><th>Time</th></tr>
 
@@ -174,9 +74,10 @@ hr{
             <tr><td>Hatkamba</td><td>8.30am, 9.30am, 10.30am, 1.30pm, 3.30pm, 5.30pm, 7.30pm, 8.30pm, 9.30pm</td></tr>
         </table>
     </div>
-    <hr>
-    <div class="content">
-        <span class="simple-title">Kokan Nagar Route</span>
+    
+
+        <div class="route-card">
+        <div class="route-title">Kokan Nagar Route</div>
 
         <table class="route-table">
             <tr><th>Stop</th><th>Time</th></tr>
@@ -193,9 +94,10 @@ hr{
             <tr><td>Jambhul Phata</td><td>8.30am, 9.30am, 10.30am, 1.30pm, 3.30pm, 5.30pm, 7.30pm, 8.30pm, 9.30pm</td></tr>
         </table>
     </div>
-    <hr>
-    <div class="content">
-       <span class="simple-title">Nachane Route </span>
+    
+ 
+        <div class="route-card">
+       <div class="route-title">Nachane Route </div>
         <table class="route-table">
             <tr><th>Stop</th><th>Time</th></tr>
 
@@ -211,9 +113,10 @@ hr{
             <tr><td>Kajarghati</td><td>8.30am, 9.30am, 10.30am, 1.30pm, 3.30pm, 5.30pm, 7.30pm, 8.30pm, 9.30pm</td></tr>
         </table>
     </div>
-	<hr>
-	<div class="content">
-        <span class="simple-title">Railway Station Route Return</span>
+	
+
+        <div class="route-card">
+        <div class="route-title">Railway Station Route Return</div>
         <table class="route-table">
             <tr><th>Stop</th><th>Time</th></tr>
 
@@ -227,9 +130,10 @@ hr{
             <tr><td>City Bus Stand</td><td>8.30am, 9.30am, 10.30am, 1.30pm, 3.30pm, 5.30pm, 7.30pm, 8.30pm, 9.30pm</td></tr>
         </table>
     </div>
-	<hr>
-	<div class="content">
-        <span class="simple-title">Salvi Stop Route Return</span>
+	
+	
+        <div class="route-card">
+        <div class="route-title">Salvi Stop Route Return</div>
         <table class="route-table">
             <tr><th>Stop</th><th>Time</th></tr>
 
@@ -245,9 +149,10 @@ hr{
             <tr><td>City Bus Stand</td><td>8.30am, 9.30am, 10.30am, 1.30pm, 3.30pm, 5.30pm, 7.30pm, 8.30pm, 9.30pm</td></tr>
         </table>
     </div>
-	<hr>
-	<div class="content">
-        <span class="simple-title">Kokan Nagar Route Return</span>
+	
+
+        <div class="route-card">
+        <div class="route-title">Kokan Nagar Route Return</div>
 
         <table class="route-table">
             <tr><th>Stop</th><th>Time</th></tr>
@@ -264,9 +169,10 @@ hr{
             <tr><td>City Bus Stand</td><td>8.30am, 9.30am, 10.30am, 1.30pm, 3.30pm, 5.30pm, 7.30pm, 8.30pm, 9.30pm</td></tr>
         </table>
     </div>
-	<hr>
-	<div class="content">
-       <span class="simple-title">Nachane Route Return</span>
+	
+
+        <div class="route-card">
+       <div class="route-title">Nachane Route Return</div>
         <table class="route-table">
             <tr><th>Stop</th><th>Time</th></tr>
 
@@ -282,10 +188,9 @@ hr{
             <tr><td>City Bus Stand</td><td>8.30am, 9.30am, 10.30am, 1.30pm, 3.30pm, 5.30pm, 7.30pm, 8.30pm, 9.30pm</td></tr>
         </table>
     </div>
-	
-
 
 </div>
 
+<script src="{{ url_for('static', filename='js/timetable.js') }}"></script>
 </body>
 </html>
