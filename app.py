@@ -1,6 +1,11 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify, redirect
+
 #from dotenv import load_dotenv
 #from groq import Groq
+
+# from dotenv import load_dotenv
+# from groq import Groq
+
 import random
 import string
 import os
@@ -18,7 +23,11 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
+# <<<<<<< HEAD
         password="Parth@123",
+# =======
+        # password="#SAR1807",
+# >>>>>>> 0cca0583117791d2ea6dd3d2e05a4311e67ee304
         database="RotaryClub_Database"
     )
 
@@ -1453,7 +1462,11 @@ start_notification_service()
 # if not GROQ_API_KEY:
 #      raise ValueError("GROQ_API_KEY not found in .env file")
 
-#groq_client = Groq(api_key=GROQ_API_KEY)
+# <<<<<<< HEAD
+# #groq_client = Groq(api_key=GROQ_API_KEY)
+# =======
+# # groq_client = Groq(api_key=GROQ_API_KEY)
+# >>>>>>> 0cca0583117791d2ea6dd3d2e05a4311e67ee304
 
 def get_database_context():
     db = get_db()
