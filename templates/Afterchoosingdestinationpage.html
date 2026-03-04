@@ -4,9 +4,102 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Buy Ticket</title>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
+.ticket-container {
+    margin-top: -40px;
+    background: white;
+    border-radius: 30px 30px 0 0;
+    padding: 30px 20px;
+    min-height: 80vh;
+    box-shadow: 0 -5px 30px rgba(0,0,0,0.05);
+}
+
+.route-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.location h3 {
+    margin: 5px 0 0;
+    font-weight: 800;
+}
+
+.label {
+    font-size: 12px;
+    color: #888;
+}
+
+.route-icon {
+    font-size: 20px;
+    color: #6C64FF;
+}
+
+.fare-section {
+    background: #F8F9FF;
+    padding: 18px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+}
+
+.fare-section div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.counter-section {
+    margin-bottom: 25px;
+}
+
+.counter-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.counter-box button {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: #6C64FF;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.counter-box span {
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.total-section {
+    margin-bottom: 25px;
+}
+
+.total-section h2 {
+    color: #6C64FF;
+    margin-top: 5px;
+    font-weight: 900;
+}
+
+.pay-btn {
+    width: 100%;
+    padding: 15px;
+    border-radius: 18px;
+    border: none;
+    background: linear-gradient(135deg,#6C64FF,#4A42E8);
+    color: white;
+    font-weight: 800;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(108,100,255,0.3);
+}
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
@@ -20,8 +113,8 @@
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
-    background: var(--bg);
+    font-family: "Nunito", sans-serif;
+    background: #F0F2FF;;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -29,36 +122,37 @@ body {
 }
 
 /* ─── HEADER ─── */
-.header {
-    width: 100%;
-    max-width: 420px;
-    background: var(--purple);
-    padding: 50px 24px 60px;
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.content {
+    margin: -28px 16px 100px 16px;
     position: relative;
-    overflow: hidden;
+    z-index: 10;
 }
 
-.header-ring {
-    position: absolute;
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.1);
+.header-tagline {
+    font-size: 23px;
+    font-weight: 800;
+    color: #333;
+    margin: 24px 4px 6px 4px;
+    animation: slideUp 0.4s ease both;
 }
-.ring1 { width: 160px; height: 160px; top: -40px; right: -30px; }
-.ring2 { width: 110px; height: 110px; top: -10px; right: 10px; }
-.ring3 { width: 70px; height: 70px; top: 15px; right: 35px; }
 
-.back-btn {
-    width: 40px; height: 40px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
-    border: none;
-    color: #fff;
-    font-size: 22px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 16px;
-    text-decoration: none;
+.section-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #AAAACC;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0 4px 14px 4px;
 }
+
+
+
 
 .header h1 {
     color: #fff;
@@ -72,100 +166,21 @@ body {
 }
 
 /* ─── MAIN CARD ─── */
-.card {
-    width: calc(100% - 32px);
-    max-width: 388px;
-    background: var(--card);
-    border-radius: 32px;
-    margin-top: -32px;
-    padding: 28px 24px 24px;
-    box-shadow: 0 8px 32px rgba(108,100,255,0.13);
-    position: relative;
-    z-index: 2;
-}
+
 
 /* ─── ROUTE SECTION ─── */
-.route-wrap {
-    display: flex;
-    align-items: stretch;
-    gap: 14px;
-    margin-bottom: 24px;
-}
 
-.route-line {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 4px;
-}
 
-.dot {
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    border: 3px solid var(--purple);
-    background: #fff;
-    flex-shrink: 0;
-}
+
+
 .dot.filled { background: var(--purple); }
 
-.dashes {
-    flex: 1;
-    width: 2px;
-    background: repeating-linear-gradient(
-        to bottom,
-        var(--purple) 0px,
-        var(--purple) 5px,
-        transparent 5px,
-        transparent 10px
-    );
-    margin: 5px 0;
-    min-height: 40px;
-}
 
-.route-stops {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 14px;
-}
 
-.stop-box {
-    background: var(--purple-light);
-    border-radius: 14px;
-    padding: 12px 16px;
-}
 
-.stop-label {
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--purple);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 3px;
-}
-
-.stop-name {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text);
-    font-family: 'Hind Guntur', sans-serif;
-}
-
-/* ─── DIVIDER ─── */
-.divider {
-    border: none;
-    border-top: 1.5px dashed #DDD;
-    margin: 4px 0 20px;
-}
 
 /* ─── FARE ROW ─── */
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-}
+
 
 .info-label {
     font-size: 13px;
@@ -180,21 +195,9 @@ body {
 }
 
 /* ─── COUNTER ─── */
-.counter-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--purple-light);
-    border-radius: 16px;
-    padding: 14px 18px;
-    margin-bottom: 20px;
-}
 
-.counter-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text);
-}
+
+
 
 .counter-ctrl {
     display: flex;
@@ -202,45 +205,12 @@ body {
     gap: 14px;
 }
 
-.ctrl-btn {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    border: none;
-    background: var(--purple);
-    color: #fff;
-    font-size: 22px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    line-height: 1;
-    transition: transform 0.1s, opacity 0.1s;
-}
+
 .ctrl-btn:active { transform: scale(0.92); opacity: 0.85; }
 
-.ctrl-num {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--purple);
-    min-width: 28px;
-    text-align: center;
-}
 
 /* ─── TOTAL ─── */
-.total-box {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 18px;
-    background: var(--text);
-    border-radius: 16px;
-    margin-bottom: 18px;
-}
 
-.total-label {
-    color: rgba(255,255,255,0.7);
-    font-size: 13px;
-    font-weight: 500;
-}
 
 .total-amount {
     color: #fff;
@@ -249,20 +219,7 @@ body {
 }
 
 /* ─── PAY BUTTON ─── */
-.pay-btn {
-    width: 100%;
-    background: var(--purple);
-    color: #fff;
-    border: none;
-    border-radius: 18px;
-    padding: 18px;
-    font-size: 16px;
-    font-weight: 700;
-    font-family: 'Poppins', sans-serif;
-    cursor: pointer;
-    letter-spacing: 0.5px;
-    transition: background 0.2s, transform 0.15s;
-}
+
 .pay-btn:active { transform: scale(0.98); background: var(--purple-dark); }
 
 /* ─── PROCESSING OVERLAY ─── */
@@ -327,7 +284,18 @@ body {
     animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
 }
 .checkmark svg { width: 34px; height: 34px; }
-
+ .bluebg {
+    background: linear-gradient(135deg, #6C64FF 0%, #8B84FF 100%);
+    height: 180px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+.bluebg h1 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-top: 20px;
+}
 .ticket-num-display {
     background: var(--purple-light);
     border-radius: 10px;
@@ -338,78 +306,252 @@ body {
     margin-top: 14px;
     letter-spacing: 0.5px;
 }
+
+.circle1 {
+    position: absolute;
+    width: 190px; height: 190px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.10);
+    top: -55px; right: -45px;
+  }
+  .circle2 {
+    position: absolute;
+    width: 115px; height: 115px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    top: 45px; right: 25px;
+  }
+
+  .backbutton {
+    position: absolute;
+    top: 45px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 49px;
+  }
+
+  .backbutton img {
+    width: 42px; height: 42px;
+    object-fit: contain;
+    display: block;
+  }
+.ticket-container {
+    max-width: 420px;
+    width: 100%;
+}
+.content {
+    max-width: 420px;
+    width: 100%;
+}
+
+.content {
+    width: 100%;
+    max-width: 420px;
+    margin: -60px auto 100px auto;
+    padding: 0 16px;
+    padding-top: 2cm;
+    position: relative;
+    z-index: 10;
+}
+
+.main-card {
+    background: white;
+    border-radius: 28px;
+    padding: 26px 20px 28px;
+    
+    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+}
+
+.header-tagline {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.section-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #AAAACC;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+}
+
+/* Shared section styling */
+.card-section {
+    padding: 16px 0;
+    border-bottom: 1px solid #F0F0F0;
+}
+
+/* Route */
+.route-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.route-arrow {
+    color: #6C64FF;
+    font-size: 18px;
+}
+
+.label {
+    font-size: 11px;
+    color: #888;
+}
+
+.location h3 {
+    font-size: 15px;
+    font-weight: 800;
+    margin-top: 4px;
+}
+
+/* Fare info */
+.info-row div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+/* Counter */
+.counter-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.counter-box {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.counter-box button {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: #6C64FF;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.counter-box span {
+    font-weight: 800;
+    font-size: 16px;
+}
+
+/* Total */
+.total-row {
+    padding: 18px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-row h2 {
+    color: #6C64FF;
+    font-weight: 900;
+}
+
+/* Button */
+.pay-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 18px;
+    border: none;
+    background: linear-gradient(135deg,#6C64FF,#4A42E8);
+    color: white;
+    font-weight: 800;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 8px;
+    box-shadow: 0 6px 20px rgba(108,100,255,0.25);
+}
 </style>
 </head>
 
 <body>
 
 <!-- HEADER -->
-<div class="header" style="max-width:420px;">
-    <div class="header-ring ring1"></div>
-    <div class="header-ring ring2"></div>
-    <div class="header-ring ring3"></div>
-    <a href="/home" class="back-btn">‹</a>
-    <h1>Buy Ticket</h1>
-    <p>Confirm your journey details</p>
+<!-- HEADER -->
+<div class="bluebg">
+  <div class="circle1"></div>
+  <div class="circle2"></div>
+
+  <a href="/backtohome" style="text-decoration:none;color:inherit;outline:none;-webkit-tap-highlight-color:transparent;">
+    <div class="backbutton">
+      <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+      <p style="font-size:22px;font-weight:600;color:white;">Buy Ticket </p>
+    </div>
+  </a>
 </div>
 
-<!-- MAIN CARD -->
-<div class="card">
 
-    <!-- Route -->
-    <div class="route-wrap">
-        <div class="route-line">
-            <div class="dot filled"></div>
-            <div class="dashes"></div>
-            <div class="dot"></div>
-        </div>
-        <div class="route-stops">
-            <div class="stop-box">
-                <div class="stop-label">📍 From</div>
-                <div class="stop-name">Maruti Mandir</div>
+ <!-- MAIN CARD -->
+<div class="content">
+
+    <div class="main-card">
+
+        <p class="header-tagline">Confirm Your Journey</p>
+        <p class="section-label">Ticket Details</p>
+        
+        <!-- Route Section -->
+        <div class="card-section route-row">
+            <div class="location">
+                <span class="label">From</span>
+                <h3>Maruti Mandir</h3>
             </div>
-            <div class="stop-box">
-                <div class="stop-label">🏁 To</div>
-                <div class="stop-name" id="destName">Loading...</div>
+
+            <i class="fa-solid fa-arrow-right route-arrow"></i>
+
+            <div class="location">
+                <span class="label">To</span>
+                <h3 id="destName">Loading...</h3>
             </div>
         </div>
-    </div>
 
-    <hr class="divider">
-
-    <!-- Info rows -->
-    <div class="info-row">
-        <span class="info-label">Fare per ticket</span>
-        <span class="info-value" id="farePerTicket">₹ —</span>
-    </div>
-    <div class="info-row">
-        <span class="info-label">Stops away</span>
-        <span class="info-value" id="stopsCount">—</span>
-    </div>
-
-    <hr class="divider">
-
-    <!-- Counter -->
-    <div class="counter-row">
-        <span class="counter-label">No. of Tickets</span>
-        <div class="counter-ctrl">
-            <button class="ctrl-btn" onclick="dec()">−</button>
-            <span class="ctrl-num" id="ticketCount">1</span>
-            <button class="ctrl-btn" onclick="inc()">+</button>
+        <!-- Fare Section -->
+        <div class="card-section info-row">
+            <div>
+                <span>Fare per ticket</span>
+                <strong id="farePerTicket">₹ —</strong>
+            </div>
+            <div>
+                <span>Stops away</span>
+                <strong id="stopsCount">—</strong>
+            </div>
         </div>
-    </div>
 
-    <!-- Total -->
-    <div class="total-box">
-        <span class="total-label">Total Amount</span>
-        <span class="total-amount" id="totalAmount">₹ 0.00</span>
-    </div>
+        <!-- Ticket Counter -->
+        <div class="card-section counter-row">
+            <span>Number of Tickets</span>
 
-    <!-- Pay -->
-    <button class="pay-btn" onclick="handlePay()">Pay with GPay &nbsp;→</button>
+            <div class="counter-box">
+                <button onclick="dec()">−</button>
+                <span id="ticketCount">1</span>
+                <button onclick="inc()">+</button>
+            </div>
+        </div>
+
+        <!-- Total -->
+        <div class="total-row">
+            <span>Total Amount</span>
+            <h2 id="totalAmount">₹ 0.00</h2>
+        </div>
+
+        <!-- Pay Button -->
+        <button class="pay-btn" onclick="handlePay()">
+           Pay Now
+        </button>
+
+    </div>
 
 </div>
-
 <!-- PROCESSING OVERLAY -->
 <div class="overlay" id="overlay">
     <div class="overlay-card" id="overlayCard">
@@ -458,7 +600,7 @@ async function loadFare() {
     } catch {
         // Fallback: compute a simple fare
         // Use a reasonable default
-        pricePerTicket = 20.00;
+        pricePerTicket = 10.00;
         stopsDiff = '~4';
     }
     document.getElementById('farePerTicket').textContent = '₹ ' + pricePerTicket.toFixed(2);
