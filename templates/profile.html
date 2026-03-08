@@ -54,10 +54,47 @@ body {
     display: block;
 }
 
-.settings-button {
+/* ── TOP RIGHT CONTROLS ── */
+.top-right-controls {
     position: absolute;
     right: 20px;
     top: 48px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ── LANGUAGE TOGGLE ── */
+.lang-toggle {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.18);
+    border-radius: 14px;
+    overflow: hidden;
+    height: 40px;
+    cursor: pointer;
+}
+
+.lang-btn {
+    padding: 0 13px;
+    height: 100%;
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.65);
+    background: transparent;
+    border: none;
+    font-family: "Nunito", sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    letter-spacing: 0.3px;
+}
+
+.lang-btn.active {
+    background: rgba(255,255,255,0.30);
+    color: #fff;
+}
+
+.settings-button {
     width: 40px; height: 40px;
     background: rgba(255,255,255,0.18);
     border-radius: 12px;
@@ -204,8 +241,16 @@ body {
         </div>
     </a>
 
-    <div class="settings-button" onclick="window.location.href='/complaints'">
-        <i class="fa-solid fa-gear"></i>
+    <div class="top-right-controls">
+        <!-- LANGUAGE TOGGLE -->
+        <div class="lang-toggle">
+            <button class="lang-btn active" id="btn-en" onclick="changeLang('en')">EN</button>
+            <button class="lang-btn" id="btn-mr" onclick="changeLang('mr')">मर</button>
+        </div>
+
+        <div class="settings-button" onclick="window.location.href='/complaints'">
+            <i class="fa-solid fa-gear"></i>
+        </div>
     </div>
 
     <div class="avatar-wrap">
@@ -223,8 +268,8 @@ body {
         <!-- NAME -->
         <div class="field-row">
             <div class="field-label">
-                <span>Name</span>
-                <span class="edit-btn">✎ Edit</span>
+                <span data-en="Name" data-mr="नाव">Name</span>
+                <span class="edit-btn" data-en="✎ Edit" data-mr="✎ संपादित करा">✎ Edit</span>
             </div>
             <input class="field-input" id="inputName" type="text" value="Loading..." disabled>
         </div>
@@ -232,8 +277,8 @@ body {
         <!-- AGE -->
         <div class="field-row">
             <div class="field-label">
-                <span>Age</span>
-                <span class="edit-btn">✎ Edit</span>
+                <span data-en="Age" data-mr="वय">Age</span>
+                <span class="edit-btn" data-en="✎ Edit" data-mr="✎ संपादित करा">✎ Edit</span>
             </div>
             <input class="field-input" id="inputAge" type="number" value="0" disabled>
         </div>
@@ -241,8 +286,8 @@ body {
         <!-- MOBILE -->
         <div class="field-row">
             <div class="field-label">
-                <span>Mobile Number</span>
-                <span class="edit-btn">✎ Edit</span>
+                <span data-en="Mobile Number" data-mr="मोबाईल नंबर">Mobile Number</span>
+                <span class="edit-btn" data-en="✎ Edit" data-mr="✎ संपादित करा">✎ Edit</span>
             </div>
             <input class="field-input" id="inputMobile" type="text" value="Loading..." disabled>
         </div>
@@ -250,8 +295,8 @@ body {
         <!-- EMAIL -->
         <div class="field-row">
             <div class="field-label">
-                <span>Email</span>
-                <span class="edit-btn">✎ Edit</span>
+                <span data-en="Email" data-mr="ईमेल">Email</span>
+                <span class="edit-btn" data-en="✎ Edit" data-mr="✎ संपादित करा">✎ Edit</span>
             </div>
             <input class="field-input" id="inputEmail" type="text" value="Loading..." disabled>
         </div>
@@ -384,5 +429,28 @@ window.addEventListener('beforeunload', function(event) {
     }
 });
 </script>
+
+<!-- ── BILINGUAL SCRIPT ── -->
+<script>
+function changeLang(lang) {
+    document.querySelectorAll("[data-en]").forEach(el => {
+        el.innerHTML = el.getAttribute("data-" + lang);
+    });
+
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-mr').classList.toggle('active', lang === 'mr');
+
+    localStorage.setItem("lang", lang);
+}
+
+// On load, restore saved language
+(function() {
+    const saved = localStorage.getItem("lang");
+    if (saved && saved !== 'en') {
+        changeLang(saved);
+    }
+})();
+</script>
+
 </body>
 </html>
