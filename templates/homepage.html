@@ -89,6 +89,43 @@ body {
     z-index: 10;
 }
 
+/* ── LANGUAGE TOGGLE ── */
+.lang-toggle {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.18);
+    border-radius: 14px;
+    overflow: hidden;
+    height: 44px;
+    cursor: pointer;
+}
+
+.lang-btn {
+    padding: 0 13px;
+    height: 100%;
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.65);
+    background: transparent;
+    border: none;
+    font-family: "Nunito", sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    letter-spacing: 0.3px;
+}
+
+.lang-btn.active {
+    background: rgba(255,255,255,0.30);
+    color: #fff;
+}
+
+/* ── TOP-RIGHT CONTROLS ── */
+.top-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 /* ── SLIDE UP ANIMATION ── */
 @keyframes slideUp {
     from { opacity: 0; transform: translateY(28px); }
@@ -298,15 +335,23 @@ body {
             <div class="profile-row">
                 <i class="fa-solid fa-circle-user" style="font-size: 48px; color: rgba(255,255,255,0.85);"></i>
                 <div>
-                    <span class="greeting-text">Good day 👋</span>
+                    <span class="greeting-text" data-en="Good day 👋" data-mr="शुभ दिन 👋">Good day 👋</span>
                     <span id="currentUserName">Loading...</span>
                 </div>
             </div>
         </a>
 
-        <div class="bell-container" onclick="window.location.href='/notifications'">
-            <i class="fa-solid fa-bell"></i>
-            <span id="notificationDot" class="notification-dot"></span>
+        <div class="top-right">
+            <!-- //lang toggle cha button  -->
+            <div class="lang-toggle">
+                <button class="lang-btn active" id="btn-en" onclick="changeLang('en')">EN</button>
+                <button class="lang-btn" id="btn-mr" onclick="changeLang('mr')">मर</button>
+            </div>
+
+            <div class="bell-container" onclick="window.location.href='/notifications'">
+                <i class="fa-solid fa-bell"></i>
+                <span id="notificationDot" class="notification-dot"></span>
+            </div>
         </div>
     </div>
 </div>
@@ -319,6 +364,8 @@ body {
             <input class="search-box"
                    type="search"
                    id="destinationInput"
+                   data-en-placeholder="Where are you going?"
+                   data-mr-placeholder="तुम्ही कुठे जात आहात?"
                    placeholder="Where are you going?"
                    list="stopsList"
                    autocomplete="off">
@@ -329,34 +376,34 @@ body {
 
 <!-- MAIN CONTENT -->
 <div class="white-card">
-    <p class="section-label" style="margin-top: 24px;">Quick Actions</p>
+    <p class="section-label" style="margin-top: 24px;" data-en="Quick Actions" data-mr="द्रुत क्रिया">Quick Actions</p>
 
     <div class="btn-grid">
 
         <div class="card-btn half" onclick="window.location.href='/view_ticket'">
             <div class="card-icon-wrap"><i class="fa-solid fa-ticket"></i></div>
-            <p class="card-label">View<br>Ticket</p>
+            <p class="card-label" data-en="View<br>Ticket" data-mr="तिकीट<br>पहा">View<br>Ticket</p>
         </div>
 
         <div class="card-btn half" onclick="window.location.href='/view_pass'">
             <div class="card-icon-wrap"><i class="fa-solid fa-id-card"></i></div>
-            <p class="card-label">View<br>Pass</p>
+            <p class="card-label" data-en="View<br>Pass" data-mr="पास<br>पहा">View<br>Pass</p>
         </div>
 
         <div class="card-btn half" onclick="window.location.href='/routestime'">
             <div class="card-icon-wrap"><i class="fa-solid fa-route"></i></div>
-            <p class="card-label">Route<br>Timetables</p>
+            <p class="card-label" data-en="Route<br>Timetables" data-mr="मार्ग<br>वेळापत्रक">Route<br>Timetables</p>
         </div>
 
         <div class="card-btn half" onclick="handleBuyPassClick()">
             <div class="card-icon-wrap"><i class="fa-solid fa-wallet"></i></div>
-            <p class="card-label">Buy<br>Pass</p>
+            <p class="card-label" data-en="Buy<br>Pass" data-mr="पास<br>खरेदी करा">Buy<br>Pass</p>
         </div>
 
         <div class="card-btn full-btn tiko-card" onclick="window.location.href='/robo'">
             <div class="card-icon-wrap"><i class="fa-solid fa-robot"></i></div>
-            <p class="card-label">Chat With Tiko</p>
-            <span class="tiko-badge">NEW</span>
+            <p class="card-label" data-en="Chat With Tiko" data-mr="टिकोशी बोला">Chat With Tiko</p>
+            <span class="tiko-badge" data-en="NEW" data-mr="नवीन">NEW</span>
         </div>
 
     </div>
@@ -569,6 +616,37 @@ searchInput.addEventListener('change', function() {
         }
     }
 });
+</script>
+
+    <!-- // bilungual  -->
+<script>
+function changeLang(lang) {
+    // Update all data-en / data-mr elements (innerHTML to support <br> tags)
+    document.querySelectorAll("[data-en]").forEach(el => {
+        el.innerHTML = el.getAttribute("data-" + lang);
+    });
+
+    // Update search placeholder separately (can't use innerHTML on input)
+    const input = document.getElementById('destinationInput');
+    if (input) {
+        input.placeholder = input.getAttribute("data-" + lang + "-placeholder");
+    }
+
+    // Toggle active state on lang buttons
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-mr').classList.toggle('active', lang === 'mr');
+
+    // Remember choice across refreshes
+    localStorage.setItem("lang", lang);
+}
+
+// On load, restore saved language
+(function() {
+    const saved = localStorage.getItem("lang");
+    if (saved && saved !== 'en') {
+        changeLang(saved);
+    }
+})();
 </script>
 
 </body>
