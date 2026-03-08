@@ -1,10 +1,9 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify, redirect
 
-#from dotenv import load_dotenv
-#from groq import Groq
-
 # from dotenv import load_dotenv
 # from groq import Groq
+
+
 
 import random
 import string
@@ -23,11 +22,9 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-# <<<<<<< HEAD
-        password="Parth@123",
-# =======
-        # password="#SAR1807",
-# >>>>>>> 0cca0583117791d2ea6dd3d2e05a4311e67ee304
+
+        password="#SAR1807",
+
         database="RotaryClub_Database"
     )
 
@@ -366,24 +363,24 @@ def faqs():
     return render_template("FAQs.html")
 
 
-# @app.route('/update_location', methods=['POST'])
-# def update_location():
-#     data = request.get_json()
-#     user_id = data["user_id"]
-#     lat = data["latitude"]
-#     lon = data["longitude"]
+@app.route('/update_location', methods=['POST'])
+def update_location():
+    data = request.get_json()
+    user_id = data["user_id"]
+    lat = data["latitude"]
+    lon = data["longitude"]
 
-#     db = get_db()
-#     cursor = db.cursor()
-#     cursor.execute(
-#         "UPDATE cust_info SET latitude=%s, longitude=%s, last_seen=%s WHERE id=%s",
-#         (lat, lon, datetime.now(), user_id)
-#     )
-#     db.commit()
-#     cursor.close()
-#     db.close()
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+        "UPDATE cust_info SET latitude=%s, longitude=%s, last_seen=%s WHERE id=%s",
+        (lat, lon, datetime.now(), user_id)
+    )
+    db.commit()
+    cursor.close()
+    db.close()
 
-#     return jsonify({"status": "success"})
+    return jsonify({"status": "success"})
 
 
 @app.route('/get_location/<int:user_id>')
@@ -1462,11 +1459,10 @@ start_notification_service()
 # if not GROQ_API_KEY:
 #      raise ValueError("GROQ_API_KEY not found in .env file")
 
-# <<<<<<< HEAD
+
 # #groq_client = Groq(api_key=GROQ_API_KEY)
-# =======
-# # groq_client = Groq(api_key=GROQ_API_KEY)
-# >>>>>>> 0cca0583117791d2ea6dd3d2e05a4311e67ee304
+
+
 
 def get_database_context():
     db = get_db()
