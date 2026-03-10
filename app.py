@@ -104,6 +104,15 @@ def about_us():
 def customer_helpline():
     return render_template('customer_helpline.html')
 
+@app.route('/terms_conditions')
+def terms_conditions():
+    return render_template('terms_conditions.html')
+
+
+@app.route('/devs_corner')
+def devs_corner():
+    return render_template('devs_corner.html')
+
 
 
 
