@@ -195,14 +195,21 @@ View<br>Pass
       </div>
 
       <div class="detail-item full">
-        <div class="d-label">Pass Number</div>
-        <div class="d-value">{{ pass_number }}</div>
-      </div>
+  <div class="d-label">Pass Number</div>
+  <div class="d-value">
+    {% for pass in passes %}
+      {{ pass.pass_number }}<br>
+    {% endfor %}
+  </div>
+</div>
 
-      <div class="detail-item full">
-        <div class="d-label">Issued On</div>
-        <div class="d-value">{{ issue_datetime }}</div>
-      </div>
+<div class="detail-item full">
+  <div class="d-label">Issued On</div>
+  <div class="d-value">
+    {{ passes[0].issue_date }} | {{ passes[0].issue_time }}
+  </div>
+</div>
+</div>
 
     </div>
   </div>
