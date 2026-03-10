@@ -27,7 +27,8 @@ def get_db():
 
         database="RotaryClub_Database"
     )
-
+ 
+ 
 # ---------- normal routes ----------
 @app.route('/')
 def home():
@@ -94,6 +95,17 @@ def serve_dino_files(filename):
 @app.route('/tc_login')
 def tc_login():
     return render_template("tc_login.html")
+
+@app.route('/about_us')
+def about_us():
+    return render_template('about_us.html')
+
+@app.route('/customer_helpline')
+def customer_helpline():
+    return render_template('customer_helpline.html')
+
+
+
 
          #buy pass
 
