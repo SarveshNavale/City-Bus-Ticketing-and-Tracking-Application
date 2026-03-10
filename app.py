@@ -23,7 +23,7 @@ def get_db():
         host="localhost",
         user="root",
 
-        password="#SAR1807",
+        password="shreyash45",
 
         database="RotaryClub_Database"
     )
