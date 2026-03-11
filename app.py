@@ -1,5 +1,5 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify, redirect, session
-
+import requests
 # from dotenv import load_dotenv
 # from groq import Groq
 
@@ -22,7 +22,7 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Parth@123",
+        password="shreyash45",
        # password="",
         database="RotaryClub_Database"
     )
@@ -147,7 +147,8 @@ def generate_unique_pass_number(cursor):
 
         if not cursor.fetchone():
             return pass_number
-        
+
+            
 @app.route('/purchase_pass', methods=['POST'])
 def purchase_pass():
     try:
@@ -180,11 +181,27 @@ def purchase_pass():
         amount_per_pass = float(data.get('amount_per_pass', 30.00))
         service_fee = float(data.get('service_fee', 0.50))
 
-        #  Only limit per purchase (max 5)
+        # Limit per purchase
         if quantity > 5:
             return jsonify({
                 'success': False,
                 'error': 'Maximum 5 passes allowed at a time'
+            })
+
+        # DAILY LIMIT CHECK
+        cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM passes_info
+        WHERE mobile_no = %s AND issue_date = CURDATE()
+        """,(mobile_no,))
+
+        result = cursor.fetchone()
+        today_total = result['total']
+
+        if today_total + quantity > 5:
+            return jsonify({
+                'success': False,
+                'error': 'Daily limit reached. Maximum 5 passes allowed per day.'
             })
 
         current_date = datetime.now().date()
@@ -212,7 +229,7 @@ def purchase_pass():
             passes_created.append(pass_number)
 
         db.commit()
-   
+
         cursor.close()
         db.close()
 
@@ -228,14 +245,13 @@ def purchase_pass():
             'success': False,
             'error': str(e)
         })
-        
 @app.route('/view_pass')
 def view_pass():
-
     try:
         db = get_db()
         cursor = db.cursor(dictionary=True)
 
+        # logged user
         cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
         current_login = cursor.fetchone()
 
@@ -244,62 +260,61 @@ def view_pass():
 
         mobile_no = current_login['mobile_no']
 
+        # get user name
         cursor.execute(
             "SELECT cust_name FROM cust_info WHERE cust_number = %s",
             (mobile_no,)
         )
         user = cursor.fetchone()
 
-        # latest purchase time
+        holder_name = user['cust_name'] if user else "User"
+
+        # fetch all passes
         cursor.execute("""
-        SELECT issue_time
+        SELECT pass_number, issue_date, issue_time, amount_paid
         FROM passes_info
         WHERE mobile_no = %s
-        ORDER BY id DESC
-        LIMIT 1
-        """,(mobile_no,))
-
-        latest = cursor.fetchone()
-
-        if not latest:
-            return render_template(
-                "view_pass.html",
-                holder_name=user['cust_name'],
-                total_tickets=0,
-                amount_paid=0,
-                no_pass=True
-            )
-
-        latest_time = latest['issue_time']
-
-        # fetch only latest purchase passes
-        cursor.execute("""
-        SELECT *
-        FROM passes_info
-        WHERE mobile_no = %s
-        AND issue_time = %s
-        """,(mobile_no,latest_time))
+        ORDER BY issue_date DESC, issue_time DESC
+        """, (mobile_no,))
 
         passes = cursor.fetchall()
 
         cursor.close()
         db.close()
 
+        # if no passes
+        if not passes:
+            return render_template(
+                "view_pass.html",
+                holder_name=holder_name,
+                passes=[],
+                total_tickets=0,
+                amount_paid=0,
+                no_pass=True
+            )
+
         total_tickets = len(passes)
-        amount_paid = total_tickets * 30.50
+        amount_paid = sum(p['amount_paid'] for p in passes)
 
         return render_template(
             "view_pass.html",
+            holder_name=holder_name,
             passes=passes,
-            holder_name=user['cust_name'],
             total_tickets=total_tickets,
             amount_paid=amount_paid,
-            actual_user=True
+            no_pass=False
         )
 
     except Exception as e:
         print("View pass error:", e)
-        return "Error loading pass"
+        return render_template(
+            "view_pass.html",
+            holder_name="User",
+            passes=[],
+            total_tickets=0,
+            amount_paid=0,
+            no_pass=True
+        )
     
 @app.route('/faqs')
 def faqs():
@@ -902,6 +917,18 @@ def update_user_location_from_map():
         print(f"Location update error: {e}")
         return jsonify({'success': False, 'error': str(e)})
 
+
+# --------------- REAL TIME TRACKED DRIVER (from driver_location table) ---------------
+@app.route('/get_driver_locations')
+def get_driver_locations():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    # cursor.execute("SELECT driver_id, driver_name, latitude, longitude, no_plate FROM driver_location")  # uncomment after ALTER TABLE ADD COLUMN no_plate
+    cursor.execute("SELECT driver_id, driver_name, latitude, longitude FROM driver_location")
+    rows = cursor.fetchall()
+    cursor.close()
+    db.close()
+    return jsonify(rows)
 
 @app.route('/test_add_notification')
 def test_add_notification():
@@ -1546,6 +1573,69 @@ def delete_complaint(id):
     except Exception as e:
         print("Delete Error:", e)
         return jsonify({"success": False})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def fetch_location():
+
+    while True:
+
+        try:
+
+            response = requests.get("https://drivertracker-a4290-default-rtdb.firebaseio.com/location.json")
+
+            data = response.json()
+
+            lat = data["latitude"]
+            lon = data["longitude"]
+
+            db = mysql.connector.connect(
+                host="localhost",
+                user="root",
+                password="#SAR1807",
+                database="RotaryClub_Database"
+            )
+
+            cursor = db.cursor()
+
+            sql = "UPDATE driver_location SET latitude=%s, longitude=%s WHERE driver_id=1"
+            cursor.execute(sql,(lat,lon))
+
+            db.commit()
+
+            cursor.close()
+            db.close()
+
+        except Exception as e:
+            print(e)
+
+        time.sleep(5)
+
+thread = threading.Thread(target=fetch_location)
+thread.daemon = True
+thread.start()
+
+
+
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
