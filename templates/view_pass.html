@@ -5,23 +5,45 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>View Pass</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
 
 body{
   margin:0;
-  font-family:'Hind Guntur', sans-serif;
+  font-family:"Nunito", sans-serif;
   background:#ffffff;
   color:#333;
 }
 
-/* HEADER */
+
+
 .bluebg{
-  background-color:#6C64FF;
-  height:220px;
+  background:linear-gradient(135deg,#6C64FF 0%,#8B84FF 100%);
+  height:180px;
   width:100%;
   position:relative;
+  overflow:hidden;
+}
+
+.circle1{
+  position:absolute;
+  width:190px;
+  height:190px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.10);
+  top:-55px;
+  right:-45px;
+}
+
+.circle2{
+  position:absolute;
+  width:115px;
+  height:115px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.07);
+  top:45px;
+  right:25px;
 }
 
 .backbutton{
@@ -33,20 +55,16 @@ body{
   gap:49px;
 }
 
-.topcircles{
-  position:absolute;
-  right:5px;
-  top:0;
-}
 
-/* CONTENT */
+
 .content{
   padding:30px 18px 40px;
   max-width:420px;
   margin:auto;
 }
 
-/* PASS CARD */
+
+
 .pass-card{
   background:#ffffff;
   border-radius:20px;
@@ -61,7 +79,8 @@ body{
   to{opacity:1;transform:translateY(0)}
 }
 
-/* TOP STRIP */
+
+
 .pass-strip{
   background:linear-gradient(135deg,#6C64FF,#8f89ff);
   padding:25px 18px 55px;
@@ -77,7 +96,8 @@ body{
   letter-spacing:1px;
 }
 
-/* ROTARY LOGO (CIRCULAR) */
+
+
 .rotary-logo{
   position:absolute;
   bottom:-35px;
@@ -99,7 +119,8 @@ body{
   object-fit:contain;
 }
 
-/* DETAILS */
+
+
 .pass-details{
   padding:60px 18px 25px;
 }
@@ -139,7 +160,12 @@ body{
 <body>
 
 <!-- HEADER -->
+
 <div class="bluebg">
+
+<div class="circle1"></div>
+<div class="circle2"></div>
+
 <a href="/backtohome" style="text-decoration:none;color:inherit;">
 <div class="backbutton">
 <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
@@ -149,9 +175,6 @@ View<br>Pass
 </div>
 </a>
 
-<div class="topcircles">
-<img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" style="width:150px;">
-</div>
 </div>
 
 <!-- CONTENT -->
@@ -166,84 +189,57 @@ View<br>Pass
 
 <div class="pass-card">
 
-  <div class="pass-strip">
-    <h2>CITY BUS PASS</h2>
+<div class="pass-strip">
+<h2>CITY BUS PASS</h2>
 
-    <!-- Rotary Logo -->
-    <div class="rotary-logo">
-      <img src="{{ url_for('static', filename='Assets/images/rotary-logo.png') }}">
-    </div>
+<div class="rotary-logo">
+<img src="{{ url_for('static', filename='Assets/images/rotary-logo.png') }}">
+</div>
 
-  </div>
+</div>
 
-  <div class="pass-details">
-    <div class="detail-grid">
+<div class="pass-details">
+<div class="detail-grid">
 
-      <div class="detail-item">
-        <div class="d-label">Total Tickets</div>
-        <div class="d-value">{{ total_tickets }}</div>
-      </div>
+<div class="detail-item">
+<div class="d-label">Total Tickets</div>
+<div class="d-value">{{ total_tickets }}</div>
+</div>
 
-      <div class="detail-item">
-        <div class="d-label">Amount Paid</div>
-        <div class="d-value">₹{{ amount_paid }}</div>
-      </div>
+<div class="detail-item">
+<div class="d-label">Amount Paid</div>
+<div class="d-value">₹{{ amount_paid }}</div>
+</div>
 
-      <div class="detail-item full">
-        <div class="d-label">Pass Holder</div>
-        <div class="d-value">{{ holder_name }}</div>
-      </div>
+<div class="detail-item full">
+<div class="d-label">Pass Holder</div>
+<div class="d-value">{{ holder_name }}</div>
+</div>
 
-      <div class="detail-item full">
-        <div class="d-label">Pass Number</div>
-        <div class="d-value">{{ pass_number }}</div>
-      </div>
+<div class="detail-item full">
+<div class="d-label">Pass Number</div>
+<div class="d-value">
+{% for pass in passes %}
+{{ pass.pass_number }}<br>
+{% endfor %}
+</div>
+</div>
 
-      <div class="detail-item full">
-        <div class="d-label">Issued On</div>
-        <div class="d-value">{{ issue_datetime }}</div>
-      </div>
+<div class="detail-item full">
+<div class="d-label">Issued On</div>
+<div class="d-value">
+{{ passes[0].issue_date }} | {{ passes[0].issue_time }}
+</div>
+</div>
 
-    </div>
-  </div>
+</div>
+</div>
 
 </div>
 
 {% endif %}
 
 </div>
-
-<!-- SAME LOGIC -->
-{% if actual_user %}
-<div id="pass-data" 
-     data-actual-user="true"
-     data-holder-name="{{ holder_name }}"
-     data-pass-number="{{ pass_number }}"
-     data-amount-paid="{{ amount_paid }}"
-     data-issue-datetime="{{ issue_datetime }}"
-     data-mobile-no="{{ mobile_no }}"
-     {% if no_pass %}data-no-pass="true"{% else %}data-no-pass="false"{% endif %}
-     style="display:none;">
-</div>
-{% endif %}
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const passDataElement = document.getElementById('pass-data');
-    if (passDataElement) {
-        const passData = {
-            actualUser: passDataElement.dataset.actualUser === 'true',
-            holderName: passDataElement.dataset.holderName,
-            passNumber: passDataElement.dataset.passNumber,
-            amountPaid: parseFloat(passDataElement.dataset.amountPaid),
-            issueDateTime: passDataElement.dataset.issueDatetime,
-            mobileNo: passDataElement.dataset.mobileNo,
-            noPass: passDataElement.dataset.noPass === 'true'
-        };
-        console.log('Pass data:', passData);
-    }
-});
-</script>
 
 </body>
 </html>

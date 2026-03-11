@@ -73,14 +73,53 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const payButton = document.getElementById('payButton');
-    payButton.addEventListener('click', async function() {
-        const selectedPayment = document.querySelector('.payment-option.selected').dataset.payment;
-        const totalPrice = parseFloat(totalAmount.textContent);
-        
-        showProcessingModal();
-        
-        setTimeout(() => {
+    payButton.addEventListener('click', function () {
+
+    const selectedOption = document.querySelector('.payment-option.selected');
+
+    if (!selectedOption) {
+        alert("Please select payment method");
+        return;
+    }
+
+    const selectedPayment = selectedOption.dataset.payment;
+
+    showProcessingModal();
+
+    fetch("/purchase_pass", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            quantity: quantity,
+            amount_per_pass: passPrice,
+            service_fee: feePerPass,
+            payment_method: selectedPayment
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Server error");
+        }
+        return response.json();
+    })
+    .then(data => {
+
+        if (data.success) {
             showSuccessModal();
-        }, 2000);
+        } else {
+            modalTitle.textContent = "Payment Failed";
+            modalText.textContent = data.error;
+        }
+
+    })
+    .catch(error => {
+        console.error("Fetch error:", error);
+        modalTitle.textContent = "Server Error";
+        modalText.textContent = "Something went wrong";
     });
+
 });
+        
+    });

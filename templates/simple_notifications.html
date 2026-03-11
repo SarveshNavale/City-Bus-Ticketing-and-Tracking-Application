@@ -1,260 +1,271 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notifications</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@400;600&display=swap" rel="stylesheet">
-    
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Hind Guntur', sans-serif;
-            background: #ffffff;
-            color: #333;
-        }
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications</title>
 
-        .bluebg {
-            background-color: #6C64FF;
-            height: 220px;
-            width: 100%;
-            position: relative;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-        .backbutton {
-            position: absolute;
-            top: 45px;
-            left: 20px;
-            display: flex;
-            align-items: center;
-            gap: 49px;
-        }
+<style>
 
-        .topcircles {
-            position: absolute;
-            right: 5px;
-            top: 0;
-        }
+*{box-sizing:border-box;}
 
-        .content {
-            padding: 30px 18px 40px;
-            max-width: 420px;
-            margin: auto;
-        }
+body{
+margin:0;
+font-family:"Nunito",sans-serif;
+background:#F0F2FF;
+color:#333;
+}
 
-        .notification-card {
-            background: #ffffff;
-            border-radius: 20px;
-            border: 1px solid #e8e8f0;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(108,100,255,0.08);
-            animation: slideUp .35s ease both;
-            margin-bottom: 20px;
-        }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
 
-        .notification-strip {
-            background: linear-gradient(135deg, #6C64FF, #8f89ff);
-            padding: 20px 18px;
-            text-align: center;
-            color: white;
-            position: relative;
-        }
+.bluebg{
+background:linear-gradient(135deg,#6C64FF 0%,#8B84FF 100%);
+height:180px;
+width:100%;
+position:relative;
+overflow:hidden;
+}
 
-        .notification-strip h2 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
+.circle1{
+position:absolute;
+width:190px;
+height:190px;
+border-radius:50%;
+background:rgba(255,255,255,0.10);
+top:-55px;
+right:-45px;
+}
 
-        .bus-icon {
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ffffff;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
+.circle2{
+position:absolute;
+width:115px;
+height:115px;
+border-radius:50%;
+background:rgba(255,255,255,0.07);
+top:45px;
+right:25px;
+}
 
-        .bus-icon i {
-            color: #6C64FF;
-            font-size: 25px;
-        }
+.backbutton{
+position:absolute;
+top:45px;
+left:20px;
+display:flex;
+align-items:center;
+gap:49px;
+}
 
-        .notification-details {
-            padding: 40px 18px 20px;
-        }
 
-        .notification-heading {
-            font-size: 18px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 10px;
-        }
 
-        .notification-description {
-            font-size: 14px;
-            color: #666;
-            line-height: 1.5;
-            margin-bottom: 15px;
-        }
+.content{
+margin:-28px auto 40px;
+padding:30px 18px 40px;
+max-width:420px;
+position:relative;
+z-index:10;
+}
 
-        .notification-time {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #6C64FF;
-            font-size: 13px;
-            font-weight: 600;
-            padding-top: 10px;
-            border-top: 1px dashed #e8e8f0;
-        }
+.notification-card{
+background:#ffffff;
+border-radius:20px;
+border:1px solid #e8e8f0;
+overflow:hidden;
+box-shadow:0 8px 25px rgba(108,100,255,0.08);
+animation:slideUp .35s ease both;
+margin-bottom:20px;
+}
 
-        .notification-time i {
-            font-size: 14px;
-        }
+@keyframes slideUp{
+from{opacity:0;transform:translateY(20px);}
+to{opacity:1;transform:translateY(0);}
+}
 
-        .refresh-btn {
-            background: #6C64FF;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 12px 25px;
-            font-family: 'Hind Guntur', sans-serif;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(108,100,255,0.3);
-            transition: all 0.3s;
-        }
+.notification-strip{
+background:linear-gradient(135deg,#6C64FF,#8f89ff);
+padding:20px 18px;
+text-align:center;
+color:white;
+position:relative;
+}
 
-        .refresh-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(108,100,255,0.4);
-        }
+.notification-strip h2{
+margin:0;
+font-size:18px;
+font-weight:700;
+letter-spacing:1px;
+}
 
-        .state-msg {
-            text-align: center;
-            padding: 60px 20px;
-            color: #777;
-        }
+.bus-icon{
+position:absolute;
+bottom:-25px;
+left:50%;
+transform:translateX(-50%);
+background:#ffffff;
+width:50px;
+height:50px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 4px 15px rgba(0,0,0,0.1);
+}
 
-        .state-msg i {
-            color: #6C64FF;
-            font-size: 50px;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
+.bus-icon i{
+color:#6C64FF;
+font-size:25px;
+}
 
-        .state-msg h3 {
-            margin: 10px 0;
-            color: #333;
-        }
-        
-        .debug-info {
-            background: #f0f0f0;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            font-size: 12px;
-            color: #666;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+.notification-details{
+padding:40px 18px 20px;
+}
+
+.notification-heading{
+font-size:18px;
+font-weight:700;
+color:#333;
+margin-bottom:10px;
+}
+
+.notification-description{
+font-size:14px;
+color:#666;
+line-height:1.5;
+margin-bottom:15px;
+}
+
+.notification-time{
+display:flex;
+align-items:center;
+gap:8px;
+color:#6C64FF;
+font-size:13px;
+font-weight:600;
+padding-top:10px;
+border-top:1px dashed #e8e8f0;
+}
+
+.notification-time i{
+font-size:14px;
+}
+
+.state-msg{
+text-align:center;
+padding:60px 20px;
+color:#777;
+}
+
+.state-msg i{
+color:#6C64FF;
+font-size:50px;
+margin-bottom:15px;
+opacity:0.5;
+}
+
+.state-msg h3{
+margin:10px 0;
+color:#333;
+}
+
+.debug-info{
+background:#f0f0f0;
+padding:10px;
+border-radius:5px;
+margin-bottom:20px;
+font-size:12px;
+color:#666;
+}
+
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
 
-<div class="bluebg">
-    <a href="/backtohome" style="text-decoration:none;color:inherit;">
-        <div class="backbutton">
-            <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
-            <p style="font-size:22px;font-weight:600;color:white;">
-                Notifications
-            </p>
-        </div>
-    </a>
+<!-- HEADER -->
 
-    <div class="topcircles">
-        <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" style="width:140px;">
-    </div>
+<div class="bluebg">
+
+<div class="circle1"></div>
+<div class="circle2"></div>
+
+<a href="/backtohome" style="text-decoration:none;color:inherit;">
+<div class="backbutton">
+
+<img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+
+<p style="font-size:22px;font-weight:600;color:white;">
+Notifications
+</p>
+
 </div>
+</a>
+
+</div>
+
 
 <div class="content">
 
-    {% if notifications and notifications|length > 0 %}
-        <div class="debug-info" style="background: #e0f0e0;">
-            <strong>Success:</strong> Displaying {{ notifications|length }} notifications
-        </div>
-        {% for notification in notifications %}
-        <div class="notification-card">
-            <div class="notification-strip">
-                <h2>BUS ALERT</h2>
-                
-                <div class="bus-icon">
-                    <i class="fas fa-bus"></i>
-                </div>
-            </div>
+{% if notifications and notifications|length > 0 %}
 
-            <div class="notification-details">
-    <div class="notification-heading">
-        {{ notification.notif_heading }}
-    </div>
-    
-    <div class="notification-description">
-        {{ notification.notif_description }}
-    </div>
-    
-    <div class="notification-time">
-        <i class="far fa-calendar-alt"></i>
-        {{ notification.notif_date }}
-        <i class="far fa-clock ms-3"></i>
-        {{ notification.notif_time }}
-    </div>
-    
-    {% if 'MH08' in notification.notif_description %}
-    <div style="margin-top: 5px; font-size: 11px; color: #6C64FF;">
-        <i class="fas fa-check-circle"></i> Has number plate
-    </div>
-    {% endif %}
+<div class="debug-info" style="background:#e0f0e0;">
+<strong>Success:</strong> Displaying {{ notifications|length }} notifications
 </div>
-        </div>
-        {% endfor %}
-    {% else %}
-        <div class="state-msg">
-            <i class="fas fa-bell-slash"></i>
-            <h3>No Notifications</h3>
-            <p>You'll be notified when buses are nearby!</p>
-        </div>
-    {% endif %}
+
+{% for notification in notifications %}
+
+<div class="notification-card">
+
+<div class="notification-strip">
+<h2>BUS ALERT</h2>
+
+<div class="bus-icon">
+<i class="fas fa-bus"></i>
+</div>
 
 </div>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Notifications page loaded');
-    
-    const debugDiv = document.getElementById('debug-info');
-    if (debugDiv) {
-        const count = debugDiv.dataset.count;
-        console.log('Notifications count from data:', count);
-    }
-});
-</script>
+
+<div class="notification-details">
+
+<div class="notification-heading">
+{{ notification.notif_heading }}
+</div>
+
+<div class="notification-description">
+{{ notification.notif_description }}
+</div>
+
+<div class="notification-time">
+<i class="far fa-calendar-alt"></i>
+{{ notification.notif_date }}
+<i class="far fa-clock"></i>
+{{ notification.notif_time }}
+</div>
+
+{% if 'MH08' in notification.notif_description %}
+<div style="margin-top:5px;font-size:11px;color:#6C64FF;">
+<i class="fas fa-check-circle"></i> Has number plate
+</div>
+{% endif %}
+
+</div>
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="state-msg">
+<i class="fas fa-bell-slash"></i>
+<h3>No Notifications</h3>
+<p>You'll be notified when buses are nearby!</p>
+</div>
+
+{% endif %}
+
+</div>
 
 </body>
 </html>
