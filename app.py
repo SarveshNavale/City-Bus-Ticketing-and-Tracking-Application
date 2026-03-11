@@ -1,5 +1,5 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify, redirect, session
-
+import requests
 # from dotenv import load_dotenv
 # from groq import Groq
 
@@ -22,7 +22,7 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Parth@123",
+        password="#SAR1807",
        # password="",
         database="RotaryClub_Database"
     )
@@ -1546,6 +1546,69 @@ def delete_complaint(id):
     except Exception as e:
         print("Delete Error:", e)
         return jsonify({"success": False})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def fetch_location():
+
+    while True:
+
+        try:
+
+            response = requests.get("https://drivertracker-a4290-default-rtdb.firebaseio.com/location.json")
+
+            data = response.json()
+
+            lat = data["latitude"]
+            lon = data["longitude"]
+
+            db = mysql.connector.connect(
+                host="localhost",
+                user="root",
+                password="#SAR1807",
+                database="RotaryClub_Database"
+            )
+
+            cursor = db.cursor()
+
+            sql = "UPDATE driver_location SET latitude=%s, longitude=%s WHERE driver_id=1"
+            cursor.execute(sql,(lat,lon))
+
+            db.commit()
+
+            cursor.close()
+            db.close()
+
+        except Exception as e:
+            print(e)
+
+        time.sleep(5)
+
+thread = threading.Thread(target=fetch_location)
+thread.daemon = True
+thread.start()
+
+
+
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
