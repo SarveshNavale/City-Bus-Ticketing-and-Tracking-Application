@@ -85,26 +85,26 @@ body {
     margin: 0 4px 14px 4px;
 }
 
-/* ABOUT CARD */
-.about-card {
-    background: #fff;
-    border-radius: 22px;
-    box-shadow: 0 4px 18px rgba(108,100,255,0.10);
-    padding: 22px;
-    line-height: 1.6;
+
+.bus-icon {
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffffff;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-.about-card p {
-    font-size: 14px;
-    color: #555;
-}
-
-.about-card i {
-    font-size: 28px;
+.bus-icon i {
     color: #6C64FF;
-    margin-bottom: 10px;
+    font-size: 35px;
 }
-
 </style>
 </head>
 
@@ -125,15 +125,16 @@ body {
 
 <!-- CONTENT -->
 <div class="content">
-
+               
 <br><br>
+         
 
 <p class="header-tagline">Smart Bus Travel</p>
 <p class="section-label">About Project</p>
+ <div class="bus-icon">
+                <i class="fas fa-bus"></i>
+            </div>
 
-<div class="about-card">
-
-<i class="fa-solid fa-bus"></i>
 
 <p>
 City Bus Ticketing and Tracking Application is designed to make public transport easier and smarter for passengers.

@@ -22,7 +22,7 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="#SAR1807",
+        password="shreyash45",
        # password="",
         database="RotaryClub_Database"
     )
