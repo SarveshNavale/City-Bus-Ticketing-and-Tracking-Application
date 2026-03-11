@@ -903,6 +903,18 @@ def update_user_location_from_map():
         return jsonify({'success': False, 'error': str(e)})
 
 
+# --------------- REAL TIME TRACKED DRIVER (from driver_location table) ---------------
+@app.route('/get_driver_locations')
+def get_driver_locations():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    # cursor.execute("SELECT driver_id, driver_name, latitude, longitude, no_plate FROM driver_location")  # uncomment after ALTER TABLE ADD COLUMN no_plate
+    cursor.execute("SELECT driver_id, driver_name, latitude, longitude FROM driver_location")
+    rows = cursor.fetchall()
+    cursor.close()
+    db.close()
+    return jsonify(rows)
+
 @app.route('/test_add_notification')
 def test_add_notification():
     try:
