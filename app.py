@@ -23,7 +23,7 @@ def get_db():
         host="localhost",
         user="root",
 
-        password="#SAR1807",
+        password="Parth@123",
 
         database="RotaryClub_Database"
     )
@@ -1606,4 +1606,9 @@ def delete_complaint(id):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+
+
+@app.route("/tourist")
+def tourist():
+    return render_template("tourist.html")
 #task completed
