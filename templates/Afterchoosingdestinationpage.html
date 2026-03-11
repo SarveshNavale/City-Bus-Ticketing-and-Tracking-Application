@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -122,8 +121,6 @@ body {
     align-items: center;
 }
 
-/* ─── HEADER ─── */
-
 @keyframes slideUp {
     from { opacity: 0; transform: translateY(28px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -152,37 +149,6 @@ body {
     margin: 0 4px 14px 4px;
 }
 
-
-
-
-.header h1 {
-    color: #fff;
-    font-size: 22px;
-    font-weight: 700;
-}
-.header p {
-    color: rgba(255,255,255,0.75);
-    font-size: 13px;
-    margin-top: 3px;
-}
-
-/* ─── MAIN CARD ─── */
-
-
-/* ─── ROUTE SECTION ─── */
-
-
-
-
-.dot.filled { background: var(--purple); }
-
-
-
-
-
-/* ─── FARE ROW ─── */
-
-
 .info-label {
     font-size: 13px;
     color: var(--subtext);
@@ -195,23 +161,13 @@ body {
     color: var(--text);
 }
 
-/* ─── COUNTER ─── */
-
-
-
-
 .counter-ctrl {
     display: flex;
     align-items: center;
     gap: 14px;
 }
 
-
 .ctrl-btn:active { transform: scale(0.92); opacity: 0.85; }
-
-
-/* ─── TOTAL ─── */
-
 
 .total-amount {
     color: #fff;
@@ -219,11 +175,8 @@ body {
     font-weight: 700;
 }
 
-/* ─── PAY BUTTON ─── */
-
 .pay-btn:active { transform: scale(0.98); background: var(--purple-dark); }
 
-/* ─── PROCESSING OVERLAY ─── */
 .overlay {
     display: none;
     position: fixed;
@@ -251,7 +204,6 @@ body {
     to   { transform: scale(1);   opacity: 1; }
 }
 
-/* Spinner */
 .spinner {
     width: 64px; height: 64px;
     border: 5px solid var(--purple-light);
@@ -273,7 +225,6 @@ body {
     color: var(--subtext);
 }
 
-/* Success state */
 .checkmark {
     display: none;
     width: 64px; height: 64px;
@@ -285,13 +236,14 @@ body {
     animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
 }
 .checkmark svg { width: 34px; height: 34px; }
- .bluebg {
+
+.bluebg {
     background: linear-gradient(135deg, #6C64FF 0%, #8B84FF 100%);
     height: 180px;
     width: 100%;
     position: relative;
     overflow: hidden;
-  }
+}
 .bluebg h1 {
     font-size: 22px;
     font-weight: 800;
@@ -314,34 +266,30 @@ body {
     border-radius: 50%;
     background: rgba(255,255,255,0.10);
     top: -55px; right: -45px;
-  }
-  .circle2 {
+}
+.circle2 {
     position: absolute;
     width: 115px; height: 115px;
     border-radius: 50%;
     background: rgba(255,255,255,0.07);
     top: 45px; right: 25px;
-  }
+}
 
-  .backbutton {
+.backbutton {
     position: absolute;
     top: 45px;
     left: 20px;
     display: flex;
     align-items: center;
     gap: 49px;
-  }
+}
 
-  .backbutton img {
+.backbutton img {
     width: 42px; height: 42px;
     object-fit: contain;
     display: block;
-  }
-.ticket-container {
-    max-width: 420px;
-    width: 100%;
 }
-.content {
+.ticket-container {
     max-width: 420px;
     width: 100%;
 }
@@ -360,7 +308,6 @@ body {
     background: white;
     border-radius: 28px;
     padding: 26px 20px 28px;
-    
     box-shadow: 0 12px 40px rgba(0,0,0,0.08);
 }
 
@@ -380,13 +327,11 @@ body {
     margin-bottom: 22px;
 }
 
-/* Shared section styling */
 .card-section {
     padding: 16px 0;
     border-bottom: 1px solid #F0F0F0;
 }
 
-/* Route */
 .route-row {
     display: flex;
     justify-content: space-between;
@@ -396,11 +341,15 @@ body {
 .route-arrow {
     color: #6C64FF;
     font-size: 18px;
+    flex-shrink: 0;
+    margin: 0 8px;
 }
 
 .label {
     font-size: 11px;
     color: #888;
+    display: block;
+    margin-bottom: 6px;
 }
 
 .location h3 {
@@ -409,7 +358,6 @@ body {
     margin-top: 4px;
 }
 
-/* Fare info */
 .info-row div {
     display: flex;
     justify-content: space-between;
@@ -417,7 +365,6 @@ body {
     font-size: 14px;
 }
 
-/* Counter */
 .counter-row {
     display: flex;
     justify-content: space-between;
@@ -446,7 +393,6 @@ body {
     font-size: 16px;
 }
 
-/* Total */
 .total-row {
     padding: 18px 0;
     display: flex;
@@ -459,7 +405,6 @@ body {
     font-weight: 900;
 }
 
-/* Button */
 .pay-btn {
     width: 100%;
     padding: 16px;
@@ -473,12 +418,104 @@ body {
     margin-top: 8px;
     box-shadow: 0 6px 20px rgba(108,100,255,0.25);
 }
+
+/* ── STOP SEARCH INPUTS (same style as homepage search box) ── */
+.stop-search-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.stop-search-input {
+    width: 100%;
+    height: 48px;
+    background: #F0F2FF;
+    padding: 0 16px 0 40px;
+    border-radius: 14px;
+    font-size: 14px;
+    color: #444;
+    font-family: "Nunito", sans-serif;
+    font-weight: 700;
+    border: 2px solid transparent;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.stop-search-input:focus {
+    border-color: #6C64FF;
+    background: #fff;
+}
+
+.stop-search-input::placeholder {
+    color: #BBBBCC;
+    font-weight: 600;
+}
+
+.stop-search-icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #6C64FF;
+    pointer-events: none;
+}
+
+/* dropdown list */
+.stop-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 8px 30px rgba(108,100,255,0.18);
+    z-index: 50;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #EAE9FF;
+}
+
+.stop-dropdown.open { display: block; }
+
+.stop-option {
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+    cursor: pointer;
+    border-bottom: 1px solid #F5F5FF;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.15s;
+}
+
+.stop-option:last-child { border-bottom: none; }
+
+.stop-option:hover, .stop-option.highlighted {
+    background: #F0F2FF;
+    color: #6C64FF;
+}
+
+.stop-option i {
+    color: #6C64FF;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.stop-no-result {
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #AAAACC;
+    text-align: center;
+}
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <!-- HEADER -->
 <div class="bluebg">
   <div class="circle1"></div>
@@ -487,33 +524,55 @@ body {
   <a href="/backtohome" style="text-decoration:none;color:inherit;outline:none;-webkit-tap-highlight-color:transparent;">
     <div class="backbutton">
       <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
-      <p style="font-size:22px;font-weight:600;color:white;">Buy Ticket </p>
+      <p style="font-size:22px;font-weight:600;color:white;">Buy Ticket</p>
     </div>
   </a>
 </div>
 
 
- <!-- MAIN CARD -->
+<!-- MAIN CARD -->
 <div class="content">
 
     <div class="main-card">
 
         <p class="header-tagline">Confirm Your Journey</p>
         <p class="section-label">Ticket Details</p>
-        
-        <!-- Route Section -->
+
+        <!-- Route Section — now with search inputs -->
         <div class="card-section route-row">
-            <div class="location">
+
+            <!-- FROM stop -->
+            <div class="location" style="flex:1;">
                 <span class="label">From</span>
-                <h3>Maruti Mandir</h3>
+                <div class="stop-search-wrap">
+                    <i class="fa-solid fa-circle-dot stop-search-icon"></i>
+                    <input
+                        type="text"
+                        id="sourceInput"
+                        class="stop-search-input"
+                        placeholder="Source stop..."
+                        autocomplete="off">
+                    <div class="stop-dropdown" id="sourceDropdown"></div>
+                </div>
             </div>
 
             <i class="fa-solid fa-arrow-right route-arrow"></i>
 
-            <div class="location">
+            <!-- TO stop -->
+            <div class="location" style="flex:1;">
                 <span class="label">To</span>
-                <h3 id="destName">Loading...</h3>
+                <div class="stop-search-wrap">
+                    <i class="fa-solid fa-location-dot stop-search-icon"></i>
+                    <input
+                        type="text"
+                        id="destInput"
+                        class="stop-search-input"
+                        placeholder="Destination stop..."
+                        autocomplete="off">
+                    <div class="stop-dropdown" id="destDropdown"></div>
+                </div>
             </div>
+
         </div>
 
         <!-- Fare Section -->
@@ -531,7 +590,6 @@ body {
         <!-- Ticket Counter -->
         <div class="card-section counter-row">
             <span>Number of Tickets</span>
-
             <div class="counter-box">
                 <button onclick="dec()">−</button>
                 <span id="ticketCount">1</span>
@@ -553,18 +611,17 @@ body {
     </div>
 
 </div>
+
 <!-- PROCESSING OVERLAY -->
 <div class="overlay" id="overlay">
     <div class="overlay-card" id="overlayCard">
 
-        <!-- Processing state -->
         <div id="stateProcessing">
             <div class="spinner"></div>
             <div class="overlay-title">Processing Payment…</div>
             <div class="overlay-sub">Please wait, don't go back</div>
         </div>
 
-        <!-- Success state -->
         <div id="stateSuccess" style="display:none;">
             <div class="checkmark" id="checkmark" style="display:flex;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -580,95 +637,234 @@ body {
 </div>
 
 <script>
-// ─── Get destination from URL ───
-const params = new URLSearchParams(window.location.search);
-const destination = params.get('destination') || 'Unknown Stop';
+// ════════════════════════════════════════════════
+//  STOP SEARCH — reusable for both source & dest
+// ════════════════════════════════════════════════
 
-document.getElementById('destName').textContent = destination;
+function makeStopSearch(inputId, dropdownId) {
+    const input    = document.getElementById(inputId);
+    const dropdown = document.getElementById(dropdownId);
+    let selectedStop = '';
+    let allStops = [];       // cache fetched results
+    let activeIndex = -1;    // keyboard nav
 
-// ─── Pricing: ₹10 base + ₹5 per stop (dummy stop count) ───
-// We'll fetch stops to compute distance; fallback to a fixed amount if fetch fails
-let pricePerTicket = 20.00; // default fallback
-let stopsDiff = 4;
-
-async function loadFare() {
-    try {
-        const res = await fetch('/search_stops?q=');
-        // We don't have a stops-distance API, so we'll fetch all stops and
-        // find index of Maruti Mandir vs destination to compute gap
-        const r2 = await fetch('/get_stops_list'); // may not exist
-        throw new Error('use fallback');
-    } catch {
-        // Fallback: compute a simple fare
-        // Use a reasonable default
-        pricePerTicket = 10.00;
-        stopsDiff = '~4';
+    // Pre-fill from URL param if this is the dest field
+    if (inputId === 'destInput') {
+        const params = new URLSearchParams(window.location.search);
+        const pre = params.get('destination');
+        if (pre) {
+            input.value = pre;
+            selectedStop = pre;
+        }
     }
+
+    function renderDropdown(stops) {
+        dropdown.innerHTML = '';
+        activeIndex = -1;
+
+        if (stops.length === 0) {
+            dropdown.innerHTML = '<div class="stop-no-result">No stops found</div>';
+            dropdown.classList.add('open');
+            return;
+        }
+
+        stops.forEach((stop, i) => {
+            const item = document.createElement('div');
+            item.className = 'stop-option';
+            item.innerHTML = `<i class="fa-solid fa-bus"></i> ${stop}`;
+            item.addEventListener('mousedown', function(e) {
+                e.preventDefault(); // don't blur input before click fires
+                selectStop(stop);
+            });
+            dropdown.appendChild(item);
+        });
+
+        dropdown.classList.add('open');
+        allStops = stops;
+    }
+
+    function selectStop(stop) {
+        input.value = stop;
+        selectedStop = stop;
+        dropdown.classList.remove('open');
+        dropdown.innerHTML = '';
+        recalcFare();   // recalculate fare whenever either stop changes
+    }
+
+    function closeDropdown() {
+        dropdown.classList.remove('open');
+    }
+
+    // Typing → fetch from /search_stops
+    input.addEventListener('input', function() {
+        const q = this.value.trim();
+        selectedStop = '';   // clear until user picks from list
+
+        if (q.length === 0) {
+            closeDropdown();
+            return;
+        }
+
+        fetch(`/search_stops?q=${encodeURIComponent(q)}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.stops.length > 0) {
+                    renderDropdown(data.stops);
+                } else {
+                    renderDropdown([]);
+                }
+            })
+            .catch(() => closeDropdown());
+    });
+
+    // Keyboard navigation
+    input.addEventListener('keydown', function(e) {
+        const items = dropdown.querySelectorAll('.stop-option');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            activeIndex = Math.min(activeIndex + 1, items.length - 1);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            activeIndex = Math.max(activeIndex - 1, 0);
+        } else if (e.key === 'Enter' && activeIndex >= 0) {
+            e.preventDefault();
+            selectStop(allStops[activeIndex]);
+            return;
+        } else if (e.key === 'Escape') {
+            closeDropdown();
+            return;
+        }
+
+        items.forEach((it, i) => {
+            it.classList.toggle('highlighted', i === activeIndex);
+        });
+    });
+
+    // Close on outside click
+    document.addEventListener('click', function(e) {
+        if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+            closeDropdown();
+        }
+    });
+
+    // Expose getter
+    return {
+        getStop: () => input.value.trim()   // returns whatever is typed / selected
+    };
+}
+
+// Initialise both search fields
+const sourceSearch = makeStopSearch('sourceInput', 'sourceDropdown');
+const destSearch   = makeStopSearch('destInput',   'destDropdown');
+
+
+// ════════════════════════════════════════════════
+//  FARE CALCULATION
+// ════════════════════════════════════════════════
+
+let pricePerTicket = 10.00;
+let stopsDiff = '—';
+
+async function recalcFare() {
+    const src  = sourceSearch.getStop();
+    const dest = destSearch.getStop();
+
+    if (!src || !dest || src === dest) {
+        document.getElementById('farePerTicket').textContent = '₹ —';
+        document.getElementById('stopsCount').textContent = '—';
+        pricePerTicket = 5.00;
+        updateTotal();
+        return;
+    }
+
+    try {
+        const res = await fetch(`/get_stops_between?src=${encodeURIComponent(src)}&dest=${encodeURIComponent(dest)}`);
+        const data = await res.json();
+
+        if (data.success && data.stops_away > 0) {
+            stopsDiff = data.stops_away;
+            pricePerTicket = 5 + (stopsDiff * 5); // ₹10 base + ₹5 per stop
+        } else {
+            stopsDiff = '—';
+            pricePerTicket = 5.00;
+        }
+    } catch {
+        stopsDiff = '—';
+        pricePerTicket = 5.00;
+    }
+
     document.getElementById('farePerTicket').textContent = '₹ ' + pricePerTicket.toFixed(2);
     document.getElementById('stopsCount').textContent = stopsDiff;
     updateTotal();
 }
 
-loadFare();
+// ════════════════════════════════════════════════
+//  COUNTER
+// ════════════════════════════════════════════════
 
-// ─── Counter logic ───
 let count = 1;
 
-function inc() {
-    if (count < 5) { count++; updateTotal(); }
-}
-function dec() {
-    if (count > 1) { count--; updateTotal(); }
-}
+function inc() { if (count < 5) { count++; updateTotal(); } }
+function dec() { if (count > 1) { count--; updateTotal(); } }
+
 function updateTotal() {
     document.getElementById('ticketCount').textContent = count;
-    const total = (count * pricePerTicket).toFixed(2);
-    document.getElementById('totalAmount').textContent = '₹ ' + total;
+    document.getElementById('totalAmount').textContent = '₹ ' + (count * pricePerTicket).toFixed(2);
 }
 
-// ─── Pay handler ───
+
+// ════════════════════════════════════════════════
+//  PAY HANDLER
+// ════════════════════════════════════════════════
+
 async function handlePay() {
+    const src  = sourceSearch.getStop();
+    const dest = destSearch.getStop();
+
+    if (!src || !dest) {
+        alert('Please select both source and destination stops.');
+        return;
+    }
+    if (src === dest) {
+        alert('Source and destination cannot be the same stop.');
+        return;
+    }
+
     const overlay = document.getElementById('overlay');
     overlay.classList.add('show');
 
-    // Show processing for 2 seconds
     await sleep(2200);
 
-    // Save to DB
     let ticketNumber = 'TC' + Date.now();
     try {
         const res = await fetch('/save_ticket', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                start_dest: 'Maruti Mandir',
-                final_dest: destination,
+                start_dest: src,
+                final_dest: dest,
                 no_of_tickets: count,
                 amount_paid: (count * pricePerTicket).toFixed(2)
             })
         });
         const result = await res.json();
-        if (result.success) {
-            ticketNumber = result.ticket_number;
-        }
+        if (result.success) ticketNumber = result.ticket_number;
     } catch (e) {
         console.error('Save ticket error:', e);
     }
 
-    // Show success
     document.getElementById('stateProcessing').style.display = 'none';
     document.getElementById('stateSuccess').style.display = 'block';
     document.getElementById('ticketNumDisplay').textContent = ticketNumber;
 
-    // Redirect home after 2.5s
     await sleep(2500);
     window.location.href = '/home';
 }
 
-function sleep(ms) {
-    return new Promise(r => setTimeout(r, ms));
-}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
 
 </body>
-</html> 
+</html>

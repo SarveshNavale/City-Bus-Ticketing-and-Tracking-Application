@@ -1,5 +1,5 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify, redirect, session
-import requests
+#import requests
 # from dotenv import load_dotenv
 # from groq import Groq
 
@@ -22,7 +22,7 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="shreyash45",
+        password="Parth@123",
        # password="",
         database="RotaryClub_Database"
     )
@@ -1574,6 +1574,39 @@ def delete_complaint(id):
         print("Delete Error:", e)
         return jsonify({"success": False})
 
+@app.route('/get_stops_between')
+def get_stops_between():
+    src  = request.args.get('src', '')
+    dest = request.args.get('dest', '')
+    db = get_db()
+    cursor = db.cursor()
+
+    # Get track_no for source stop
+    cursor.execute("SELECT track_no FROM stops_info WHERE stop_name = %s", (src,))
+    src_row = cursor.fetchone()
+
+    # Get track_no for destination stop
+    cursor.execute("SELECT track_no FROM stops_info WHERE stop_name = %s", (dest,))
+    dest_row = cursor.fetchone()
+
+    cursor.close()
+    db.close()
+
+    if src_row and dest_row:
+        stops_away = abs(dest_row[0] - src_row[0])
+        return jsonify({'success': True, 'stops_away': stops_away})
+    else:
+        return jsonify({'success': False, 'stops_away': 0})
+    
+
+@app.route("/tourist")
+def tourist():
+    return render_template("tourist.html")
+
+
+@app.route("/")
+def start_page():
+    return render_template("start_page.html")
 
 
 
@@ -1593,44 +1626,45 @@ def delete_complaint(id):
 
 
 
-def fetch_location():
 
-    while True:
+# def fetch_location():
 
-        try:
+#     while True:
 
-            response = requests.get("https://drivertracker-a4290-default-rtdb.firebaseio.com/location.json")
+#         try:
 
-            data = response.json()
+#             #response = requests.get("https://drivertracker-a4290-default-rtdb.firebaseio.com/location.json")
 
-            lat = data["latitude"]
-            lon = data["longitude"]
+#             #data = response.json()
 
-            db = mysql.connector.connect(
-                host="localhost",
-                user="root",
-                password="#SAR1807",
-                database="RotaryClub_Database"
-            )
+#             lat = data["latitude"]
+#             lon = data["longitude"]
 
-            cursor = db.cursor()
+#             db = mysql.connector.connect(
+#                 host="localhost",
+#                 user="root",
+#                 password="#SAR1807",
+#                 database="RotaryClub_Database"
+#             )
 
-            sql = "UPDATE driver_location SET latitude=%s, longitude=%s WHERE driver_id=1"
-            cursor.execute(sql,(lat,lon))
+#             cursor = db.cursor()
 
-            db.commit()
+#             sql = "UPDATE driver_location SET latitude=%s, longitude=%s WHERE driver_id=1"
+#             cursor.execute(sql,(lat,lon))
 
-            cursor.close()
-            db.close()
+#             db.commit()
 
-        except Exception as e:
-            print(e)
+#             cursor.close()
+#             db.close()
 
-        time.sleep(5)
+#         except Exception as e:
+#             print(e)
 
-thread = threading.Thread(target=fetch_location)
-thread.daemon = True
-thread.start()
+#         time.sleep(5)
+
+# thread = threading.Thread(target=fetch_location)
+# thread.daemon = True
+# thread.start()
 
 
 
@@ -1641,11 +1675,3 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 
 
-@app.route("/tourist")
-def tourist():
-    return render_template("tourist.html")
-
-
-@app.route("/")
-def start_page():
-    return render_template("start_page.html")
