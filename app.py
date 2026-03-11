@@ -1554,4 +1554,8 @@ if __name__ == "__main__":
 @app.route("/tourist")
 def tourist():
     return render_template("tourist.html")
-#task completed
+
+
+@app.route("/")
+def start_page():
+    return render_template("start_page.html")

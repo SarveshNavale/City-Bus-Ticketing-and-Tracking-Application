@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rotary Bus</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f4f6ff;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+/* LOADER */
+
+.loader{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.6);
+backdrop-filter:blur(8px);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:1000;
+animation:hide 0s linear 3s forwards;
+}
+
+.spinner{
+width:60px;
+height:60px;
+border:6px solid rgba(255,255,255,0.3);
+border-top:6px solid #6961ff;
+border-radius:50%;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+to{transform:rotate(360deg)}
+}
+
+@keyframes hide{
+to{visibility:hidden}
+}
+
+/* SPLASH CONTAINER */
+
+.container{
+width:100%;
+max-width:420px;
+height:100vh;
+background:#fff;
+overflow:hidden;
+position:relative;
+}
+/* HEADER */
+
+.header{
+height:60%;
+background:linear-gradient(135deg,#6C64FF 0%,#8B84FF 100%);
+border-radius:0 0 36px 36px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+position:relative;
+color:white;
+text-align:center;
+overflow:hidden;
+}
+
+
+/*  CIRCLES */
+
+.circle1{
+position:absolute;
+width:190px;
+height:190px;
+border-radius:50%;
+background:rgba(255,255,255,0.10);
+top:-55px;
+right:-45px;
+}
+
+.circle2{
+position:absolute;
+width:115px;
+height:115px;
+border-radius:50%;
+background:rgba(255,255,255,0.07);
+top:45px;
+right:25px;
+}
+
+
+/* LOGO */
+
+.logo{
+width:120px;
+margin-bottom:20px;
+}
+
+/* TITLE */
+
+.header h1{
+font-size:28px;
+margin-bottom:10px;
+}
+
+.header p{
+font-size:15px;
+opacity:0.9;
+}
+
+/* BOTTOM SECTION */
+
+.bottom{
+height:40%;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:30px;
+}
+
+.bottom h2{
+color:#4a4ac7;
+font-size:24px;
+margin-bottom:25px;
+}
+
+/* BUTTON */
+
+.btn{
+padding:12px 40px;
+background:linear-gradient(to right,#928df8,#3d3bff);
+color:#fff;
+border-radius:30px;
+font-size:17px;
+text-decoration:none;
+box-shadow:0 5px 12px rgba(0,0,0,0.15);
+transition:0.3s;
+}
+
+.btn:hover{
+transform:translateY(-2px);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- LOADER -->
+
+<div class="loader">
+<div class="spinner"></div>
+</div>
+
+<div class="container">
+
+<!-- HEADER -->
+
+<div class="header">
+
+<div class="circle1"></div>
+<div class="circle2"></div>
+
+<img src="{{ url_for('static', filename='rotary-logo.png') }}" class="logo">
+
+<h1>Rotary Bus</h1>
+<p>Real-time bus tracking, digital ticketing<br>and seamless city travel</p>
+
+</div>
+
+<!-- BOTTOM -->
+
+<div class="bottom">
+
+<h2>Smart Travel<br>Made Easy</h2>
+
+<a href="/register" class="btn">
+Get Started
+</a>
+
+</div>
+
+</div>
+
+</body>
+</html>
