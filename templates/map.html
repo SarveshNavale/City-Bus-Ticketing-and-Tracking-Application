@@ -101,6 +101,9 @@
     }
 
     .navitem.active i { color: #fff; }
+
+    /* driver bus icon red tint */
+    .driver-bus-icon { filter: hue-rotate(320deg) saturate(2); }
   </style>
 </head>
 <body>
@@ -423,6 +426,42 @@ if ("geolocation" in navigator) {
     { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 }
   );
 }
+/* --------------- REAL TIME TRACKED DRIVER (from driver_location table) --------------- */
+var driverMarkers = {};
+
+function makeDriverDivIcon() {
+  return L.divIcon({
+    html: '<div class="bus-div" style="background:#e74c3c;border-color:#c0392b;padding:3px 10px;">LIVE</div>',
+    className: '',
+    iconSize: [54, 22],
+    iconAnchor: [27, 11],
+    popupAnchor: [0, -10]
+  });
+}
+
+function fetchAndUpdateDrivers() {
+  fetch('/get_driver_locations')
+    .then(r => r.json())
+    .then(function(drivers) {
+      drivers.forEach(function(d) {
+        var popupText = "Driver: " + d.driver_name +
+                        // + "<br>Plate: " + d.no_plate +   /* uncomment after ALTER TABLE ADD COLUMN no_plate */
+                        "<br><small>Live Tracked</small>";
+        if (driverMarkers[d.driver_id]) {
+          driverMarkers[d.driver_id].setLatLng([d.latitude, d.longitude]);
+          driverMarkers[d.driver_id].getPopup().setContent(popupText);
+        } else {
+          driverMarkers[d.driver_id] = L.marker([d.latitude, d.longitude], { icon: makeDriverDivIcon() })
+            .addTo(map)
+            .bindPopup(popupText);
+        }
+      });
+    })
+    .catch(function() { /* ignore fetch errors */ });
+}
+
+fetchAndUpdateDrivers();
+setInterval(fetchAndUpdateDrivers, 5000);
 </script>
 </body>
 </html>

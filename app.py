@@ -28,7 +28,8 @@ def get_db():
 
         database="RotaryClub_Database"
     )
-
+ 
+ 
 # ---------- normal routes ----------
 @app.route('/')
 def home():
@@ -95,6 +96,26 @@ def serve_dino_files(filename):
 @app.route('/tc_login')
 def tc_login():
     return render_template("tc_login.html")
+
+@app.route('/about_us')
+def about_us():
+    return render_template('about_us.html')
+
+@app.route('/customer_helpline')
+def customer_helpline():
+    return render_template('customer_helpline.html')
+
+@app.route('/terms_conditions')
+def terms_conditions():
+    return render_template('terms_conditions.html')
+
+
+@app.route('/devs_corner')
+def devs_corner():
+    return render_template('devs_corner.html')
+
+
+
 
          #buy pass
 
@@ -1010,6 +1031,18 @@ def update_user_location_from_map():
         return jsonify({'success': False, 'error': str(e)})
 
 
+# --------------- REAL TIME TRACKED DRIVER (from driver_location table) ---------------
+@app.route('/get_driver_locations')
+def get_driver_locations():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    # cursor.execute("SELECT driver_id, driver_name, latitude, longitude, no_plate FROM driver_location")  # uncomment after ALTER TABLE ADD COLUMN no_plate
+    cursor.execute("SELECT driver_id, driver_name, latitude, longitude FROM driver_location")
+    rows = cursor.fetchall()
+    cursor.close()
+    db.close()
+    return jsonify(rows)
+
 @app.route('/test_add_notification')
 def test_add_notification():
     try:
@@ -1654,6 +1687,74 @@ def delete_complaint(id):
         print("Delete Error:", e)
         return jsonify({"success": False})
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def fetch_location():
+
+    while True:
+
+        try:
+
+            response = requests.get("https://drivertracker-a4290-default-rtdb.firebaseio.com/location.json")
+
+            data = response.json()
+
+            lat = data["latitude"]
+            lon = data["longitude"]
+
+            db = mysql.connector.connect(
+                host="localhost",
+                user="root",
+                password="#SAR1807",
+                database="RotaryClub_Database"
+            )
+
+            cursor = db.cursor()
+
+            sql = "UPDATE driver_location SET latitude=%s, longitude=%s WHERE driver_id=1"
+            cursor.execute(sql,(lat,lon))
+
+            db.commit()
+
+            cursor.close()
+            db.close()
+
+        except Exception as e:
+            print(e)
+
+        time.sleep(5)
+
+thread = threading.Thread(target=fetch_location)
+thread.daemon = True
+thread.start()
+
+
+
+
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+
+
+@app.route("/tourist")
+def tourist():
+    return render_template("tourist.html")
 #task completed

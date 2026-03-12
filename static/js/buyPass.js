@@ -81,45 +81,60 @@ document.addEventListener('DOMContentLoaded', function() {
         alert("Please select payment method");
         return;
     }
+const selectedPayment = selectedOption.dataset.payment;
 
-    const selectedPayment = selectedOption.dataset.payment;
+showProcessingModal();
 
-    showProcessingModal();
-
-    fetch("/purchase_pass", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            quantity: quantity,
-            amount_per_pass: passPrice,
-            service_fee: feePerPass,
-            payment_method: selectedPayment
-        })
+fetch("/purchase_pass", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        quantity: quantity,
+        amount_per_pass: passPrice,
+        service_fee: feePerPass,
+        payment_method: selectedPayment
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Server error");
-        }
-        return response.json();
-    })
-    .then(data => {
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error("Server error");
+    }
+    return response.json();
+})
+.then(data => {
 
-        if (data.success) {
-            showSuccessModal();
-        } else {
-            modalTitle.textContent = "Payment Failed";
-            modalText.textContent = data.error;
-        }
+    if (data.success) {
+        showSuccessModal();
 
-    })
-    .catch(error => {
-        console.error("Fetch error:", error);
-        modalTitle.textContent = "Server Error";
-        modalText.textContent = "Something went wrong";
-    });
+        // success → 3 sec redirect
+        setTimeout(() => {
+            window.location.href = "/view_pass";
+        }, 3000);
+
+    } else {
+        modalTitle.textContent = "Payment Failed";
+        modalText.textContent = data.error;
+
+        // ❗ error → 5 sec redirect
+        setTimeout(() => {
+            window.location.href = "/view_pass";
+        }, 5000);
+    }
+
+})
+.catch(error => {
+    console.error("Fetch error:", error);
+    modalTitle.textContent = "Server Error";
+    modalText.textContent = "Something went wrong";
+
+    // server error redirect
+    setTimeout(() => {
+        window.location.href = "/view_pass";
+    }, 5000);
+});
 
 });
         
-    });
+});

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>About Us</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Nunito", sans-serif;
+    background: #F0F2FF;
+    min-height: 100vh;
+}
+
+/* HEADER */
+.bluebg {
+    background: linear-gradient(135deg, #6C64FF 0%, #8B84FF 100%);
+    height: 180px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.circle1 {
+    position: absolute;
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.10);
+    top: -55px;
+    right: -45px;
+}
+
+.circle2 {
+    position: absolute;
+    width: 115px;
+    height: 115px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    top: 45px;
+    right: 25px;
+}
+
+.backbutton {
+    position: absolute;
+    top: 45px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 49px;
+}
+
+.backbutton img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    display: block;
+}
+
+/* CONTENT */
+.content {
+    margin: -28px 16px 40px 16px;
+    position: relative;
+    z-index: 10;
+}
+
+.header-tagline {
+    font-size: 23px;
+    font-weight: 800;
+    color: #333;
+    margin: 24px 4px 6px 4px;
+}
+
+.section-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #AAAACC;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0 4px 14px 4px;
+}
+
+
+.bus-icon {
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffffff;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.bus-icon i {
+    color: #6C64FF;
+    font-size: 35px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="bluebg">
+    <div class="circle1"></div>
+    <div class="circle2"></div>
+
+    <a href="/backtohome" style="text-decoration:none;color:inherit;">
+        <div class="backbutton">
+            <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+            <p style="font-size:22px;font-weight:600;color:white;">About <br>Us</p>
+        </div>
+    </a>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+               
+<br><br>
+         
+
+<p class="header-tagline">Smart Bus Travel</p>
+<p class="section-label">About Project</p>
+ <div class="bus-icon">
+                <i class="fas fa-bus"></i>
+            </div>
+
+
+<p>
+City Bus Ticketing and Tracking Application is designed to make public transport easier and smarter for passengers.
+This system allows users to book bus tickets and passes digitally without standing in long queues.
+</p>
+
+<p>
+Our goal is to provide a simple and user-friendly platform where passengers can easily manage their travel,
+check their tickets or passes, and access transport services quickly.
+</p>
+
+<p>
+The system aims to support smart transportation by improving convenience,
+reducing waiting time, and making bus travel more efficient for everyone.
+</p>
+
+</div>
+
+</div>
+
+</body>
+</html>

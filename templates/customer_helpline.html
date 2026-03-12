@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Customer Helpline</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+padding:0;
+font-family:"Nunito",sans-serif;
+background:#F0F2FF;
+min-height:100vh;
+}
+
+/* HEADER */
+
+.bluebg{
+background:linear-gradient(135deg,#6C64FF 0%,#8B84FF 100%);
+height:180px;
+width:100%;
+position:relative;
+overflow:hidden;
+}
+
+.circle1{
+position:absolute;
+width:190px;
+height:190px;
+border-radius:50%;
+background:rgba(255,255,255,0.10);
+top:-55px;
+right:-45px;
+}
+
+.circle2{
+position:absolute;
+width:115px;
+height:115px;
+border-radius:50%;
+background:rgba(255,255,255,0.07);
+top:45px;
+right:25px;
+}
+
+.backbutton{
+position:absolute;
+top:45px;
+left:20px;
+display:flex;
+align-items:center;
+gap:49px;
+}
+
+.backbutton img{
+width:72px;
+height:72px;
+object-fit:contain;
+display:block;
+}
+
+/* CONTENT */
+
+.content{
+margin:-28px 16px 40px 16px;
+position:relative;
+z-index:10;
+}
+
+.header-tagline{
+font-size:23px;
+font-weight:800;
+color:#333;
+margin:24px 4px 6px 4px;
+}
+
+.section-label{
+font-size:12px;
+font-weight:800;
+color:#AAAACC;
+letter-spacing:1px;
+text-transform:uppercase;
+margin:0 4px 14px 4px;
+}
+
+
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="bluebg">
+
+<div class="circle1"></div>
+<div class="circle2"></div>
+
+<a href="/backtohome" style="text-decoration:none;color:inherit;outline:none;">
+<div class="backbutton">
+
+<img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+
+<p style="font-size:22px;font-weight:600;color:white;">
+Customer<br> Helpline
+</p>
+
+</div>
+</a>
+
+</div>
+
+
+<!-- CONTENT -->
+
+<div class="content">
+
+<br><br>
+
+<p class="header-tagline">Customer Helpline</p>
+<p class="section-label">Support Information</p>
+
+
+
+<p>
+Welcome to the <b>Customer Helpline</b>.<br>
+If you face any issues while using the <b>City Bus Ticketing and Tracking Application</b>, our support team is here to help you.
+</p>
+
+<p><b>You can contact us for the following:</b></p>
+
+<ul>
+<li>Ticket booking issues</li>
+<li>Pass purchase problems</li>
+<li>Payment related queries</li>
+<li>App errors or technical problems</li>
+<li>General travel information</li>
+</ul>
+
+<hr>
+
+<p style="font-weight:800;color:#333;">Contact Information</p>
+
+<p>
+<b>Customer Support Number</b><br>
+📞 <a href="tel:+919876543210">+91 8788852145</a><br>
+📞 <a href="tel:+919763772464">+91 9763772464</a>
+</p>
+
+<p>
+<b>Email Support</b><br>
+📧 <a href="mailto:support@citybus.com">support@citybus.com</a>
+</p>
+
+<p>
+<b>Working Hours</b><br>
+🕒 24 hours<br>
+
+</p>
+
+<hr>
+
+<p style="font-weight:800;color:#333;">Emergency Help</p>
+
+<p>
+If you face any urgent issue during travel, please contact the nearest bus depot or call the helpline number immediately.
+</p>
+
+</div>
+
+</div>
+
+</body>
+</html>

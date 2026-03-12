@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Explore Ratnagiri</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --purple:  #6C64FF;
+    --purple2: #8B84FF;
+    --bg:      #F0F2FF;
+    --card:    #fff;
+    --text:    #1E1E2E;
+    --sub:     #555577;
+    --muted:   #AAAACC;
+}
+
+body {
+    font-family: "Nunito", sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    padding-bottom: 40px;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* ── HEADER ── */
+.bluebg {
+    background: linear-gradient(135deg, #6C64FF 0%, #8B84FF 100%);
+    height: 200px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+.bluebg::before {
+    content:''; position:absolute;
+    width:220px;height:220px;border-radius:50%;
+    background:rgba(255,255,255,.09);
+    top:-70px;right:-55px;
+}
+.bluebg::after {
+    content:''; position:absolute;
+    width:130px;height:130px;border-radius:50%;
+    background:rgba(255,255,255,.06);
+    top:55px;right:35px;
+}
+
+.backbutton {
+    position: absolute;
+    top: 45px; left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 49px;
+    text-decoration: none;
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+.backbutton img {
+    width: 42px; height: 42px;
+    object-fit: contain; display: block;
+}
+
+/* header hero text */
+.header-hero {
+    position: absolute;
+    bottom: 24px; left: 22px;
+    z-index: 5;
+}
+.header-hero-title {
+    font-size: 24px; font-weight: 900; color: #fff;
+    display: flex; align-items: center; gap: 8px;
+}
+.header-hero-sub {
+    font-size: 12px; font-weight: 700;
+    color: rgba(255,255,255,.72);
+    margin-top: 4px;
+}
+
+/* place count badge */
+.place-count {
+    position: absolute;
+    bottom: 28px; right: 20px;
+    background: rgba(255,255,255,.18);
+    border: 1.5px solid rgba(255,255,255,.3);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px; font-weight: 800; color: #fff;
+    display: flex; align-items: center; gap: 6px;
+}
+.place-count i { font-size: 11px; }
+
+/* ── FILTER CHIPS ── */
+.filter-bar {
+    display: flex; gap: 8px;
+    overflow-x: auto; padding: 16px 16px 4px;
+    scrollbar-width: none;
+    animation: slideUp .35s ease .05s both;
+}
+.filter-bar::-webkit-scrollbar { display: none; }
+
+.chip {
+    flex-shrink: 0;
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 12px; font-weight: 800;
+    background: var(--card);
+    color: var(--muted);
+    box-shadow: 0 2px 10px rgba(108,100,255,.10);
+    cursor: pointer;
+    border: 2px solid transparent;
+    white-space: nowrap;
+    transition: all .18s;
+    -webkit-tap-highlight-color: transparent;
+}
+.chip.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+
+/* ── CONTENT AREA ── */
+.content { padding: 12px 16px 30px; }
+
+.sec-label {
+    font-size: 11px; font-weight: 800; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .9px;
+    margin: 16px 2px 10px;
+}
+
+/* ── PLACE CARD ── */
+.place-card {
+    background: var(--card);
+    border-radius: 24px;
+    box-shadow: 0 4px 20px rgba(108,100,255,.11);
+    margin-bottom: 18px;
+    overflow: hidden;
+    animation: slideUp .4s ease both;
+}
+
+/* slideshow */
+.slideshow {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: #E8EAFF;
+}
+.slide {
+    position: absolute; inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity .55s ease;
+}
+.slide.active { opacity: 1; }
+
+/* gradient overlay on image */
+.slide-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(30,30,46,.62) 100%);
+    z-index: 2;
+}
+
+/* dot indicators */
+.slide-dots {
+    position: absolute; bottom: 10px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 5px; z-index: 5;
+}
+.sdot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,.5);
+    transition: all .25s;
+}
+.sdot.active { background: #fff; width: 16px; border-radius: 4px; }
+
+/* slide arrows */
+.slide-arrow {
+    position: absolute; top: 50%; z-index: 5;
+    transform: translateY(-50%);
+    width: 30px; height: 30px;
+    background: rgba(255,255,255,.25);
+    border: none; border-radius: 50%;
+    color: #fff; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; backdrop-filter: blur(4px);
+    -webkit-tap-highlight-color: transparent;
+}
+.slide-arrow.prev { left: 10px; }
+.slide-arrow.next { right: 10px; }
+
+/* category tag on image */
+.cat-tag {
+    position: absolute; top: 12px; left: 12px; z-index: 5;
+    padding: 4px 11px; border-radius: 20px;
+    font-size: 11px; font-weight: 800;
+    backdrop-filter: blur(6px);
+    background: rgba(255,255,255,.22);
+    border: 1.5px solid rgba(255,255,255,.4);
+    color: #fff;
+}
+
+/* placeholder when no image */
+.no-image {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 8px; color: var(--muted);
+}
+.no-image i { font-size: 36px; color: #C7C5FF; }
+.no-image p { font-size: 12px; font-weight: 700; }
+
+/* ── CARD BODY ── */
+.card-body { padding: 16px 18px 18px; }
+
+.card-title-row {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 10px;
+    margin-bottom: 8px;
+}
+
+.place-name { font-size: 17px; font-weight: 900; color: var(--text); }
+.place-dist {
+    font-size: 11px; font-weight: 800;
+    color: var(--purple); background: #EDE9FE;
+    padding: 4px 10px; border-radius: 20px;
+    white-space: nowrap; flex-shrink: 0;
+}
+
+/* specialty pills row */
+.spec-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.spec-pill {
+    font-size: 10px; font-weight: 800;
+    padding: 3px 9px; border-radius: 20px;
+    background: var(--bg); color: var(--sub);
+    display: flex; align-items: center; gap: 4px;
+}
+.spec-pill i { font-size: 9px; color: var(--purple); }
+
+.place-desc {
+    font-size: 13px; font-weight: 600;
+    color: var(--sub); line-height: 1.7;
+    margin-bottom: 14px;
+}
+
+/* info row */
+.info-row {
+    display: flex; gap: 8px; margin-bottom: 14px;
+}
+.info-box {
+    flex: 1; background: var(--bg);
+    border-radius: 13px; padding: 10px 10px;
+    text-align: center;
+}
+.info-box-icon { font-size: 15px; color: var(--purple); }
+.info-box-val  { font-size: 13px; font-weight: 900; color: var(--text); margin-top: 3px; }
+.info-box-lbl  { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
+
+/* map button */
+.map-btn {
+    width: 100%; height: 44px;
+    border-radius: 13px; border: none;
+    background: linear-gradient(135deg, var(--purple), var(--purple2));
+    color: #fff; font-size: 14px; font-weight: 800;
+    font-family: "Nunito", sans-serif;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(108,100,255,.28);
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .15s;
+}
+.map-btn:active { transform: scale(.97); }
+
+/* ── NO RESULTS ── */
+.no-results {
+    text-align: center; padding: 40px 20px;
+    font-size: 14px; font-weight: 700; color: var(--muted);
+}
+.no-results i { font-size: 36px; color: #D1D5FF; display: block; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="bluebg">
+    <a href="/home" class="backbutton">
+        <img src="static/Assets/images/back-button.png" alt="Back">
+        <p style="font-size:22px;font-weight:600;color:white;">Explore Ratnagiri</p>
+    </a>
+    <div class="header-hero">
+        <p class="header-hero-sub">🌊 Konkan Coast, Maharashtra</p>
+    </div>
+    <div class="place-count"><i class="fa-solid fa-location-dot"></i> 15 Places</div>
+</div>
+
+<!-- ── FILTER CHIPS ── -->
+<div class="filter-bar">
+    <div class="chip active" data-cat="all">🗺️ All Places</div>
+    <div class="chip" data-cat="beach">🏖️ Beaches</div>
+    <div class="chip" data-cat="fort">🏰 Forts</div>
+    <div class="chip" data-cat="temple">🛕 Temples</div>
+    <div class="chip" data-cat="nature">🌿 Nature</div>
+    <div class="chip" data-cat="heritage">🏛️ Heritage</div>
+    <div class="chip" data-cat="lighthouse">🔦 Lighthouse</div>
+</div>
+
+<!-- ── PLACES ── -->
+<div class="content" id="places-container">
+    <!-- built by JS -->
+</div>
+
+<script>
+/* ───────────────────────────────────────────────
+   PLACE DATA
+   images: Wikimedia Commons / Unsplash (free-use URLs)
+─────────────────────────────────────────────── */
+const PLACES = [
+    {
+        name: "Ganpatipule Beach & Temple",
+        cat: "beach",
+        catLabel: "🏖️ Beach + Temple",
+        dist: "30 km",
+        time: "45 min",
+        rating: "4.8",
+        entry: "Free",
+        desc: "One of the most pristine beaches in Maharashtra, famous for the self-manifested Lord Ganesha temple right on the beach. The golden sand stretches for kilometres with clean azure water, making it a top pilgrimage and tourist destination.",
+        specs: ["Swayambhu Ganesh Temple","Konkan Food","Beachside Camping"],
+        location: "Ganpatipule, Ratnagiri",
+        mapUrl: "https://maps.google.com/?q=Ganpatipule+Beach+Ratnagiri",
+        images: [
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Ganpatipule_beach.jpg/800px-Ganpatipule_beach.jpg",
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Ganpatipule_Temple.jpg/800px-Ganpatipule_Temple.jpg"
+        ]
+    },
+    {
+        name: "Ratnadurg Fort",
+        cat: "fort",
+        catLabel: "🏰 Fort",
+        dist: "3 km",
+        time: "10 min",
+        rating: "4.5",
+        entry: "Free",
+        desc: "A historic sea fort built by the Bijapur Sultanate and later controlled by the Marathas and Portuguese. Perched on a rocky peninsula, it offers breathtaking 360° views of the Arabian Sea and Ratnagiri city.",
+        specs: ["Bhagwati Temple","Sea Views","Maratha History"],
+        location: "Ratnagiri Fort Area",
+        mapUrl: "https://maps.google.com/?q=Ratnadurg+Fort+Ratnagiri",
+        images: [
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Ratnadurg_fort.jpg/800px-Ratnadurg_fort.jpg"
+        ]
+    },
+    {
+        name: "Pawas — Swami Swaroopanand Ashram",
+        cat: "heritage",
+        catLabel: "🏛️ Heritage",
+        dist: "20 km",
+        time: "30 min",
+        rating: "4.7",
+        entry: "Free",
+        desc: "A deeply spiritual village on the Ratnagiri coast, home to the ashram of the great saint Swami Swaroopanand. The serene Pawas Lake, lush greenery, and a peaceful atmosphere attract seekers and tourists alike.",
+        specs: ["Spiritual Retreat","Peaceful Lake","Swami Ashram"],
+        location: "Pawas, Ratnagiri",
+        mapUrl: "https://maps.google.com/?q=Pawas+Ratnagiri",
+        images: []
+    },
+    {
+        name: "Jaigad Fort",
+        cat: "fort",
+        catLabel: "🏰 Fort",
+        dist: "55 km",
+        time: "1 hr 15 min",
+        rating: "4.4",
+        entry: "Free",
+        desc: "A spectacular Portuguese-era fort at the confluence of the Shastri River and the Arabian Sea. One of the best-preserved coastal forts in the Konkan, offering majestic sea views and stunning sunsets.",
+        specs: ["Portuguese Architecture","Confluence Views","Sunset Point"],
+        location: "Jaigad, Ratnagiri District",
+        mapUrl: "https://maps.google.com/?q=Jaigad+Fort+Ratnagiri",
+        images: [
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Jaigad_Fort.jpg/800px-Jaigad_Fort.jpg"
+        ]
+    },
+    {
+        name: "Ratnagiri Lighthouse",
+        cat: "lighthouse",
+        catLabel: "🔦 Lighthouse",
+        dist: "5 km",
+        time: "12 min",
+        rating: "4.6",
+        entry: "₹20",
+        desc: "The iconic Ratnagiri Lighthouse stands tall on a rocky cliff overlooking the Arabian Sea. Visitors can climb to the top for a panoramic view of the coastline, harbour, and on clear days, see ships far out at sea.",
+        specs: ["Panoramic Sea View","Photography Spot","Colonial Era"],
+        location: "Ratnagiri Harbour",
+        mapUrl: "https://maps.google.com/?q=Ratnagiri+Lighthouse",
+        images: [
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Ratnagiri_Lighthouse.jpg/800px-Ratnagiri_Lighthouse.jpg"
+        ]
+    },
+    {
+        name: "Bhatye Beach",
+        cat: "beach",
+        catLabel: "🏖️ Beach",
+        dist: "7 km",
+        time: "15 min",
+        rating: "4.4",
+        entry: "Free",
+        desc: "A calm, less-crowded beach just outside Ratnagiri city, popular with locals for evening walks and weekend picnics. The beach is known for its clean shoreline, gentle waves, and beautiful sunsets over the Arabian Sea.",
+        specs: ["Sunset Views","Quiet & Clean","Family Friendly"],
+        location: "Bhatye, Ratnagiri",
+        mapUrl: "https://maps.google.com/?q=Bhatye+Beach+Ratnagiri",
+        images: [
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Bhatye_beach_ratnagiri.jpg/800px-Bhatye_beach_ratnagiri.jpg"
+        ]
+    },
+    {
+        name: "Thibaw Palace Museum",
+        cat: "heritage",
+        catLabel: "🏛️ Heritage",
+        dist: "2 km",
+        time: "8 min",
+        rating: "4.3",
+        entry: "₹10",
+        desc: "The palace where King Thibaw of Burma was exiled by the British in 1885. This colonial-era structure, now converted into a museum, holds artefacts, photos, and stories of the Burmese royals who spent their final days in Ratnagiri.",
+        specs: ["Burmese Royal History","Colonial Museum","Rare Artefacts"],
+        location: "Ratnagiri City Centre",
+        mapUrl: "https://maps.google.com/?q=Thibaw+Palace+Ratnagiri",
+        images: [
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Thibaw_Palace_Ratnagiri.jpg/800px-Thibaw_Palace_Ratnagiri.jpg"
+        ]
+    },
+    {
+        name: "Prachibimb — Lokmanya Tilak Birthplace",
+        cat: "heritage",
+        catLabel: "🏛️ Heritage",
+        dist: "1 km",
+        time: "5 min",
+        rating: "4.7",
+        entry: "Free",
+        desc: "The ancestral home of Bal Gangadhar Tilak (Lokmanya Tilak), one of India's foremost freedom fighters and father of the Indian independence movement. The memorial museum displays rare photographs, personal belongings and documents.",
+        specs: ["Freedom Fighter","Historic Home","Museum"],
+        location: "Ratnagiri City",
+        mapUrl: "https://maps.google.com/?q=Lokmanya+Tilak+Birthplace+Ratnagiri",
+        images: []
+    },
+    {
+        name: "Aare-Ware Beach",
+        cat: "beach",
+        catLabel: "🏖️ Beach",
+        dist: "10 km",
+        time: "20 min",
+        rating: "4.5",
+        entry: "Free",
+        desc: "A scenic twin beach with a rocky divide creating two separate coves — Aare and Ware. Surrounded by casuarina trees and rocky outcrops, it's a favourite for photographers and nature lovers seeking a less touristy experience.",
+        specs: ["Twin Cove Beach","Photography","Casuarina Groves"],
+        location: "Near Ratnagiri",
+        mapUrl: "https://maps.google.com/?q=Aare+Ware+Beach+Ratnagiri",
+        images: [
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Aare_ware_beach.jpg/800px-Aare_ware_beach.jpg"
+        ]
+    },
+    {
+        name: "Hedvi — Gokarna Mahabaleshwar Temple",
+        cat: "temple",
+        catLabel: "🛕 Temple",
+        dist: "65 km",
+        time: "1 hr 30 min",
+        rating: "4.8",
+        entry: "Free",
+        desc: "An ancient, architecturally magnificent Shiva temple built in the Hemadpanthi style, said to be around 2000 years old. The Shivalinga here is considered one of the most sacred in the Konkan, attracting pilgrims from all over Maharashtra.",
+        specs: ["Ancient Shiva Temple","Hemadpanthi Style","Pilgrimage Site"],
+        location: "Hedvi, Guhagar Taluka",
+        mapUrl: "https://maps.google.com/?q=Hedvi+Gokarna+Mahabaleshwar+Temple",
+        images: []
+    },
+    {
+        name: "Marleshwar Temple & Waterfall",
+        cat: "nature",
+        catLabel: "🌿 Nature + Temple",
+        dist: "85 km",
+        time: "2 hrs",
+        rating: "4.8",
+        entry: "Free",
+        desc: "A hidden gem deep inside the Sahyadri forests — a Shiva temple inside a natural cave with a waterfall flowing right over the Shivalinga. The trek through dense jungle and multiple streams makes it an unforgettable adventure.",
+        specs: ["Cave Temple","Forest Trek","Seasonal Waterfall"],
+        location: "Marleshwar, Sangameshwar",
+        mapUrl: "https://maps.google.com/?q=Marleshwar+Waterfall+Ratnagiri",
+        images: [
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Marleshwar_temple.jpg/800px-Marleshwar_temple.jpg"
+        ]
+    },
+    {
+        name: "Velneshwar Beach & Temple",
+        cat: "beach",
+        catLabel: "🏖️ Beach + Temple",
+        dist: "70 km",
+        time: "1 hr 40 min",
+        rating: "4.6",
+        entry: "Free",
+        desc: "A pristine, remote beach with white sand and clear waters, backed by casuarina groves. The ancient Velneshwar Shiva temple right beside the beach is another draw. Famous for crystal-clear water ideal for swimming.",
+        specs: ["White Sand","Crystal Water","Ancient Shiva Temple"],
+        location: "Velneshwar, Guhagar",
+        mapUrl: "https://maps.google.com/?q=Velneshwar+Beach",
+        images: []
+    },
+    {
+        name: "Rajiwada — Alphonso Mango Orchards",
+        cat: "nature",
+        catLabel: "🌿 Nature",
+        dist: "25 km",
+        time: "40 min",
+        rating: "4.5",
+        entry: "Seasonal",
+        desc: "Ratnagiri is the world capital of the GI-tagged Alphonso (Hapus) mango. A visit to the mango orchards of Rajiwada during March–May lets you taste the king of mangoes fresh from the tree, and learn about traditional Konkan farming.",
+        specs: ["GI Tagged Hapus","Mango Orchards","March–May Season"],
+        location: "Rajiwada, Ratnagiri",
+        mapUrl: "https://maps.google.com/?q=Rajiwada+Ratnagiri",
+        images: []
+    },
+    {
+        name: "Gowalkot Fort",
+        cat: "fort",
+        catLabel: "🏰 Fort",
+        dist: "65 km",
+        time: "1 hr 30 min",
+        rating: "4.3",
+        entry: "Free",
+        desc: "A lesser-known sea fort at Jaigad creek offering solitary exploration. The fort features ancient bastions, cannons and a small temple. The view from the ramparts across the Shastri estuary and mangroves is spectacular.",
+        specs: ["Secluded Fort","Estuary Views","Ancient Cannons"],
+        location: "Near Jaigad, Ratnagiri",
+        mapUrl: "https://maps.google.com/?q=Gowalkot+Fort+Ratnagiri",
+        images: []
+    },
+    {
+        name: "Kasheli Waterfall",
+        cat: "nature",
+        catLabel: "🌿 Nature",
+        dist: "45 km",
+        time: "1 hr",
+        rating: "4.4",
+        entry: "Free",
+        desc: "A spectacular seasonal waterfall hidden inside the Sahyadri hills near Ratnagiri. Best visited during and just after the monsoon (June–September), when the falls thunder down rocky cliffs into a clear natural pool.",
+        specs: ["Monsoon Waterfall","Natural Pool","Trekking Trail"],
+        location: "Kasheli, Ratnagiri District",
+        mapUrl: "https://maps.google.com/?q=Kasheli+Waterfall+Ratnagiri",
+        images: []
+    }
+];
+
+/* ───────────────────────────────────────────────
+   CATEGORY EMOJI MAP
+─────────────────────────────────────────────── */
+const CAT_ICONS = {
+    beach:    'fa-umbrella-beach',
+    fort:     'fa-chess-rook',
+    temple:   'fa-place-of-worship',
+    nature:   'fa-leaf',
+    heritage: 'fa-landmark',
+    lighthouse:'fa-tower-observation'
+};
+
+/* ───────────────────────────────────────────────
+   BUILD CARDS
+─────────────────────────────────────────────── */
+function buildCards(filter) {
+    const container = document.getElementById('places-container');
+    const filtered  = filter === 'all' ? PLACES : PLACES.filter(p => p.cat === filter);
+    container.innerHTML = '';
+
+    if (!filtered.length) {
+        container.innerHTML = `<div class="no-results"><i class="fa-solid fa-binoculars"></i>No places in this category</div>`;
+        return;
+    }
+
+    filtered.forEach((place, idx) => {
+        const card = document.createElement('div');
+        card.className = 'place-card';
+        card.style.animationDelay = (idx * 0.06) + 's';
+        card.dataset.cat = place.cat;
+
+        /* ── SLIDESHOW ── */
+        const hasImages = place.images && place.images.length > 0;
+        let slideshowHtml = '';
+
+        if (hasImages) {
+            const slides = place.images.map((url, i) =>
+                `<div class="slide ${i===0?'active':''}" style="background-image:url('${url}')"></div>`
+            ).join('');
+            const dots = place.images.length > 1 ? `
+                <div class="slide-dots">
+                    ${place.images.map((_,i) => `<div class="sdot ${i===0?'active':''}"></div>`).join('')}
+                </div>` : '';
+            const arrows = place.images.length > 1 ? `
+                <button class="slide-arrow prev" onclick="slideNav(this,-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="slide-arrow next" onclick="slideNav(this,1)"><i class="fa-solid fa-chevron-right"></i></button>` : '';
+
+            slideshowHtml = `
+            <div class="slideshow" data-current="0">
+                ${slides}
+                <div class="slide-overlay"></div>
+                <div class="cat-tag">${place.catLabel}</div>
+                ${dots}
+                ${arrows}
+            </div>`;
+        } else {
+            slideshowHtml = `
+            <div class="slideshow">
+                <div class="no-image">
+                    <i class="fa-solid ${CAT_ICONS[place.cat]||'fa-image'}"></i>
+                    <p>No photos available</p>
+                </div>
+                <div class="cat-tag">${place.catLabel}</div>
+            </div>`;
+        }
+
+        /* ── SPEC PILLS ── */
+        const specHtml = place.specs.map(s =>
+            `<span class="spec-pill"><i class="fa-solid fa-star"></i>${s}</span>`
+        ).join('');
+
+        /* ── INFO BOXES ── */
+        const infoHtml = `
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-box-icon"><i class="fa-solid fa-location-dot"></i></div>
+                <p class="info-box-val">${place.dist}</p>
+                <p class="info-box-lbl">Distance</p>
+            </div>
+            <div class="info-box">
+                <div class="info-box-icon"><i class="fa-regular fa-clock"></i></div>
+                <p class="info-box-val">${place.time}</p>
+                <p class="info-box-lbl">Travel Time</p>
+            </div>
+            <div class="info-box">
+                <div class="info-box-icon"><i class="fa-solid fa-star"></i></div>
+                <p class="info-box-val">${place.rating}★</p>
+                <p class="info-box-lbl">Rating</p>
+            </div>
+            <div class="info-box">
+                <div class="info-box-icon"><i class="fa-solid fa-ticket"></i></div>
+                <p class="info-box-val">${place.entry}</p>
+                <p class="info-box-lbl">Entry</p>
+            </div>
+        </div>`;
+
+        card.innerHTML = `
+            ${slideshowHtml}
+            <div class="card-body">
+                <div class="card-title-row">
+                    <p class="place-name">${place.name}</p>
+                    <span class="place-dist"><i class="fa-solid fa-route" style="margin-right:4px;font-size:10px;"></i>${place.dist}</span>
+                </div>
+                <div class="spec-row">${specHtml}</div>
+                <p class="place-desc">${place.desc}</p>
+                ${infoHtml}
+                <a class="map-btn" href="${place.mapUrl}" target="_blank">
+                    <i class="fa-solid fa-map-location-dot"></i> Open in Maps
+                </a>
+            </div>`;
+
+        container.appendChild(card);
+    });
+
+    /* start auto-slideshows */
+    startAutoSlide();
+}
+
+/* ───────────────────────────────────────────────
+   SLIDESHOW LOGIC
+─────────────────────────────────────────────── */
+let slideTimers = [];
+
+function startAutoSlide() {
+    slideTimers.forEach(t => clearInterval(t));
+    slideTimers = [];
+
+    document.querySelectorAll('.slideshow[data-current]').forEach(ss => {
+        const slides = ss.querySelectorAll('.slide');
+        if (slides.length < 2) return;
+        const timer = setInterval(() => advanceSlide(ss, 1), 3500);
+        slideTimers.push(timer);
+    });
+}
+
+function advanceSlide(ss, dir) {
+    const slides = ss.querySelectorAll('.slide');
+    const dots   = ss.querySelectorAll('.sdot');
+    let cur = parseInt(ss.dataset.current) || 0;
+    slides[cur].classList.remove('active');
+    if (dots[cur]) dots[cur].classList.remove('active');
+    cur = (cur + dir + slides.length) % slides.length;
+    slides[cur].classList.add('active');
+    if (dots[cur]) dots[cur].classList.add('active');
+    ss.dataset.current = cur;
+}
+
+function slideNav(btn, dir) {
+    const ss = btn.closest('.slideshow');
+    advanceSlide(ss, dir);
+}
+
+/* ───────────────────────────────────────────────
+   FILTER CHIPS
+─────────────────────────────────────────────── */
+document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        buildCards(chip.dataset.cat);
+    });
+});
+
+/* ── INIT ── */
+buildCards('all');
+</script>
+
+</body>
+</html>

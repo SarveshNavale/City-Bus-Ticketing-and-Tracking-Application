@@ -1,168 +1,187 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin Login</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Login</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-  <style>
-    :root{
-      --blue:#6C64FF;
-      --white:#fff;
-      --card-bg:#f2f2f2;
-      --text:#333;
-      --radius:14px;
-      --shadow:0 10px 18px rgba(0,0,0,0.12);
-    }
-
-    *{margin:0;padding:0;box-sizing:border-box}
-
-    body{
-      background:#fff;
-      font-family:"Poppins",sans-serif;
-      color:var(--text);
-    }
-
-    /* header */
-    .bluebg {
-    background-color: #6C64FF;
-    height: 220px;
-    width: 100%;
-    position: relative;
+<style>
+:root{
+--blue:#6C64FF;
+--white:#fff;
+--card-bg:#f2f2f2;
+--text:#333;
+--radius:14px;
+--shadow:0 10px 18px rgba(0,0,0,0.12);
 }
 
-.backbutton {
-    position: absolute;
-    top: 45px;
-    left: 20px;
-    display: flex;
-    align-items: center;
-    gap: 49px;
-}
+*{margin:0;padding:0;box-sizing:border-box}
 
-.backbutton img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: flaot;   /* 🔒 kept same */
-}
-
-.topcircles {
-    position: absolute;
-    right: 5px;
-    top: 0px;
+body{
+background:#fff;
+font-family:"Nunito",sans-serif;
+color:var(--text);
 }
 
 
-    /* content area */
-    .content{
-  background:var(--white);
-  margin:-28px auto 0;   /* center */
-  border-radius:12px;
-  padding:28px 18px 40px;
-  max-width:420px;       /* card center */
+.bluebg{
+background:linear-gradient(135deg,#6C64FF 0%,#8B84FF 100%);
+height:180px;
+width:100%;
+position:relative;
+overflow:hidden;
+}
+
+.circle1{
+position:absolute;
+width:190px;
+height:190px;
+border-radius:50%;
+background:rgba(255,255,255,0.10);
+top:-55px;
+right:-45px;
+}
+
+.circle2{
+position:absolute;
+width:115px;
+height:115px;
+border-radius:50%;
+background:rgba(255,255,255,0.07);
+top:45px;
+right:25px;
+}
+
+.backbutton{
+position:absolute;
+top:45px;
+left:20px;
+display:flex;
+align-items:center;
+gap:49px;
+}
+
+.backbutton img{
+width:72px;
+height:72px;
+object-fit:contain;
+display:block;
 }
 
 
-    .card{
-      background:var(--card-bg);
-      border-radius:var(--radius);
-      padding:24px;
-      box-shadow:var(--shadow);
-    }
 
-    .title{
-      text-align:center;
-      font-size:20px;
-      font-weight:600;
-      margin-bottom:20px;
-    }
+.content{
+background:var(--white);
+margin:-28px auto 0;
+border-radius:12px;
+padding:28px 18px 40px;
+max-width:420px;
+}
 
-    .field{
-      margin-bottom:16px;
-    }
+.card{
+background:var(--card-bg);
+border-radius:var(--radius);
+padding:24px;
+box-shadow:var(--shadow);
+}
 
-    .field label{
-      font-size:14px;
-      color:#555;
-      display:block;
-      margin-bottom:6px;
-    }
+.title{
+text-align:center;
+font-size:20px;
+font-weight:600;
+margin-bottom:20px;
+}
 
-    .field input{
-      width:100%;
-      padding:12px;
-      border-radius:8px;
-      border:1px solid #ccc;
-      font-size:15px;
-    }
+.field{
+margin-bottom:16px;
+}
 
-    .login-btn{
-      width:100%;
-      padding:12px;
-      margin-top:10px;
-      border:none;
-      border-radius:8px;
-      background:var(--blue);
-      color:#fff;
-      font-size:16px;
-      font-weight:600;
-      cursor:pointer;
-    }
+.field label{
+font-size:14px;
+color:#555;
+display:block;
+margin-bottom:6px;
+}
 
-    .login-btn:hover{
-      opacity:0.95;
-    }
-  </style>
+.field input{
+width:100%;
+padding:12px;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:15px;
+}
+
+.login-btn{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+background:var(--blue);
+color:#fff;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+}
+
+.login-btn:hover{
+opacity:0.95;
+}
+
+</style>
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <div class="bluebg">
-    <a href="/" style="text-decoration: none; color: inherit; outline: none; -webkit-tap-highlight-color: transparent;">
-    <div class="backbutton">
-        <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
-        <p style="font-size: 22px; font-family: 'Hind Guntur'; font-weight:600; color:white;"> Admin <br> login</p>
-    </div>
-    </a>
+<!-- HEADER -->
+<div class="bluebg">
 
-    <div class="topcircles">
-        <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" style="width:150px;">
-    </div>
+<div class="circle1"></div>
+<div class="circle2"></div>
+
+<a href="/" style="text-decoration:none;color:inherit;">
+<div class="backbutton">
+<img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+<p style="font-size:22px;font-weight:600;color:white;">
+Admin <br> Login
+</p>
+</div>
+</a>
 
 </div>
 
-  <!-- CONTENT -->
+<!-- CONTENT -->
 <div class="content">
-  <div class="card">
+<div class="card">
 
-    <div class="title"></div>
+<div class="title"></div>
 
-    <!--  ERROR MESSAGE HERE -->
-    {% if error %}
-    <p style="color:red; text-align:center; margin-bottom:15px;">
-        {{ error }}
-    </p>
-    {% endif %}
+{% if error %}
+<p style="color:red;text-align:center;margin-bottom:15px;">
+{{ error }}
+</p>
+{% endif %}
 
-    <form method="POST" action="/admin_login">
+<form method="POST" action="/admin_login">
 
-      <div class="field">
-          <label>Admin ID</label>
-          <input type="text" name="admin_id" required>
-      </div>
-
-      <div class="field">
-          <label>Password</label>
-          <input type="password" name="password" required>
-      </div>
-
-      <button type="submit" class="login-btn">Login</button>
-
-    </form>
-
-  </div>
+<div class="field">
+<label>Admin ID</label>
+<input type="text" name="admin_id" required>
 </div>
+
+<div class="field">
+<label>Password</label>
+<input type="password" name="password" required>
+</div>
+
+<button type="submit" class="login-btn">Login</button>
+
+</form>
+
+</div>
+</div>
+
+</body>
+</html>

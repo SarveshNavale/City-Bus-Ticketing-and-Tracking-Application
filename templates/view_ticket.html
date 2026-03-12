@@ -5,24 +5,44 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>My Tickets</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
 
-/* ───────── GLOBAL ───────── */
+
 body{
   margin:0;
-  font-family:'Hind Guntur', sans-serif;
+  font-family:"Nunito", sans-serif;
   background:#ffffff;
   color:#333;
 }
 
-/* ───────── HEADER (UNCHANGED) ───────── */
 .bluebg{
-  background-color:#6C64FF;
-  height:220px;
+  background:linear-gradient(135deg,#6C64FF 0%,#8B84FF 100%);
+  height:180px;
   width:100%;
   position:relative;
+  overflow:hidden;
+}
+
+.circle1{
+  position:absolute;
+  width:190px;
+  height:190px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.10);
+  top:-55px;
+  right:-45px;
+}
+
+.circle2{
+  position:absolute;
+  width:115px;
+  height:115px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.07);
+  top:45px;
+  right:25px;
 }
 
 .backbutton{
@@ -34,20 +54,21 @@ body{
   gap:49px;
 }
 
-.topcircles{
-  position:absolute;
-  right:5px;
-  top:0;
+.backbutton img{
+  width:72px;
+  height:72px;
+  object-fit:contain;
+  display:block;
 }
 
-/* ───────── CONTENT ───────── */
+
 .content{
   padding:30px 18px 40px;
   max-width:420px;
   margin:auto;
 }
 
-/* refresh row */
+
 .refresh-row{
   display:flex;
   justify-content:space-between;
@@ -68,10 +89,10 @@ body{
   padding:6px 14px;
   border-radius:20px;
   cursor:pointer;
-  font-family:'Hind Guntur';
+  font-family:"Nunito";
 }
 
-/* ───────── MODERN TICKET CARD ───────── */
+
 
 .ticket-card{
   background:#ffffff;
@@ -88,7 +109,7 @@ body{
   to{opacity:1;transform:translateY(0)}
 }
 
-/* ROUTE STRIP */
+
 .route-strip{
   background:linear-gradient(135deg,#6C64FF,#8f89ff);
   padding:16px 18px;
@@ -125,7 +146,7 @@ body{
   fill:none;
 }
 
-/* DETAILS */
+
 .ticket-details{
   padding:14px 18px;
 }
@@ -153,7 +174,7 @@ body{
   grid-column:1 / -1;
 }
 
-/* proximity */
+
 .proximity-banner{
   display:none;
   background:#fff3cd;
@@ -172,7 +193,7 @@ body{
   color:#d90429;
 }
 
-/* states */
+
 .ticket-card.deleted{
   opacity:.4;
   transform:scale(.97);
@@ -182,7 +203,7 @@ body{
   background:linear-gradient(135deg,#22c55e,#16a34a);
 }
 
-/* spinner */
+
 .spinner{
   width:24px;
   height:24px;
@@ -192,6 +213,7 @@ body{
   animation:spin .8s linear infinite;
   margin:40px auto;
 }
+
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .state-msg{
@@ -207,6 +229,10 @@ body{
 
 <!-- HEADER -->
 <div class="bluebg">
+
+<div class="circle1"></div>
+<div class="circle2"></div>
+
 <a href="/backtohome" style="text-decoration:none;color:inherit;">
 <div class="backbutton">
 <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
@@ -216,8 +242,11 @@ My<br>Tickets
 </div>
 </a>
 
+
+
+
 <div class="topcircles">
-<img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" style="width:150px;">
+
 </div>
 </div>
 
@@ -237,7 +266,7 @@ My<br>Tickets
 
 <script>
 
-/* ===== SAME LOGIC ===== */
+/
 
 const PROXIMITY_METRES = 100;
 const DELETE_DELAY_MS  = 60000;
@@ -254,7 +283,7 @@ function haversineMetres(lat1, lon1, lat2, lon2){
  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
-/* ───────── RENDER ───────── */
+
 function renderTickets(tickets){
 
  const container=document.getElementById('tickets-container');
