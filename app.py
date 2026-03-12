@@ -1,5 +1,5 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify, redirect, session
-#import requests
+import requests
 # from dotenv import load_dotenv
 # from groq import Groq
 
@@ -22,7 +22,7 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Parth@123",
+        password="#SAR1807",
        # password="",
         database="RotaryClub_Database"
     )
@@ -45,7 +45,7 @@ def view_c():
 
 @app.route('/admin_dashboard')
 def admin_dashboard():
-    return render_template("admin_dashboard.html") 
+    return render_template("tc_login.html")
 
 @app.route('/select')
 def select():
@@ -147,8 +147,7 @@ def generate_unique_pass_number(cursor):
 
         if not cursor.fetchone():
             return pass_number
-
-            
+        
 @app.route('/purchase_pass', methods=['POST'])
 def purchase_pass():
     try:
@@ -181,27 +180,11 @@ def purchase_pass():
         amount_per_pass = float(data.get('amount_per_pass', 30.00))
         service_fee = float(data.get('service_fee', 0.50))
 
-        # Limit per purchase
+        #  Only limit per purchase (max 5)
         if quantity > 5:
             return jsonify({
                 'success': False,
                 'error': 'Maximum 5 passes allowed at a time'
-            })
-
-        # DAILY LIMIT CHECK
-        cursor.execute("""
-        SELECT COUNT(*) AS total
-        FROM passes_info
-        WHERE mobile_no = %s AND issue_date = CURDATE()
-        """,(mobile_no,))
-
-        result = cursor.fetchone()
-        today_total = result['total']
-
-        if today_total + quantity > 5:
-            return jsonify({
-                'success': False,
-                'error': 'Daily limit reached. Maximum 5 passes allowed per day.'
             })
 
         current_date = datetime.now().date()
@@ -229,7 +212,7 @@ def purchase_pass():
             passes_created.append(pass_number)
 
         db.commit()
-
+   
         cursor.close()
         db.close()
 
@@ -245,13 +228,14 @@ def purchase_pass():
             'success': False,
             'error': str(e)
         })
+        
 @app.route('/view_pass')
 def view_pass():
+
     try:
         db = get_db()
         cursor = db.cursor(dictionary=True)
 
-        # logged user
         cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
         current_login = cursor.fetchone()
 
@@ -260,61 +244,62 @@ def view_pass():
 
         mobile_no = current_login['mobile_no']
 
-        # get user name
         cursor.execute(
             "SELECT cust_name FROM cust_info WHERE cust_number = %s",
             (mobile_no,)
         )
         user = cursor.fetchone()
 
-        holder_name = user['cust_name'] if user else "User"
-
-        # fetch all passes
+        # latest purchase time
         cursor.execute("""
-        SELECT pass_number, issue_date, issue_time, amount_paid
+        SELECT issue_time
         FROM passes_info
         WHERE mobile_no = %s
-        ORDER BY issue_date DESC, issue_time DESC
-        """, (mobile_no,))
+        ORDER BY id DESC
+        LIMIT 1
+        """,(mobile_no,))
+
+        latest = cursor.fetchone()
+
+        if not latest:
+            return render_template(
+                "view_pass.html",
+                holder_name=user['cust_name'],
+                total_tickets=0,
+                amount_paid=0,
+                no_pass=True
+            )
+
+        latest_time = latest['issue_time']
+
+        # fetch only latest purchase passes
+        cursor.execute("""
+        SELECT *
+        FROM passes_info
+        WHERE mobile_no = %s
+        AND issue_time = %s
+        """,(mobile_no,latest_time))
 
         passes = cursor.fetchall()
 
         cursor.close()
         db.close()
 
-        # if no passes
-        if not passes:
-            return render_template(
-                "view_pass.html",
-                holder_name=holder_name,
-                passes=[],
-                total_tickets=0,
-                amount_paid=0,
-                no_pass=True
-            )
-
         total_tickets = len(passes)
-        amount_paid = sum(p['amount_paid'] for p in passes)
+        amount_paid = total_tickets * 30.50
 
         return render_template(
             "view_pass.html",
-            holder_name=holder_name,
             passes=passes,
+            holder_name=user['cust_name'],
             total_tickets=total_tickets,
             amount_paid=amount_paid,
-            no_pass=False
+            actual_user=True
         )
 
     except Exception as e:
         print("View pass error:", e)
-        return render_template(
-            "view_pass.html",
-            holder_name="User",
-            passes=[],
-            total_tickets=0,
-            amount_paid=0,
-            no_pass=True
-        )
+        return "Error loading pass"
     
 @app.route('/faqs')
 def faqs():
@@ -363,7 +348,7 @@ def get_location(user_id):
 def get_buses():
     db = get_db()
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT id, bus_no, no_plate, route, latitude, longitude, driver_name, driver_phone FROM bus_info")
+    cursor.execute("SELECT id, bus_no, no_plate, route, latitude, longitude FROM bus_info")
     buses = cursor.fetchall()
     cursor.close()
     db.close()
@@ -1574,39 +1559,6 @@ def delete_complaint(id):
         print("Delete Error:", e)
         return jsonify({"success": False})
 
-@app.route('/get_stops_between')
-def get_stops_between():
-    src  = request.args.get('src', '')
-    dest = request.args.get('dest', '')
-    db = get_db()
-    cursor = db.cursor()
-
-    # Get track_no for source stop
-    cursor.execute("SELECT track_no FROM stops_info WHERE stop_name = %s", (src,))
-    src_row = cursor.fetchone()
-
-    # Get track_no for destination stop
-    cursor.execute("SELECT track_no FROM stops_info WHERE stop_name = %s", (dest,))
-    dest_row = cursor.fetchone()
-
-    cursor.close()
-    db.close()
-
-    if src_row and dest_row:
-        stops_away = abs(dest_row[0] - src_row[0])
-        return jsonify({'success': True, 'stops_away': stops_away})
-    else:
-        return jsonify({'success': False, 'stops_away': 0})
-    
-
-@app.route("/tourist")
-def tourist():
-    return render_template("tourist.html")
-
-
-@app.route("/")
-def start_page():
-    return render_template("start_page.html")
 
 
 
@@ -1626,85 +1578,46 @@ def start_page():
 
 
 
+def fetch_location():
 
-# def fetch_location():
+    while True:
 
-#     while True:
+        try:
 
-#         try:
+            response = requests.get("https://drivertracker-a4290-default-rtdb.firebaseio.com/location.json")
 
-#             #response = requests.get("https://drivertracker-a4290-default-rtdb.firebaseio.com/location.json")
+            data = response.json()
 
-#             #data = response.json()
+            lat = data["latitude"]
+            lon = data["longitude"]
 
-#             lat = data["latitude"]
-#             lon = data["longitude"]
+            db = mysql.connector.connect(
+                host="localhost",
+                user="root",
+                password="#SAR1807",
+                database="RotaryClub_Database"
+            )
 
-#             db = mysql.connector.connect(
-#                 host="localhost",
-#                 user="root",
-#                 password="#SAR1807",
-#                 database="RotaryClub_Database"
-#             )
+            cursor = db.cursor()
 
-#             cursor = db.cursor()
+            sql = "UPDATE driver_location SET latitude=%s, longitude=%s WHERE driver_id=1"
+            cursor.execute(sql,(lat,lon))
 
-#             sql = "UPDATE driver_location SET latitude=%s, longitude=%s WHERE driver_id=1"
-#             cursor.execute(sql,(lat,lon))
+            db.commit()
 
-#             db.commit()
+            cursor.close()
+            db.close()
 
-#             cursor.close()
-#             db.close()
+        except Exception as e:
+            print(e)
 
-#         except Exception as e:
-#             print(e)
+        time.sleep(5)
 
-#         time.sleep(5)
-
-# thread = threading.Thread(target=fetch_location)
-# thread.daemon = True
-# thread.start()
-
-@app.route('/add_bus', methods=['POST'])
-def add_bus():
-    data = request.get_json()
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute(
-        "INSERT INTO bus_info (bus_no, no_plate, route, driver_name, driver_phone) VALUES (%s, %s, %s, %s, %s)",
-        (
-            data.get('bus_no', ''),
-            data.get('no_plate', ''),
-            data.get('route', ''),
-            data.get('driver_name', ''),
-            data.get('driver_phone', '')
-        )
-    )
-    db.commit()
-    cursor.close()
-    db.close()
-    return jsonify({'success': True})
+thread = threading.Thread(target=fetch_location)
+thread.daemon = True
+thread.start()
 
 
-@app.route('/update_bus', methods=['POST'])
-def update_bus():
-    data = request.get_json()
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute(
-        "UPDATE bus_info SET driver_name=%s, driver_phone=%s, route=%s WHERE id=%s",
-        (
-            data.get('driver_name', ''),
-            data.get('driver_phone', ''),
-            data.get('route', ''),
-            data.get('bus_id')
-        )
-    )
-    db.commit()
-    cursor.close()
-    db.close()
-    return jsonify({'success': True})
 
 
 
@@ -1713,3 +1626,7 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 
 
+@app.route("/tourist")
+def tourist():
+    return render_template("tourist.html")
+#task completed
