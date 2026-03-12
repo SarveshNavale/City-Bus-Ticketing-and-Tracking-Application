@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard – Tikko Transit</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"Nunito",sans-serif; background:#F0F2FF; min-height:100vh; }
+
+/* ── HEADER ── */
+.top-area {
+    background:linear-gradient(135deg,#6C64FF 0%,#8B84FF 100%);
+    padding:28px 20px 80px 20px;
+    border-radius:0 0 36px 36px;
+    position:relative; overflow:hidden;
+}
+.top-area::before {
+    content:''; position:absolute;
+    width:220px; height:220px; border-radius:50%;
+    background:rgba(255,255,255,0.09); top:-75px; right:-60px;
+}
+.top-area::after {
+    content:''; position:absolute;
+    width:130px; height:130px; border-radius:50%;
+    background:rgba(255,255,255,0.06); top:45px; right:28px;
+}
+.top-content {
+    display:flex; justify-content:space-between; align-items:center;
+    position:relative; z-index:1;
+}
+.admin-title-row { display:flex; align-items:center; gap:12px; }
+.admin-avatar {
+    width:46px; height:46px; background:rgba(255,255,255,0.22);
+    border-radius:14px; display:flex; align-items:center; justify-content:center;
+    font-size:22px; color:#fff;
+}
+.admin-greeting { font-size:12px; color:rgba(255,255,255,0.7); font-weight:600; }
+.admin-name     { font-size:18px; font-weight:900; color:#fff; }
+.header-right   { display:flex; gap:10px; }
+.icon-btn {
+    width:44px; height:44px; background:rgba(255,255,255,0.18);
+    border-radius:14px; display:flex; align-items:center; justify-content:center;
+    font-size:18px; color:#fff; cursor:pointer; text-decoration:none; border:none;
+    transition:background 0.2s;
+}
+.icon-btn:hover { background:rgba(255,255,255,0.28); }
+
+/* ── STAT PILLS ── */
+.stats-row {
+    position:absolute; bottom:-32px; left:16px; right:16px;
+    display:flex; gap:10px; z-index:20;
+}
+.stat-pill {
+    flex:1; background:#fff; border-radius:18px; padding:12px 10px;
+    text-align:center; box-shadow:0 6px 24px rgba(108,100,255,0.13);
+}
+.stat-pill .sp-val { font-size:20px; font-weight:900; color:#6C64FF; display:block; }
+.stat-pill .sp-lbl { font-size:10px; font-weight:700; color:#AAAACC; letter-spacing:0.3px; }
+
+/* ── BODY ── */
+.body-wrap { margin-top:50px; padding:0 16px 100px; }
+
+/* ── TAB NAV ── */
+.tab-nav {
+    display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;
+    margin-bottom:18px; scrollbar-width:none;
+}
+.tab-nav::-webkit-scrollbar { display:none; }
+.tab-btn {
+    flex-shrink:0; height:38px; padding:0 16px; border-radius:12px; border:none;
+    background:#fff; font-family:"Nunito",sans-serif; font-size:12px; font-weight:800;
+    color:#AAAACC; cursor:pointer; box-shadow:0 2px 10px rgba(108,100,255,0.08);
+    transition:all 0.2s; display:flex; align-items:center; gap:6px;
+}
+.tab-btn.active { background:#6C64FF; color:#fff; box-shadow:0 4px 16px rgba(108,100,255,0.30); }
+.tab-btn i { font-size:13px; }
+
+/* ── PANELS ── */
+.tab-panel { display:none; }
+.tab-panel.active { display:block; animation:slideUp 0.35s ease both; }
+@keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── SHARED ── */
+.sec-label {
+    font-size:11px; font-weight:800; color:#AAAACC;
+    letter-spacing:1px; text-transform:uppercase; margin-bottom:12px;
+}
+.card {
+    background:#fff; border-radius:22px;
+    box-shadow:0 4px 18px rgba(108,100,255,0.09); padding:20px; margin-bottom:14px;
+}
+.route-badge {
+    background:#F0F2FF; color:#6C64FF;
+    font-size:10px; font-weight:800; padding:3px 8px; border-radius:8px;
+}
+.status-dot { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:800; }
+.status-dot::before {
+    content:''; width:7px; height:7px; border-radius:50%; display:inline-block;
+}
+.status-dot.online  { color:#22C55E; }
+.status-dot.online::before  { background:#22C55E; box-shadow:0 0 0 2px rgba(34,197,94,0.2); }
+.status-dot.offline { color:#FF4444; }
+.status-dot.offline::before { background:#FF4444; }
+
+/* ── BUS TABLE ── */
+.table-wrap { overflow-x:auto; }
+.bus-table { width:100%; border-collapse:collapse; }
+.bus-table th {
+    font-size:10px; font-weight:800; color:#AAAACC; letter-spacing:0.8px;
+    text-transform:uppercase; padding:0 8px 12px; text-align:left;
+    border-bottom:1px solid #F0F0FF; white-space:nowrap;
+}
+.bus-table td {
+    padding:13px 8px; font-size:13px; font-weight:700; color:#333;
+    border-bottom:1px solid #F8F8FF; vertical-align:middle; white-space:nowrap;
+}
+.bus-table tr:last-child td { border-bottom:none; }
+.action-btns { display:flex; gap:6px; }
+.act-btn {
+    width:30px; height:30px; border-radius:9px; border:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; font-size:13px;
+    transition:transform 0.15s;
+}
+.act-btn:active { transform:scale(0.9); }
+.act-btn.edit { background:#F0F2FF; color:#6C64FF; }
+.act-btn.del  { background:#FFF0F0; color:#FF4444; }
+
+/* ── LOCATION ── */
+.location-hero {
+    background:linear-gradient(135deg,#6C64FF,#8B84FF);
+    border-radius:22px; padding:22px; color:#fff; margin-bottom:14px;
+    display:flex; justify-content:space-between; align-items:center;
+}
+.loc-stat { text-align:center; }
+.loc-stat .lv { font-size:28px; font-weight:900; }
+.loc-stat .ll { font-size:11px; font-weight:700; opacity:0.75; margin-top:2px; }
+.loc-divider  { width:1px; height:50px; background:rgba(255,255,255,0.25); }
+.bus-location-row {
+    display:flex; align-items:center; gap:12px;
+    padding:14px 0; border-bottom:1px solid #F5F5FF;
+}
+.bus-location-row:last-child { border-bottom:none; }
+.bus-icon-wrap {
+    width:40px; height:40px; background:#F0F2FF; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; color:#6C64FF; flex-shrink:0;
+}
+.bus-loc-info { flex:1; }
+.bus-loc-name   { font-size:14px; font-weight:800; color:#333; }
+.bus-loc-coords { font-size:11px; font-weight:600; color:#AAAACC; margin-top:2px; }
+.open-map-btn {
+    width:100%; height:48px; border-radius:16px; border:none;
+    background:linear-gradient(135deg,#6C64FF,#8B84FF); color:#fff;
+    font-family:"Nunito",sans-serif; font-size:14px; font-weight:800;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+    margin-bottom:14px; box-shadow:0 6px 20px rgba(108,100,255,0.28);
+}
+
+/* ── REVENUE ── */
+.revenue-hero {
+    background:linear-gradient(135deg,#22C55E,#16A34A);
+    border-radius:22px; padding:24px; color:#fff; margin-bottom:14px; text-align:center;
+}
+.rev-amount { font-size:36px; font-weight:900; letter-spacing:-1px; }
+.rev-label  { font-size:13px; font-weight:700; opacity:0.8; margin-top:4px; }
+.rev-stats  { display:flex; gap:10px; margin-bottom:14px; }
+.rev-stat-card {
+    flex:1; background:#fff; border-radius:18px; padding:16px 12px;
+    text-align:center; box-shadow:0 4px 14px rgba(108,100,255,0.09);
+}
+.rev-stat-val { font-size:18px; font-weight:900; color:#6C64FF; }
+.rev-stat-lbl { font-size:10px; font-weight:700; color:#AAAACC; margin-top:3px; }
+.bar-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.bar-day  { font-size:11px; font-weight:800; color:#AAAACC; width:28px; }
+.bar-track { flex:1; height:28px; background:#F0F2FF; border-radius:8px; overflow:hidden; }
+.bar-fill {
+    height:100%; background:linear-gradient(90deg,#6C64FF,#8B84FF); border-radius:8px;
+    display:flex; align-items:center; justify-content:flex-end; padding-right:8px;
+    transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1);
+}
+.bar-fill span { font-size:10px; font-weight:800; color:#fff; white-space:nowrap; }
+.txn-row {
+    display:flex; align-items:center; gap:12px;
+    padding:12px 0; border-bottom:1px solid #F5F5FF;
+}
+.txn-row:last-child { border-bottom:none; }
+.txn-icon {
+    width:38px; height:38px; background:#F0F2FF; border-radius:11px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; color:#6C64FF; flex-shrink:0;
+}
+.txn-info { flex:1; }
+.txn-name { font-size:13px; font-weight:800; color:#333; }
+.txn-time { font-size:11px; font-weight:600; color:#AAAACC; }
+.txn-amt  { font-size:14px; font-weight:900; color:#22C55E; }
+
+/* ── FUEL ── */
+.fuel-hero {
+    background:linear-gradient(135deg,#F59E0B,#EF4444);
+    border-radius:22px; padding:22px; color:#fff; margin-bottom:14px;
+    display:flex; justify-content:space-between; align-items:center;
+}
+.fuel-val { font-size:30px; font-weight:900; }
+.fuel-sub { font-size:12px; font-weight:700; opacity:0.8; margin-top:2px; }
+.fuel-bus-row {
+    display:flex; align-items:center; gap:12px;
+    padding:13px 0; border-bottom:1px solid #F5F5FF;
+}
+.fuel-bus-row:last-child { border-bottom:none; }
+.fuel-info { flex:1; }
+.fuel-bus-name { font-size:13px; font-weight:800; color:#333; }
+.fuel-meta     { font-size:11px; font-weight:600; color:#AAAACC; margin-top:2px; }
+.fuel-bar-bg { height:8px; background:#F0F2FF; border-radius:4px; overflow:hidden; margin-top:4px; }
+.fuel-bar-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,#F59E0B,#EF4444); }
+.fuel-litres { font-size:13px; font-weight:900; color:#F59E0B; white-space:nowrap; }
+
+/* ── INCIDENTS ── */
+.incident-hero {
+    background:linear-gradient(135deg,#EF4444,#DC2626);
+    border-radius:22px; padding:22px; color:#fff; margin-bottom:14px;
+    display:flex; justify-content:space-between; align-items:center;
+}
+.incident-card {
+    background:#fff; border-radius:18px; padding:16px; margin-bottom:10px;
+    box-shadow:0 3px 14px rgba(108,100,255,0.08); border-left:4px solid #6C64FF;
+}
+.incident-card.high   { border-left-color:#EF4444; }
+.incident-card.medium { border-left-color:#F59E0B; }
+.incident-card.low    { border-left-color:#22C55E; }
+.incident-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
+.incident-title { font-size:14px; font-weight:800; color:#333; }
+.severity-badge { font-size:10px; font-weight:800; padding:3px 9px; border-radius:8px; letter-spacing:0.3px; }
+.severity-badge.high   { background:#FFF0F0; color:#EF4444; }
+.severity-badge.medium { background:#FFFBEB; color:#F59E0B; }
+.severity-badge.low    { background:#F0FDF4; color:#22C55E; }
+.incident-desc   { font-size:12px; font-weight:600; color:#888; margin-bottom:8px; }
+.incident-footer { display:flex; justify-content:space-between; align-items:center; }
+.incident-meta   { font-size:11px; font-weight:700; color:#AAAACC; }
+.resolve-btn {
+    height:28px; padding:0 12px; border-radius:8px; border:none;
+    background:#F0F2FF; color:#6C64FF; font-family:"Nunito",sans-serif;
+    font-size:11px; font-weight:800; cursor:pointer; transition:all 0.2s;
+}
+.resolve-btn:hover { background:#6C64FF; color:#fff; }
+.report-btn {
+    width:100%; height:48px; border-radius:16px; border:none;
+    background:#FFF0F0; color:#EF4444; font-family:"Nunito",sans-serif;
+    font-size:14px; font-weight:800; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    margin-bottom:14px;
+}
+
+/* ── FORMS ── */
+.form-group  { margin-bottom:14px; }
+.form-label  {
+    font-size:11px; font-weight:800; color:#AAAACC;
+    letter-spacing:0.8px; text-transform:uppercase; margin-bottom:7px; display:block;
+}
+.form-input {
+    width:100%; height:48px; background:#F0F2FF; border:2px solid transparent;
+    border-radius:14px; padding:0 16px; font-family:"Nunito",sans-serif;
+    font-size:14px; font-weight:700; color:#333; outline:none;
+    transition:border-color 0.2s, background 0.2s;
+}
+.form-input:focus { border-color:#6C64FF; background:#fff; }
+.form-input::placeholder { color:#BBBBCC; font-weight:600; }
+.form-row { display:flex; gap:10px; }
+.form-row .form-group { flex:1; }
+.submit-btn {
+    width:100%; height:52px; border-radius:16px; border:none;
+    background:linear-gradient(135deg,#6C64FF,#4A42E8); color:#fff;
+    font-family:"Nunito",sans-serif; font-size:15px; font-weight:900;
+    cursor:pointer; box-shadow:0 6px 20px rgba(108,100,255,0.28);
+    margin-top:6px; transition:transform 0.15s;
+}
+.submit-btn:active { transform:scale(0.98); }
+
+/* ── DISCARD LIST ── */
+.discard-row {
+    display:flex; align-items:center; gap:12px;
+    padding:14px 0; border-bottom:1px solid #F5F5FF;
+}
+.discard-row:last-child { border-bottom:none; }
+.discard-info { flex:1; }
+.discard-bus-name { font-size:14px; font-weight:800; color:#333; }
+.discard-bus-meta { font-size:11px; font-weight:600; color:#AAAACC; margin-top:2px; }
+.discard-btn {
+    height:32px; padding:0 14px; border-radius:10px; border:none;
+    background:#FFF0F0; color:#EF4444; font-family:"Nunito",sans-serif;
+    font-size:12px; font-weight:800; cursor:pointer; transition:all 0.2s;
+}
+.discard-btn:hover { background:#EF4444; color:#fff; }
+
+/* ── MODAL ── */
+.modal-overlay {
+    display:none; position:fixed; inset:0; background:rgba(20,18,60,0.55);
+    z-index:200; align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.open { display:flex; }
+.modal-box {
+    background:#fff; border-radius:26px; padding:28px 22px;
+    width:100%; max-width:380px;
+    box-shadow:0 24px 60px rgba(0,0,0,0.18);
+    animation:popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popIn { from{transform:scale(0.7);opacity:0} to{transform:scale(1);opacity:1} }
+.modal-title { font-size:18px; font-weight:900; color:#333; margin-bottom:18px; }
+.modal-actions { display:flex; gap:10px; margin-top:18px; }
+.modal-cancel {
+    flex:1; height:46px; border-radius:13px; border:none;
+    background:#F0F2FF; color:#6C64FF; font-family:"Nunito",sans-serif;
+    font-size:14px; font-weight:800; cursor:pointer;
+}
+.modal-save {
+    flex:1; height:46px; border-radius:13px; border:none;
+    background:linear-gradient(135deg,#6C64FF,#4A42E8); color:#fff;
+    font-family:"Nunito",sans-serif; font-size:14px; font-weight:800;
+    cursor:pointer; box-shadow:0 4px 14px rgba(108,100,255,0.30);
+}
+
+/* ── TOAST ── */
+.toast {
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
+    background:#333; color:#fff; padding:12px 22px; border-radius:14px;
+    font-size:13px; font-weight:700; z-index:300; opacity:0;
+    transition:opacity 0.3s; pointer-events:none; white-space:nowrap;
+}
+.toast.show { opacity:1; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="top-area">
+    <div class="top-content">
+        <div class="admin-title-row">
+            <a href="/home" style="text-decoration:none;">
+    <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}" style="width:42px;height:42px;object-fit:contain;display:block;">
+</a>
+            <div>
+                <div class="admin-greeting">Welcome back</div>
+                <div class="admin-name">Admin Panel</div>
+            </div>
+        </div>
+        <div class="header-right">
+            <a href="/home" class="icon-btn" title="Home"><i class="fa-solid fa-house"></i></a>
+            <button class="icon-btn" onclick="refreshAll()" title="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- BODY -->
+<div class="body-wrap">
+
+    <!-- TAB NAV -->
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('busInfo',this)"><i class="fa-solid fa-bus"></i> Bus Info</button>
+        <button class="tab-btn" onclick="switchTab('location',this)"><i class="fa-solid fa-location-dot"></i> Location</button>
+        <button class="tab-btn" onclick="switchTab('revenue',this)"><i class="fa-solid fa-indian-rupee-sign"></i> Revenue</button>
+        <button class="tab-btn" onclick="switchTab('fuel',this)"><i class="fa-solid fa-gas-pump"></i> Fuel</button>
+        <button class="tab-btn" onclick="switchTab('incidents',this)"><i class="fa-solid fa-triangle-exclamation"></i> Incidents</button>
+        <button class="tab-btn" onclick="switchTab('manage',this)"><i class="fa-solid fa-sliders"></i> Manage</button>
+    </div>
+
+    <!-- ══ BUS INFO ══ -->
+    <div class="tab-panel active" id="tab-busInfo">
+        <p class="sec-label">Fleet Overview</p>
+        <div class="card">
+            <div class="table-wrap">
+                <table class="bus-table">
+                    <thead>
+                        <tr>
+                            <th>Bus No.</th>
+                            <th>Plate</th>
+                            <th>Driver Name</th>
+                            <th>Driver Phone</th>
+                            <th>Route</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="busTableBody">
+                        <tr><td colspan="7" style="text-align:center;color:#AAAACC;padding:20px;">Loading buses…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ LOCATION ══ -->
+    <div class="tab-panel" id="tab-location">
+        <div class="location-hero">
+            <div class="loc-stat"><div class="lv" id="locTotal">—</div><div class="ll">Total Buses</div></div>
+            <div class="loc-divider"></div>
+            <div class="loc-stat"><div class="lv" id="locActive">—</div><div class="ll">GPS Active</div></div>
+            <div class="loc-divider"></div>
+            <div class="loc-stat"><div class="lv" id="locOffline">—</div><div class="ll">No Signal</div></div>
+        </div>
+        <button class="open-map-btn" onclick="window.location.href='/map'">
+            <i class="fa-solid fa-map-location-dot"></i> Open Live Map
+        </button>
+        <p class="sec-label">Bus Positions</p>
+        <div class="card" id="busLocationList">
+            <p style="text-align:center;color:#AAAACC;padding:10px;">Loading locations…</p>
+        </div>
+    </div>
+
+    <!-- ══ REVENUE ══ -->
+    <div class="tab-panel" id="tab-revenue">
+        <div class="revenue-hero">
+            <div class="rev-amount" id="revToday">₹ —</div>
+            <div class="rev-label">Today's Revenue</div>
+        </div>
+        <div class="rev-stats">
+            <div class="rev-stat-card"><div class="rev-stat-val" id="revWeekly">—</div><div class="rev-stat-lbl">This Week</div></div>
+            <div class="rev-stat-card"><div class="rev-stat-val" id="revAvg">—</div><div class="rev-stat-lbl">Daily Avg</div></div>
+            <div class="rev-stat-card"><div class="rev-stat-val" id="revPasses">—</div><div class="rev-stat-lbl">Passes Sold</div></div>
+        </div>
+        <p class="sec-label">Weekly Chart</p>
+        <div class="card" id="revChart"></div>
+        <p class="sec-label" style="margin-top:14px;">Recent Transactions</p>
+        <div class="card" id="txnList">
+            <p style="text-align:center;color:#AAAACC;padding:10px;">Loading…</p>
+        </div>
+    </div>
+
+    <!-- ══ FUEL ══ -->
+    <div class="tab-panel" id="tab-fuel">
+        <div class="fuel-hero">
+            <div><div class="fuel-val" id="fuelTotal">— L</div><div class="fuel-sub">Total fleet consumption</div></div>
+            <div style="text-align:right;"><div class="fuel-val" id="fuelCost">₹ —</div><div class="fuel-sub">Estimated cost</div></div>
+        </div>
+        <p class="sec-label">Per Bus Consumption</p>
+        <div class="card" id="fuelBusList">
+            <p style="text-align:center;color:#AAAACC;padding:10px;">No fuel logs yet.</p>
+        </div>
+        <p class="sec-label" style="margin-top:14px;">Log Fuel Fill-Up</p>
+        <div class="card">
+            <div class="form-group">
+                <label class="form-label">Bus Number</label>
+                <input class="form-input" id="fuelBusNo" placeholder="e.g. TT-01">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Litres</label>
+                    <input class="form-input" id="fuelLitres" type="number" placeholder="e.g. 45">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cost (₹)</label>
+                    <input class="form-input" id="fuelCostInput" type="number" placeholder="e.g. 3600">
+                </div>
+            </div>
+            <button class="submit-btn" onclick="logFuel()"><i class="fa-solid fa-gas-pump"></i> &nbsp;Log Fill-Up</button>
+        </div>
+    </div>
+
+    <!-- ══ INCIDENTS ══ -->
+    <div class="tab-panel" id="tab-incidents">
+        <div class="incident-hero">
+            <div>
+                <div style="font-size:28px;font-weight:900;" id="incidentTotal">—</div>
+                <div style="font-size:12px;font-weight:700;opacity:0.8;">Total Incidents</div>
+            </div>
+            <div style="text-align:right;">
+                <div style="font-size:28px;font-weight:900;" id="incidentOpen">—</div>
+                <div style="font-size:12px;font-weight:700;opacity:0.8;">Open</div>
+            </div>
+        </div>
+        <button class="report-btn" onclick="openModal('incidentModal')">
+            <i class="fa-solid fa-plus"></i> Report New Incident
+        </button>
+        <p class="sec-label">Active Incidents</p>
+        <div id="incidentList"></div>
+    </div>
+
+    <!-- ══ MANAGE ══ -->
+    <div class="tab-panel" id="tab-manage">
+        <p class="sec-label">Add New Bus</p>
+        <div class="card">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Bus Number</label>
+                    <input class="form-input" id="addBusNo" placeholder="e.g. TT-06">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Number Plate</label>
+                    <input class="form-input" id="addPlate" placeholder="MH-04 AB 1234">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Route</label>
+                <input class="form-input" id="addRoute" placeholder="e.g. Route A">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Driver Name</label>
+                    <input class="form-input" id="addDriverName" placeholder="Full name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Driver Phone</label>
+                    <input class="form-input" id="addDriverPhone" placeholder="10-digit" type="tel">
+                </div>
+            </div>
+            <button class="submit-btn" onclick="addBus()"><i class="fa-solid fa-plus"></i> &nbsp;Add Bus to Fleet</button>
+        </div>
+        <p class="sec-label" style="margin-top:14px;">Discard Bus from Fleet</p>
+        <div class="card" id="discardList">
+            <p style="text-align:center;color:#AAAACC;padding:10px;">Loading…</p>
+        </div>
+    </div>
+
+</div><!-- /body-wrap -->
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal-box">
+        <div class="modal-title">Edit Bus Details</div>
+        <input type="hidden" id="editBusId">
+        <div class="form-group">
+            <label class="form-label">Driver Name</label>
+            <input class="form-input" id="editDriverName" placeholder="Driver full name">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Driver Phone</label>
+            <input class="form-input" id="editDriverPhone" placeholder="10-digit number" type="tel">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Route</label>
+            <input class="form-input" id="editRoute" placeholder="Route name">
+        </div>
+        <div class="modal-actions">
+            <button class="modal-cancel" onclick="closeModal('editModal')">Cancel</button>
+            <button class="modal-save" onclick="saveEdit()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- INCIDENT MODAL -->
+<div class="modal-overlay" id="incidentModal">
+    <div class="modal-box">
+        <div class="modal-title">Report Incident</div>
+        <div class="form-group">
+            <label class="form-label">Bus Number</label>
+            <input class="form-input" id="incBusNo" placeholder="e.g. TT-02">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Incident Title</label>
+            <input class="form-input" id="incTitle" placeholder="Brief title">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Description</label>
+            <input class="form-input" id="incDesc" placeholder="What happened?">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Severity</label>
+            <select class="form-input" id="incSeverity">
+                <option value="high">🔴 High</option>
+                <option value="medium" selected>🟡 Medium</option>
+                <option value="low">🟢 Low</option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button class="modal-cancel" onclick="closeModal('incidentModal')">Cancel</button>
+            <button class="modal-save" style="background:linear-gradient(135deg,#EF4444,#DC2626);box-shadow:0 4px 14px rgba(239,68,68,0.3);" onclick="submitIncident()">Report</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── HELPERS ──
+function switchTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+}
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function showToast(msg, ms=2500) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), ms);
+}
+function esc(s) { return (s||'').replace(/'/g,"\\'"); }
+function isToday(ds) {
+    if (!ds) return false;
+    const d = new Date(ds), n = new Date();
+    return d.getDate()===n.getDate() && d.getMonth()===n.getMonth() && d.getFullYear()===n.getFullYear();
+}
+function refreshAll() {
+    loadOverviewStats(); loadBusInfo(); loadLocation();
+    loadRevenue(); loadFuelData(); loadIncidents(); loadDiscardList();
+    showToast('✅ Data refreshed');
+}
+
+// ── OVERVIEW STATS ──
+async function loadOverviewStats() {
+    try {
+        const [bd, td] = await Promise.all([
+            fetch('/get_buses').then(r=>r.json()),
+            fetch('/get_all_tickets').then(r=>r.json())
+        ]);
+        const buses   = bd.buses   || [];
+        const tickets = td.tickets || [];
+        document.getElementById('statBuses').textContent   = buses.length;
+        document.getElementById('statTickets').textContent = tickets.length;
+        document.getElementById('statActive').textContent  = buses.filter(b=>b.latitude&&b.longitude).length;
+        const todayRev = tickets.filter(t=>isToday(t.purchase_date||t.date))
+            .reduce((s,t)=>s+parseFloat(t.amount_paid||0),0);
+        document.getElementById('statRevenue').textContent = '₹'+todayRev.toFixed(0);
+    } catch(e) { console.error('Stats:',e); }
+}
+
+// ── BUS INFO ──
+async function loadBusInfo() {
+    try {
+        const data  = await fetch('/get_buses').then(r=>r.json());
+        const buses = data.buses || [];
+        const tbody = document.getElementById('busTableBody');
+        if (!buses.length) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#AAAACC;padding:20px;">No buses found</td></tr>';
+            return;
+        }
+        tbody.innerHTML = buses.map(b => `
+            <tr>
+                <td><strong>${b.bus_no||'—'}</strong></td>
+                <td style="color:#888;">${b.no_plate||'—'}</td>
+                <td>${b.driver_name||'<span style="color:#AAAACC">—</span>'}</td>
+                <td style="color:#6C64FF;">${b.driver_phone||'<span style="color:#AAAACC">—</span>'}</td>
+                <td><span class="route-badge">${b.route||'—'}</span></td>
+                <td><span class="status-dot ${b.latitude?'online':'offline'}">${b.latitude?'Online':'Offline'}</span></td>
+                <td>
+                    <div class="action-btns">
+                        <button class="act-btn edit" onclick="openEdit(${b.id},'${esc(b.driver_name)}','${esc(b.driver_phone)}','${esc(b.route)}')">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button class="act-btn del" onclick="deleteBus(${b.id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>`).join('');
+    } catch(e) {
+        document.getElementById('busTableBody').innerHTML =
+            '<tr><td colspan="7" style="text-align:center;color:#EF4444;padding:20px;">Failed to load buses</td></tr>';
+    }
+}
+
+function openEdit(id, dn, dp, rt) {
+    document.getElementById('editBusId').value       = id;
+    document.getElementById('editDriverName').value  = dn||'';
+    document.getElementById('editDriverPhone').value = dp||'';
+    document.getElementById('editRoute').value       = rt||'';
+    openModal('editModal');
+}
+async function saveEdit() {
+    const id=document.getElementById('editBusId').value;
+    const payload={
+        bus_id:id,
+        driver_name:document.getElementById('editDriverName').value.trim(),
+        driver_phone:document.getElementById('editDriverPhone').value.trim(),
+        route:document.getElementById('editRoute').value.trim()
+    };
+    try {
+        const d = await fetch('/update_bus',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(r=>r.json());
+        if (d.success) { showToast('✅ Bus updated'); closeModal('editModal'); loadBusInfo(); loadDiscardList(); }
+        else showToast('❌ Update failed');
+    } catch(e) { showToast('❌ Network error'); }
+}
+async function deleteBus(id) {
+    if (!confirm('Remove this bus from the fleet?')) return;
+    try {
+        const d = await fetch('/delete_bus',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({bus_id:id})}).then(r=>r.json());
+        if (d.success) { showToast('🗑️ Bus removed'); loadBusInfo(); loadDiscardList(); loadOverviewStats(); }
+    } catch(e) { showToast('❌ Network error'); }
+}
+
+// ── LOCATION ──
+async function loadLocation() {
+    try {
+        const data  = await fetch('/get_buses').then(r=>r.json());
+        const buses = data.buses || [];
+        const active  = buses.filter(b=>b.latitude&&b.longitude);
+        const offline = buses.filter(b=>!b.latitude||!b.longitude);
+        document.getElementById('locTotal').textContent   = buses.length;
+        document.getElementById('locActive').textContent  = active.length;
+        document.getElementById('locOffline').textContent = offline.length;
+        const list = document.getElementById('busLocationList');
+        if (!buses.length) { list.innerHTML='<p style="text-align:center;color:#AAAACC;padding:10px;">No buses</p>'; return; }
+        list.innerHTML = buses.map(b=>`
+            <div class="bus-location-row">
+                <div class="bus-icon-wrap"><i class="fa-solid fa-bus"></i></div>
+                <div class="bus-loc-info">
+                    <div class="bus-loc-name">${b.bus_no||'—'} &nbsp;<span class="route-badge">${b.route||''}</span></div>
+                    <div class="bus-loc-coords">${b.latitude?`${parseFloat(b.latitude).toFixed(5)}, ${parseFloat(b.longitude).toFixed(5)}`:'No GPS signal'}</div>
+                </div>
+                <span class="status-dot ${b.latitude?'online':'offline'}">${b.latitude?'Live':'Off'}</span>
+            </div>`).join('');
+    } catch(e) {
+        document.getElementById('busLocationList').innerHTML='<p style="color:#EF4444;text-align:center;padding:10px;">Failed to load</p>';
+    }
+}
+
+// ── REVENUE ──
+async function loadRevenue() {
+    try {
+        const data    = await fetch('/get_all_tickets').then(r=>r.json());
+        const tickets = data.tickets || [];
+        const now     = new Date();
+        const todayRev = tickets.filter(t=>isToday(t.purchase_date||t.date))
+            .reduce((s,t)=>s+parseFloat(t.amount_paid||0),0);
+        const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const weekRevs = [0,0,0,0,0,0,0];
+        tickets.forEach(t=>{
+            const d=new Date(t.purchase_date||t.date);
+            if(isNaN(d)) return;
+            const diff=Math.floor((now-d)/86400000);
+            if(diff>=0&&diff<7) weekRevs[6-diff]+=parseFloat(t.amount_paid||0);
+        });
+        const weekTotal=weekRevs.reduce((a,b)=>a+b,0);
+        const maxRev=Math.max(...weekRevs,1);
+        const todayDow=now.getDay();
+        const orderedDays=[];
+        for(let i=6;i>=0;i--) orderedDays.push(dayNames[(todayDow-i+7)%7]);
+
+        document.getElementById('revToday').textContent  = '₹ '+todayRev.toFixed(0);
+        document.getElementById('revWeekly').textContent = '₹'+weekTotal.toFixed(0);
+        document.getElementById('revAvg').textContent    = '₹'+(weekTotal/7).toFixed(0);
+
+        try {
+            const pd=await fetch('/get_all_passes').then(r=>r.json());
+            document.getElementById('revPasses').textContent=pd.count||0;
+        } catch { document.getElementById('revPasses').textContent='—'; }
+
+        document.getElementById('revChart').innerHTML = weekRevs.map((v,i)=>`
+            <div class="bar-row">
+                <span class="bar-day">${orderedDays[i]}</span>
+                <div class="bar-track">
+                    <div class="bar-fill" style="width:${(v/maxRev*100).toFixed(1)}%">
+                        ${v>0?`<span>₹${v.toFixed(0)}</span>`:''}
+                    </div>
+                </div>
+            </div>`).join('');
+
+        const recent=[...tickets].reverse().slice(0,8);
+        document.getElementById('txnList').innerHTML = recent.length ? recent.map(t=>`
+            <div class="txn-row">
+                <div class="txn-icon"><i class="fa-solid fa-ticket"></i></div>
+                <div class="txn-info">
+                    <div class="txn-name">${t.start_dest||'—'} → ${t.final_dest||'—'}</div>
+                    <div class="txn-time">${t.purchase_date||t.date||'—'} · ${t.no_of_tickets||1} ticket(s)</div>
+                </div>
+                <div class="txn-amt">₹${parseFloat(t.amount_paid||0).toFixed(0)}</div>
+            </div>`).join('') :
+            '<p style="text-align:center;color:#AAAACC;padding:10px;">No transactions yet</p>';
+    } catch(e) { console.error('Revenue:',e); }
+}
+
+// ── FUEL (localStorage) ──
+function loadFuelData() {
+    const logs=JSON.parse(localStorage.getItem('fuelLogs')||'[]');
+    const map={};
+    logs.forEach(l=>{
+        if(!map[l.busNo]) map[l.busNo]={litres:0,cost:0};
+        map[l.busNo].litres+=parseFloat(l.litres||0);
+        map[l.busNo].cost  +=parseFloat(l.cost  ||0);
+    });
+    const keys=Object.keys(map);
+    const totL=keys.reduce((s,k)=>s+map[k].litres,0);
+    const totC=keys.reduce((s,k)=>s+map[k].cost,  0);
+    const maxL=Math.max(...keys.map(k=>map[k].litres),1);
+    document.getElementById('fuelTotal').textContent=totL.toFixed(1)+' L';
+    document.getElementById('fuelCost').textContent ='₹ '+totC.toFixed(0);
+    const list=document.getElementById('fuelBusList');
+    if (!keys.length) { list.innerHTML='<p style="text-align:center;color:#AAAACC;padding:10px;">No fuel logs yet. Log a fill-up below.</p>'; return; }
+    list.innerHTML=keys.map(k=>`
+        <div class="fuel-bus-row">
+            <div class="bus-icon-wrap"><i class="fa-solid fa-bus"></i></div>
+            <div class="fuel-info">
+                <div class="fuel-bus-name">${k}</div>
+                <div class="fuel-meta">Cost: ₹${map[k].cost.toFixed(0)}</div>
+                <div class="fuel-bar-bg"><div class="fuel-bar-fill" style="width:${(map[k].litres/maxL*100).toFixed(1)}%"></div></div>
+            </div>
+            <div class="fuel-litres">${map[k].litres.toFixed(1)}L</div>
+        </div>`).join('');
+}
+function logFuel() {
+    const busNo =document.getElementById('fuelBusNo').value.trim();
+    const litres=document.getElementById('fuelLitres').value.trim();
+    const cost  =document.getElementById('fuelCostInput').value.trim();
+    if (!busNo||!litres) { showToast('⚠️ Enter bus number and litres'); return; }
+    const logs=JSON.parse(localStorage.getItem('fuelLogs')||'[]');
+    logs.push({busNo,litres,cost,date:new Date().toLocaleDateString()});
+    localStorage.setItem('fuelLogs',JSON.stringify(logs));
+    document.getElementById('fuelBusNo').value='';
+    document.getElementById('fuelLitres').value='';
+    document.getElementById('fuelCostInput').value='';
+    showToast('✅ Fuel log saved'); loadFuelData();
+}
+
+// ── INCIDENTS (localStorage) ──
+function loadIncidents() {
+    const all=JSON.parse(localStorage.getItem('incidents')||'[]');
+    const open=all.filter(i=>!i.resolved);
+    document.getElementById('incidentTotal').textContent=all.length;
+    document.getElementById('incidentOpen').textContent =open.length;
+    const list=document.getElementById('incidentList');
+    if (!open.length) {
+        list.innerHTML='<div class="card" style="text-align:center;color:#22C55E;padding:20px;"><i class="fa-solid fa-circle-check" style="font-size:28px;margin-bottom:8px;display:block;"></i><strong>All Clear! No open incidents.</strong></div>';
+        return;
+    }
+    list.innerHTML=open.map((inc,i)=>`
+        <div class="incident-card ${inc.severity}">
+            <div class="incident-header">
+                <div class="incident-title">${inc.title}</div>
+                <span class="severity-badge ${inc.severity}">${inc.severity.toUpperCase()}</span>
+            </div>
+            <div class="incident-desc">${inc.desc||'No description'}</div>
+            <div class="incident-footer">
+                <div class="incident-meta">🚌 ${inc.busNo} · ${inc.date}</div>
+                <button class="resolve-btn" onclick="resolveIncident(${i})">Mark Resolved</button>
+            </div>
+        </div>`).join('');
+}
+function submitIncident() {
+    const busNo   =document.getElementById('incBusNo').value.trim();
+    const title   =document.getElementById('incTitle').value.trim();
+    const desc    =document.getElementById('incDesc').value.trim();
+    const severity=document.getElementById('incSeverity').value;
+    if (!busNo||!title) { showToast('⚠️ Fill bus number and title'); return; }
+    const all=JSON.parse(localStorage.getItem('incidents')||'[]');
+    all.push({busNo,title,desc,severity,date:new Date().toLocaleDateString(),resolved:false});
+    localStorage.setItem('incidents',JSON.stringify(all));
+    ['incBusNo','incTitle','incDesc'].forEach(id=>document.getElementById(id).value='');
+    closeModal('incidentModal'); showToast('🚨 Incident reported'); loadIncidents();
+}
+function resolveIncident(openIdx) {
+    const all=JSON.parse(localStorage.getItem('incidents')||'[]');
+    const open=all.filter(i=>!i.resolved);
+    if (open[openIdx]) {
+        const target=open[openIdx];
+        const realIdx=all.findIndex(i=>i===target||JSON.stringify(i)===JSON.stringify(target));
+        if (realIdx>-1) all[realIdx].resolved=true;
+    }
+    localStorage.setItem('incidents',JSON.stringify(all));
+    showToast('✅ Incident resolved'); loadIncidents();
+}
+
+// ── MANAGE ──
+async function addBus() {
+    const busNo      =document.getElementById('addBusNo').value.trim();
+    const plate      =document.getElementById('addPlate').value.trim();
+    const route      =document.getElementById('addRoute').value.trim();
+    const driverName =document.getElementById('addDriverName').value.trim();
+    const driverPhone=document.getElementById('addDriverPhone').value.trim();
+    if (!busNo||!plate) { showToast('⚠️ Bus number and plate required'); return; }
+    try {
+        const d=await fetch('/add_bus',{
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({bus_no:busNo,no_plate:plate,route,driver_name:driverName,driver_phone:driverPhone})
+        }).then(r=>r.json());
+        if (d.success) {
+            showToast('🚌 Bus added!');
+            ['addBusNo','addPlate','addRoute','addDriverName','addDriverPhone'].forEach(id=>document.getElementById(id).value='');
+            loadBusInfo(); loadDiscardList(); loadOverviewStats();
+        } else showToast('❌ Failed to add bus');
+    } catch(e) { showToast('❌ Network error'); }
+}
+async function loadDiscardList() {
+    try {
+        const data  =await fetch('/get_buses').then(r=>r.json());
+        const buses =data.buses||[];
+        const list  =document.getElementById('discardList');
+        if (!buses.length) { list.innerHTML='<p style="text-align:center;color:#AAAACC;padding:10px;">No buses in fleet</p>'; return; }
+        list.innerHTML=buses.map(b=>`
+            <div class="discard-row">
+                <div class="bus-icon-wrap"><i class="fa-solid fa-bus"></i></div>
+                <div class="discard-info">
+                    <div class="discard-bus-name">${b.bus_no||'—'} &nbsp;<span class="route-badge">${b.route||''}</span></div>
+                    <div class="discard-bus-meta">${b.no_plate||''} · Driver: ${b.driver_name||'Unassigned'}</div>
+                </div>
+                <button class="discard-btn" onclick="deleteBus(${b.id})">Discard</button>
+            </div>`).join('');
+    } catch(e) {
+        document.getElementById('discardList').innerHTML='<p style="color:#EF4444;text-align:center;padding:10px;">Failed to load</p>';
+    }
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+    loadOverviewStats();
+    loadBusInfo();
+    loadLocation();
+    loadRevenue();
+    loadFuelData();
+    loadIncidents();
+    loadDiscardList();
+    setInterval(() => { loadOverviewStats(); loadLocation(); }, 30000);
+});
+</script>
+</body>
+</html>

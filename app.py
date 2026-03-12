@@ -45,7 +45,7 @@ def view_c():
 
 @app.route('/admin_dashboard')
 def admin_dashboard():
-    return render_template("tc_login.html")
+    return render_template("admin_dashboard.html") 
 
 @app.route('/select')
 def select():
@@ -363,7 +363,7 @@ def get_location(user_id):
 def get_buses():
     db = get_db()
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT id, bus_no, no_plate, route, latitude, longitude FROM bus_info")
+    cursor.execute("SELECT id, bus_no, no_plate, route, latitude, longitude, driver_name, driver_phone FROM bus_info")
     buses = cursor.fetchall()
     cursor.close()
     db.close()
@@ -1666,7 +1666,45 @@ def start_page():
 # thread.daemon = True
 # thread.start()
 
+@app.route('/add_bus', methods=['POST'])
+def add_bus():
+    data = request.get_json()
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+        "INSERT INTO bus_info (bus_no, no_plate, route, driver_name, driver_phone) VALUES (%s, %s, %s, %s, %s)",
+        (
+            data.get('bus_no', ''),
+            data.get('no_plate', ''),
+            data.get('route', ''),
+            data.get('driver_name', ''),
+            data.get('driver_phone', '')
+        )
+    )
+    db.commit()
+    cursor.close()
+    db.close()
+    return jsonify({'success': True})
 
+
+@app.route('/update_bus', methods=['POST'])
+def update_bus():
+    data = request.get_json()
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+        "UPDATE bus_info SET driver_name=%s, driver_phone=%s, route=%s WHERE id=%s",
+        (
+            data.get('driver_name', ''),
+            data.get('driver_phone', ''),
+            data.get('route', ''),
+            data.get('bus_id')
+        )
+    )
+    db.commit()
+    cursor.close()
+    db.close()
+    return jsonify({'success': True})
 
 
 
