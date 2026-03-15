@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>TC Login - Rotary Bus</title>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,6 +13,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -71,13 +72,6 @@
             line-height: 1.2;
         }
 
-        .tc-header p {
-            font-size: 1rem;
-            opacity: 0.9;
-            max-width: 280px;
-            margin: 0 auto;
-        }
-
         .pass-card {
             background: #EEEEEE;
             border-radius: 40px 40px 30px 30px;
@@ -119,23 +113,135 @@
             opacity: 0.8;
         }
 
-        .search-container {
-            margin-bottom: 0.5rem;
+        /* Tab Navigation */
+        .tab-container {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 50px;
+            background: #ffffff;
+            padding: 5px;
         }
 
-        .search-label {
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 5px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .tab.active {
+            background: #6C64FF;
+            color: white;
+        }
+
+        .tab i {
+            margin-right: 5px;
+        }
+
+        /* QR Scanner Styles */
+        #qrScanner {
+            width: 100%;
+            display: none;
+        }
+
+        #qrScanner.active {
+            display: block;
+        }
+
+        .scanner-container {
+            position: relative;
+            width: 100%;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            aspect-ratio: 1/1;
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .scanner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: #636263;
-            font-weight: 600;
-            font-size: 1rem;
-            margin-bottom: 0.8rem;
+            justify-content: center;
         }
 
-        .search-label i {
-            color: #6C64FF;
+        .scanner-frame {
+            width: 250px;
+            height: 250px;
+            border: 3px solid #6C64FF;
+            border-radius: 20px;
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
+        }
+
+        .scanner-line {
+            position: absolute;
+            width: 220px;
+            height: 2px;
+            background: #6C64FF;
+            animation: scan 2s linear infinite;
+            box-shadow: 0 0 10px #6C64FF;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100px); }
+            50% { transform: translateY(100px); }
+            100% { transform: translateY(-100px); }
+        }
+
+        .scanner-btn {
+            width: 100%;
+            height: 54px;
+            background: #6C64FF;
+            border-radius: 50px;
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            font-family: "Hind Guntur", sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0px 4px 10px rgba(108, 100, 255, 0.3);
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .scanner-btn.stop {
+            background: #ff4757;
+            box-shadow: 0px 4px 10px rgba(255, 71, 87, 0.3);
+        }
+
+        .scanner-btn:active {
+            transform: scale(0.98);
+        }
+
+        .scanner-btn i {
             font-size: 1.1rem;
+        }
+
+        /* Manual Entry Section */
+        .search-container {
+            display: none;
+        }
+
+        .search-container.active {
+            display: block;
         }
 
         .input-wrapper {
@@ -158,7 +264,7 @@
             flex: 1;
             height: 48px;
             background: transparent;
-            font-size: 15px;
+            font-size: 16px;
             color: #333;
             border: none;
             font-family: "Hind Guntur", sans-serif;
@@ -166,11 +272,6 @@
 
         #passNumberInput:focus {
             outline: none;
-        }
-
-        #passNumberInput::placeholder {
-            color: #aaa;
-            font-size: 14px;
         }
 
         #searchBtn {
@@ -188,20 +289,16 @@
             justify-content: center;
             gap: 10px;
             box-shadow: 0px 4px 10px rgba(108, 100, 255, 0.3);
-            margin: 1.5rem 0 1rem;
+            margin: 1rem 0;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         #searchBtn:active {
             transform: scale(0.98);
-            box-shadow: 0px 2px 5px rgba(108, 100, 255, 0.4);
         }
 
-        #searchBtn i {
-            font-size: 1.1rem;
-        }
-
+        /* Pass Info Card */
         .pass-info-card {
             background: #FFFFFF;
             border-radius: 40px;
@@ -231,6 +328,7 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            margin-bottom: 20px;
         }
 
         .pass-detail-row {
@@ -283,10 +381,6 @@
             background: #f0f0ff;
         }
 
-        .action-btn i {
-            color: #6C64FF;
-        }
-
         .no-result {
             background: #FFFFFF;
             border-radius: 40px;
@@ -302,50 +396,25 @@
             animation: fadeUp 0.3s ease;
         }
 
-        .no-result i {
+        .camera-permission-msg {
+            text-align: center;
+            padding: 30px 20px;
+            color: #666;
+        }
+
+        .camera-permission-msg i {
+            font-size: 48px;
             color: #6C64FF;
-            opacity: 0.5;
-            margin-bottom: 1rem;
-        }
-
-        .no-result h4 {
-            color: #636263;
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .no-result p {
-            color: #636263;
-            opacity: 0.7;
-            font-size: 0.95rem;
-        }
-
-        button {
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        @media (max-width: 380px) {
-            .pass-card {
-                padding: 1.5rem 1.2rem;
-            }
-            
-            .tc-header h1 {
-                font-size: 1.5rem;
-            }
-            
-            .example-pill code {
-                font-size: 0.8rem;
-            }
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
     <div class="main-container">
         <div class="tc-header">
-            <img src="static/Assets/images/Just-circles.png" class="header-corner-img" alt="">
+            <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" class="header-corner-img" alt="">
             <a href="/select" style="text-decoration: none;">
-                <img src="static/Assets/images/back-button.png" class="header-corner-img-2" alt="">
+                <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}" class="header-corner-img-2" alt="">
             </a>
             <div class="tc-badge">TC LOGIN</div>
             <h1 class="fw-bold">Ticket Checker Portal</h1>
@@ -354,36 +423,60 @@
         <div class="pass-card">
             <div class="pass-header">
                 <div class="pass-icon">
-                    <i class="fas fa-search"></i>
+                    <i class="fas fa-ticket-alt"></i>
                 </div>
                 <div>
-                    <h3>Search Pass</h3>
-                    <p>Enter pass number to verify</p>
+                    <h3>Verify Pass</h3>
+                    <p>Scan QR or enter pass number</p>
                 </div>
             </div>
-
-            <div class="search-container">
-                <div class="search-label">
-                    <i class="fas fa-ticket-alt"></i>
-                    <span>Enter Pass Number</span>
+            <div class="tab-container">
+                <div class="tab active" id="scanTab" onclick="switchMode('scan')">
+                    <i class="fas fa-qrcode"></i> Scan QR
+                </div>
+                <div class="tab" id="manualTab" onclick="switchMode('manual')">
+                    <i class="fas fa-keyboard"></i> Manual
+                </div>
+            </div>
+            <div id="qrScanner" class="active">
+                <div class="scanner-container" id="scannerContainer">
+                    <video id="video" playsinline></video>
+                    <div class="scanner-overlay">
+                        <div class="scanner-frame"></div>
+                        <div class="scanner-line"></div>
+                    </div>
+                </div>
+                
+                <div id="cameraPermissionMsg" class="camera-permission-msg" style="display: none;">
                 </div>
 
+                <button class="scanner-btn" id="startScannerBtn">
+                    <i class="fas fa-camera"></i> Start Camera
+                </button>
+                <button class="scanner-btn stop" id="stopScannerBtn" style="display: none;">
+                    <i class="fas fa-stop"></i> Stop Camera
+                </button>
+                
+                <p style="text-align: center; color: #888; font-size: 14px; margin-top: 10px;">
+                    <i class="fas fa-info-circle"></i> Center the QR code in the frame
+                </p>
+            </div>
+            <div class="search-container" id="manualEntry">
                 <div class="input-wrapper">
+                    <i class="fas fa-hashtag"></i>
                     <input type="text" 
                         id="passNumberInput"
-                        placeholder="e.g., PS8K2M9">
+                        placeholder="Enter pass number (e.g., PS8K2M9)"
+                        autocomplete="off">
                 </div>
 
                 <button id="searchBtn">
-                    <i class="fas fa-check-circle"></i> Verify
+                    <i class="fas fa-check-circle"></i> Verify Pass
                 </button>
             </div>
-
             <div class="pass-info-card" id="passInfoCard">
-                <div class="d-flex align-items-center mb-4">
-                    <div class="verify-badge">
-                        <i class="fas fa-check-circle"></i> VALID PASS
-                    </div>
+                <div class="verify-badge">
+                    <i class="fas fa-check-circle"></i> VALID PASS
                 </div>
                 
                 <div class="pass-detail-row">
@@ -428,37 +521,252 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    
     <script>
-    function searchPass(passNumber) {
-        const input = document.getElementById('passNumberInput');
-        if (passNumber) {
-            input.value = passNumber;
+    let scanning = false;
+    let videoStream = null;
+    let scanInterval = null;
+    const video = document.getElementById('video');
+    const scannerContainer = document.getElementById('scannerContainer');
+    const cameraPermissionMsg = document.getElementById('cameraPermissionMsg');
+    const startBtn = document.getElementById('startScannerBtn');
+    const stopBtn = document.getElementById('stopScannerBtn');
+
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const isHTTPS = window.location.protocol === 'https:';
+    
+    console.log('Connection info:', {
+        hostname: window.location.hostname,
+        protocol: window.location.protocol,
+        isLocalhost: isLocalhost,
+        isHTTPS: isHTTPS
+    });
+
+    function isCameraSupported() {
+        return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+    }
+
+    function updateCameraSupportMessage() {
+        const cameraMsg = document.getElementById('cameraPermissionMsg');
+        
+        if (!isCameraSupported()) {
+            let message = '';
+            if (!isHTTPS && !isLocalhost) {
+                message = `
+                    <i class="fas fa-lock"></i>
+                    <h4>HTTPS Required</h4>
+                    <p>Camera access requires HTTPS when accessing from network IP.<br>
+                    Please use:<br>
+                    • <strong>http://localhost:5000</strong> (for testing)<br>
+                    • Or access via HTTPS</p>
+                `;
+            } else {
+                message = `
+                    <i class="fas fa-camera"></i>
+                    <h4>Camera Not Supported</h4>
+                    <p>Your browser doesn't support camera access.<br>
+                    Please use the manual entry option.</p>
+                `;
+            }
+            cameraMsg.innerHTML = message;
+            cameraMsg.style.display = 'block';
+            startBtn.style.display = 'none';
+            return false;
+        }
+        return true;
+    }
+
+    function switchMode(mode) {
+        const scanTab = document.getElementById('scanTab');
+        const manualTab = document.getElementById('manualTab');
+        const qrScanner = document.getElementById('qrScanner');
+        const manualEntry = document.getElementById('manualEntry');
+
+        if (mode === 'scan') {
+            scanTab.classList.add('active');
+            manualTab.classList.remove('active');
+            qrScanner.classList.add('active');
+            manualEntry.classList.remove('active');
+            
+            if (!isCameraSupported()) {
+                updateCameraSupportMessage();
+            }
+        } else {
+            manualTab.classList.add('active');
+            scanTab.classList.remove('active');
+            qrScanner.classList.remove('active');
+            manualEntry.classList.add('active');
+            stopScanner();
+        }
+    }
+
+    async function startScanner() {
+        try {
+            document.getElementById('passInfoCard').classList.remove('active');
+            document.getElementById('noResult').classList.remove('active');
+            
+            if (!isCameraSupported()) {
+                updateCameraSupportMessage();
+                return;
+            }
+            
+            cameraPermissionMsg.style.display = 'none';
+            
+            const constraints = {
+                video: {
+                    facingMode: 'environment', 
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            };
+
+            console.log('Requesting camera access...');
+            
+            videoStream = await navigator.mediaDevices.getUserMedia(constraints);
+            
+            console.log('Camera access granted');
+            
+            video.srcObject = videoStream;
+            
+            await new Promise((resolve) => {
+                video.onloadedmetadata = () => {
+                    video.play()
+                        .then(resolve)
+                        .catch(e => console.error('Error playing video:', e));
+                };
+            });
+
+            scanning = true;
+            startBtn.style.display = 'none';
+            stopBtn.style.display = 'block';
+            
+            scanFrame();
+            
+        } catch (err) {
+            console.error('Camera error:', err);
+            
+            let errorMessage = '';
+            if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                errorMessage = `
+                    <i class="fas fa-ban"></i>
+                    <h4>Camera Access Denied</h4>
+                    <p>Please allow camera access in your browser settings.<br>
+                    On mobile: Look for camera permissions in site settings.</p>
+                `;
+            } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                errorMessage = `
+                    <i class="fas fa-video-slash"></i>
+                    <h4>No Camera Found</h4>
+                    <p>No camera detected on this device.<br>
+                    Please use the manual entry option.</p>
+                `;
+            } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+                errorMessage = `
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h4>Camera in Use</h4>
+                    <p>Camera is being used by another application.<br>
+                    Close other apps and try again.</p>
+                `;
+            } else if (err.name === 'OverconstrainedError') {
+                errorMessage = `
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h4>Camera Not Compatible</h4>
+                    <p>Your camera doesn't support required settings.<br>
+                    Please use the manual entry option.</p>
+                `;
+            } else {
+                errorMessage = `
+                    <i class="fas fa-question-circle"></i>
+                    <h4>Camera Error</h4>
+                    <p>Could not access camera: ${err.message}<br>
+                    Please use the manual entry option.</p>
+                `;
+            }
+            
+            cameraPermissionMsg.innerHTML = errorMessage;
+            cameraPermissionMsg.style.display = 'block';
+            startBtn.style.display = 'block';
+            stopBtn.style.display = 'none';
+        }
+    }
+
+    function stopScanner() {
+        scanning = false;
+        
+        if (scanInterval) {
+            cancelAnimationFrame(scanInterval);
+            scanInterval = null;
         }
         
-        const searchValue = input.value.trim().toUpperCase();
-        const passInfo = document.getElementById('passInfoCard');
-        const noResult = document.getElementById('noResult');
-        
-        const formatRegex = /^PS[A-Z0-9]{5}$/;
-        if (!formatRegex.test(searchValue)) {
-            alert('Invalid pass number format. Expected: PS followed by 5 characters (e.g., PS8K2M9)');
-            return;
+        if (videoStream) {
+            videoStream.getTracks().forEach(track => {
+                track.stop();
+                console.log('Camera track stopped');
+            });
+            videoStream = null;
         }
         
-        const searchBtn = document.getElementById('searchBtn');
-        const originalText = searchBtn.innerHTML;
-        searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
-        searchBtn.disabled = true;
+        if (video.srcObject) {
+            video.srcObject = null;
+        }
         
-        fetch('/verify_pass', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ pass_number: searchValue })
-        })
-        .then(response => response.json())
-        .then(data => {
+        startBtn.style.display = 'block';
+        stopBtn.style.display = 'none';
+    }
+
+    function scanFrame() {
+        if (!scanning) return;
+
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            if (canvas.width > 0 && canvas.height > 0) {
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                
+                try {
+                    const code = jsQR(imageData.data, canvas.width, canvas.height, {
+                        inversionAttempts: 'dontInvert'
+                    });
+
+                    if (code) {
+                        console.log('QR Code found:', code.data);
+                        
+                        if (navigator.vibrate) navigator.vibrate(200);
+                        
+                        stopScanner();
+                        
+                        verifyPassFromQR(code.data);
+                        return;
+                    }
+                } catch (qrError) {
+                    console.error('QR scanning error:', qrError);
+                }
+            }
+        }
+        
+        scanInterval = requestAnimationFrame(scanFrame);
+    }
+    async function verifyPassFromQR(qrData) {
+        try {
+            const response = await fetch('/verify_pass_qr', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ qr_data: qrData })
+            });
+
+            const data = await response.json();
+
             if (data.success && data.found) {
                 const pass = data.pass;
                 
@@ -469,37 +777,93 @@
                 document.getElementById('displayDate').textContent = pass.issue_date;
                 document.getElementById('displayTime').textContent = pass.issue_time;
                 
-                passInfo.classList.add('active');
-                noResult.classList.remove('active');
+                document.getElementById('passInfoCard').classList.add('active');
+                document.getElementById('noResult').classList.remove('active');
             } else {
-                passInfo.classList.remove('active');
-                noResult.classList.add('active');
+                document.getElementById('passInfoCard').classList.remove('active');
+                document.getElementById('noResult').classList.add('active');
             }
-        })
-        .catch(error => {
+        } catch (error) {
             console.error('Error:', error);
             alert('Network error. Please try again.');
-        })
-        .finally(() => {
+        }
+    }
+    async function searchPass() {
+        const input = document.getElementById('passNumberInput');
+        const passNumber = input.value.trim().toUpperCase();
+        
+        if (!passNumber) {
+            alert('Please enter a pass number');
+            return;
+        }
+        
+        const searchBtn = document.getElementById('searchBtn');
+        const originalText = searchBtn.innerHTML;
+        searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+        searchBtn.disabled = true;
+        
+        try {
+            const response = await fetch('/verify_pass', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ pass_number: passNumber })
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.found) {
+                const pass = data.pass;
+                
+                document.getElementById('displayPassNumber').textContent = pass.pass_number;
+                document.getElementById('displayPassHolder').textContent = pass.pass_holder;
+                document.getElementById('displayMobile').textContent = pass.mobile_no;
+                document.getElementById('displayAmount').textContent = `₹${pass.amount_paid}`;
+                document.getElementById('displayDate').textContent = pass.issue_date;
+                document.getElementById('displayTime').textContent = pass.issue_time;
+                
+                document.getElementById('passInfoCard').classList.add('active');
+                document.getElementById('noResult').classList.remove('active');
+            } else {
+                document.getElementById('passInfoCard').classList.remove('active');
+                document.getElementById('noResult').classList.add('active');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Network error. Please try again.');
+        } finally {
             searchBtn.innerHTML = originalText;
             searchBtn.disabled = false;
-        });
+        }
     }
-
-    document.getElementById('searchBtn').addEventListener('click', function() {
-        searchPass();
+    document.getElementById('markUsedBtn').addEventListener('click', function() {
+        const passNumber = document.getElementById('displayPassNumber').textContent;
+        alert(`Pass ${passNumber} marked as used successfully!`);
+        document.getElementById('passInfoCard').classList.remove('active');
     });
 
+    startBtn.addEventListener('click', startScanner);
+    stopBtn.addEventListener('click', stopScanner);
+    document.getElementById('searchBtn').addEventListener('click', searchPass);
+    
     document.getElementById('passNumberInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             searchPass();
         }
     });
 
-    document.getElementById('markUsedBtn').addEventListener('click', function() {
-        const passNumber = document.getElementById('displayPassNumber').textContent;
-        alert(`Pass ${passNumber} marked as used successfully!`);
-        document.getElementById('passInfoCard').classList.remove('active');
+    window.addEventListener('beforeunload', function() {
+        stopScanner();
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!isCameraSupported()) {
+            updateCameraSupportMessage();
+        }
+        
+        if (isMobile && document.getElementById('scanTab').classList.contains('active') && isCameraSupported()) {
+            setTimeout(startScanner, 1000);
+        }
     });
 </script>
 </body>

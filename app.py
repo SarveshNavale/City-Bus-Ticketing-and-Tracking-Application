@@ -1,9 +1,10 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify, redirect, session
-import requests
-# from dotenv import load_dotenv
-# from groq import Groq
 
+from dotenv import load_dotenv
+from groq import Groq
+import json
 
+from qr_utils import generate_pass_qr,  extract_pass_number_from_qr
 
 import random
 import string
@@ -14,7 +15,7 @@ import time  # This is the time module for sleep()
 import threading
 from math import radians, sin, cos, sqrt, atan2
 
-#load_dotenv()
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -22,8 +23,9 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="#SAR1807",
-       # password="",
+
+        password="hrishi@123",
+
         database="RotaryClub_Database"
     )
  
@@ -304,6 +306,132 @@ def view_pass():
     except Exception as e:
         print("View pass error:", e)
         return "Error loading pass"
+    
+@app.route('/generate_pass_qr/<pass_number>')
+def generate_pass_qr_route(pass_number):
+    """Generate QR code for a specific pass"""
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT pass_number, pass_holder, mobile_no, amount_paid, issue_date, issue_time 
+            FROM passes_info 
+            WHERE pass_number = %s
+        """, (pass_number,))
+        
+        pass_data = cursor.fetchone()
+        cursor.close()
+        db.close()
+        
+        if not pass_data:
+            return jsonify({'success': False, 'error': 'Pass not found'})
+        
+        pass_data['amount_paid'] = float(pass_data['amount_paid'])
+        pass_data['issue_date'] = str(pass_data['issue_date'])
+        pass_data['issue_time'] = str(pass_data['issue_time'])
+        
+        qr_image = generate_pass_qr(pass_data)
+        
+        return jsonify({
+            'success': True,
+            'qr_image': qr_image,
+            'pass_data': pass_data
+        })
+        
+    except Exception as e:
+        print(f"QR generation error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/verify_pass', methods=['POST'])
+def verify_pass():
+    """Verify a pass number (existing) or QR code data"""
+    try:
+        data = request.get_json()
+        pass_number = data.get('pass_number', '').strip().upper()
+        
+        if not pass_number:
+            return jsonify({'success': False, 'error': 'Pass number required'})
+        
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT * FROM passes_info 
+            WHERE pass_number = %s
+        """, (pass_number,))
+        
+        pass_data = cursor.fetchone()
+        cursor.close()
+        db.close()
+        
+        if pass_data:
+            pass_data['issue_date'] = str(pass_data['issue_date'])
+            pass_data['issue_time'] = str(pass_data['issue_time'])
+            pass_data['amount_paid'] = float(pass_data['amount_paid'])
+            
+            return jsonify({
+                'success': True,
+                'found': True,
+                'pass': pass_data
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'found': False
+            })
+            
+    except Exception as e:
+        print(f"Verify pass error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/verify_pass_qr', methods=['POST'])
+def verify_pass_qr():
+    """Verify pass from QR code scan data"""
+    try:
+        data = request.get_json()
+        qr_data = data.get('qr_data', '')
+        
+        try:
+            qr_json = json.loads(qr_data)
+            pass_number = qr_json.get('pn')
+        except:
+            pass_number = qr_data
+        
+        if not pass_number:
+            return jsonify({'success': False, 'error': 'Invalid QR code'})
+        
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT * FROM passes_info 
+            WHERE pass_number = %s
+        """, (pass_number,))
+        
+        pass_data = cursor.fetchone()
+        cursor.close()
+        db.close()
+        
+        if pass_data:
+            pass_data['issue_date'] = str(pass_data['issue_date'])
+            pass_data['issue_time'] = str(pass_data['issue_time'])
+            pass_data['amount_paid'] = float(pass_data['amount_paid'])
+            
+            return jsonify({
+                'success': True,
+                'found': True,
+                'pass': pass_data
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'found': False
+            })
+            
+    except Exception as e:
+        print(f"QR verify error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
     
 @app.route('/faqs')
 def faqs():
@@ -1414,12 +1542,12 @@ atexit.register(cleanup_on_shutdown)
 # ─────────────────────────────────────────────────────────────────────────────
 start_notification_service()
 
-# GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-# if not GROQ_API_KEY:
-#      raise ValueError("GROQ_API_KEY not found in .env file")
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+if not GROQ_API_KEY:
+ raise ValueError("GROQ_API_KEY not found in .env file")
 
 
-# #groq_client = Groq(api_key=GROQ_API_KEY)
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 
 
