@@ -47,6 +47,10 @@ def view_c():
 def admin_dashboard():
     return render_template("tc_login.html")
 
+@app.route('/admin_dashboard_actual')
+def admin_dashboard_actual():
+    return render_template(admin_dashboard.html)
+
 @app.route('/select')
 def select():
     return render_template("select.html")

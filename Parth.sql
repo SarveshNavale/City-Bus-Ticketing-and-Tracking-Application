@@ -49,4 +49,14 @@ CREATE TABLE complaint (
     comp_status VARCHAR(50) DEFAULT 'Pending'
 );
 
-
+DROP TABLE IF EXISTS stops_info1;
+CREATE TABLE bus_info1 (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	bus_no VARCHAR(20) NOT NULL,
+    no_plate VARCHAR(20) NOT NULL,
+    route VARCHAR(100),
+    driver_name VARCHAR(100) DEFAULT '',
+	driver_phone VARCHAR(15) DEFAULT ''
+    
+   
+);
