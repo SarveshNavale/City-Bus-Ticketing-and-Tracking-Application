@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from groq import Groq
 import json
 
-from qr_utils import generate_pass_qr,  extract_pass_number_from_qr
+# from qr_utils import generate_pass_qr,  extract_pass_number_from_qr
 
 import random
 import string
@@ -24,7 +24,7 @@ def get_db():
         host="localhost",
         user="root",
 
-        password="hrishi@123",
+        password="#SAR1807",
 
         database="RotaryClub_Database"
     )
@@ -1542,12 +1542,12 @@ atexit.register(cleanup_on_shutdown)
 # ─────────────────────────────────────────────────────────────────────────────
 start_notification_service()
 
-GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-if not GROQ_API_KEY:
- raise ValueError("GROQ_API_KEY not found in .env file")
+# GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+# if not GROQ_API_KEY:
+#  raise ValueError("GROQ_API_KEY not found in .env file")
 
 
-groq_client = Groq(api_key=GROQ_API_KEY)
+# groq_client = Groq(api_key=GROQ_API_KEY)
 
 
 

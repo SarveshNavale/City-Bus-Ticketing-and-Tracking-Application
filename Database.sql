@@ -55,10 +55,20 @@ CREATE TABLE stops_info (
     latitude DECIMAL(10,7) DEFAULT NULL,
     longitude DECIMAL(10,7) DEFAULT NULL           
 );
+CREATE TABLE driver_location (
+    driver_id INT PRIMARY KEY,
+    driver_name VARCHAR(100),
+    latitude DOUBLE,
+    longitude DOUBLE,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 
+INSERT INTO driver_location(driver_id, driver_name, latitude, longitude)
+VALUES (1, 'Driver Name', 0, 0);
 
 ALTER TABLE stops_info
 ADD COLUMN stop_no int;
+
 
 CREATE TABLE tickets_info (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -144,6 +154,9 @@ create table admin_info(
 
 insert into admin_info(admin_username, admin_password)
 values('admin', '123456')
+
+
+
 
 
 
