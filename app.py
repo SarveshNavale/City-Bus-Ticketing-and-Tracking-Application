@@ -4,14 +4,15 @@ from dotenv import load_dotenv
 from groq import Groq
 import json
 
-# from qr_utils import generate_pass_qr,  extract_pass_number_from_qr
+from qr_utils import generate_pass_qr,  extract_pass_number_from_qr
 
 import random
 import string
 import os
 import mysql.connector
-from datetime import datetime, date, time, timedelta
-import time  # This is the time module for sleep()
+from datetime import datetime, date, timedelta
+import time
+import requests
 import threading
 from math import radians, sin, cos, sqrt, atan2
 

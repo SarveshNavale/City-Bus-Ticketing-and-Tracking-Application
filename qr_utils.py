@@ -4,6 +4,7 @@ from io import BytesIO
 import json
 import re
 
+
 def generate_pass_qr(pass_data):
     """
     Generate QR code for a pass
