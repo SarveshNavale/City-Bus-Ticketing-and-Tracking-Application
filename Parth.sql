@@ -1,6 +1,6 @@
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('City Bus Stand', 1, 16.9914520, 73.2950390);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Malnaka', 1, 16.9906412, 73.3059455);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Maruti Mandir (Kokan)', 1, 16.9908009, 73.3120636);
+
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Godbole', 1, 16.9950168, 73.3190417);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Charmalay', 1, 16.9964154, 73.3208352);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Kokan Nagar', 1, 17.0016121, 73.3245508);
@@ -13,7 +13,7 @@ INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('MARUT
 
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('City Bus Stand', 2, 16.9914520, 73.2950390);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Malnaka', 2, 16.9906412, 73.3059455);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Maruti Mandir (Main Highway)', 2, 16.9904574, 73.3130624);
+
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Shivaji Nagar', 2, 16.9913144, 73.3213231);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Salvi', 2, 16.9940142, 73.3273839);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('JK Files', 2, 16.9955833, 73.3309237);
@@ -24,7 +24,7 @@ INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Hatkh
 
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('City Bus Stand', 3, 16.9914520, 73.2950390);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Malnaka', 3, 16.9906412, 73.3059455);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Maruti Mandir (Nachane Road)', 3, 16.9897810, 73.3128478);
+
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Jogalekar', 3, 16.9897621, 73.3145604);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Power House', 3, 16.9885660, 73.3178680);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('I.T.I', 3, 16.9867141, 73.3230856);
@@ -41,22 +41,4 @@ INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Salvi
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('JK Files', 4, 16.9955833, 73.3309237);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Railway Station', 4, 16.9980804, 73.3578163);
 
-CREATE TABLE complaint (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    comp_text TEXT,
-    comp_time TIME,
-    comp_date DATE,
-    comp_status VARCHAR(50) DEFAULT 'Pending'
-);
 
-DROP TABLE IF EXISTS stops_info1;
-CREATE TABLE bus_info1 (
-	id INT AUTO_INCREMENT PRIMARY KEY,
-	bus_no VARCHAR(20) NOT NULL,
-    no_plate VARCHAR(20) NOT NULL,
-    route VARCHAR(100),
-    driver_name VARCHAR(100) DEFAULT '',
-	driver_phone VARCHAR(15) DEFAULT ''
-    
-   
-);

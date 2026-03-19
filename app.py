@@ -25,7 +25,7 @@ def get_db():
         host="localhost",
         user="root",
 
-        password="#SAR1807",
+        password="Parth@123",
 
         database="RotaryClub_Database"
     )
@@ -50,9 +50,11 @@ def view_c():
 def admin_dashboard():
     return render_template("tc_login.html")
 
+
 @app.route('/admin_dashboard_actual')
 def admin_dashboard_actual():
     return render_template(admin_dashboard.html)
+
 
 @app.route('/select')
 def select():
@@ -1543,12 +1545,12 @@ atexit.register(cleanup_on_shutdown)
 # ─────────────────────────────────────────────────────────────────────────────
 start_notification_service()
 
-# GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-# if not GROQ_API_KEY:
-#  raise ValueError("GROQ_API_KEY not found in .env file")
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+if not GROQ_API_KEY:
+ raise ValueError("GROQ_API_KEY not found in .env file")
 
 
-# groq_client = Groq(api_key=GROQ_API_KEY)
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 
 
@@ -1746,6 +1748,7 @@ def fetch_location():
 
         time.sleep(5)
 
+
 thread = threading.Thread(target=fetch_location)
 thread.daemon = True
 thread.start()
@@ -1762,4 +1765,53 @@ if __name__ == "__main__":
 @app.route("/tourist")
 def tourist():
     return render_template("tourist.html")
-#task completed
+
+
+
+
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
+
+
+@app.route('/add_bus', methods=['POST'])
+def add_bus():
+    data = request.get_json()
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+        "INSERT INTO bus_info (bus_no, no_plate, route, driver_name, driver_phone) VALUES (%s, %s, %s, %s, %s)",
+        (
+            data.get('bus_no', ''),
+            data.get('no_plate', ''),
+            data.get('route', ''),
+            data.get('driver_name', ''),
+            data.get('driver_phone', '')
+        )
+    )
+    db.commit()
+    cursor.close()
+    db.close()
+    return jsonify({'success': True})
+
+
+@app.route('/update_bus', methods=['POST'])
+def update_bus():
+    data = request.get_json()
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+        "UPDATE bus_info SET driver_name=%s, driver_phone=%s, route=%s WHERE id=%s",
+        (
+            data.get('driver_name', ''),
+            data.get('driver_phone', ''),
+            data.get('route', ''),
+            data.get('bus_id')
+        )
+    )
+    db.commit()
+    cursor.close()
+    db.close()
+    return jsonify({'success': True})
+
