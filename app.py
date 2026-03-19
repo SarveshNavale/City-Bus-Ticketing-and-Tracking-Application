@@ -34,7 +34,7 @@ def get_db():
 # ---------- normal routes ----------
 @app.route('/')
 def home():
-    return render_template("Registration.html")
+    return render_template("homepage.html")
 
 @app.route('/robo')
 def robo():
@@ -1543,12 +1543,12 @@ atexit.register(cleanup_on_shutdown)
 # ─────────────────────────────────────────────────────────────────────────────
 start_notification_service()
 
-# GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-# if not GROQ_API_KEY:
-#  raise ValueError("GROQ_API_KEY not found in .env file")
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+if not GROQ_API_KEY:
+ raise ValueError("GROQ_API_KEY not found in .env file")
 
 
-# groq_client = Groq(api_key=GROQ_API_KEY)
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 
 
