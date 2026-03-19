@@ -26,4 +26,8 @@ INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUE
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Kajarghati', 3, 16.9769149, 73.3674380, 10);
 
 
-
+CREATE TABLE IF NOT EXISTS fuel_consumption (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    total_liter DECIMAL(10,2) NOT NULL,
+    cost DECIMAL(10,2) DEFAULT NULL
+);

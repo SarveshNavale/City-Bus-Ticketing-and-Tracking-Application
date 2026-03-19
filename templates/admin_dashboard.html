@@ -329,6 +329,94 @@ body { font-family:"Nunito",sans-serif; background:#F0F2FF; min-height:100vh; }
     transition:opacity 0.3s; pointer-events:none; white-space:nowrap;
 }
 .toast.show { opacity:1; }
+
+.bus-card {
+    background:#fff;
+    border-radius:18px;
+    padding:16px;
+    margin-bottom:12px;
+    box-shadow:0 4px 14px rgba(108,100,255,0.1);
+}
+
+.bus-card-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+}
+
+.bus-title {
+    font-size:16px;
+    font-weight:900;
+    color:#333;
+}
+
+.bus-plate {
+    font-size:12px;
+    color:#888;
+}
+
+.bus-details {
+    font-size:13px;
+    margin-top:6px;
+}
+
+.bus-actions {
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+}
+.revenue-cards {
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-bottom:14px;
+}
+
+.rev-card {
+    padding:18px;
+    border-radius:18px;
+    color:#fff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 4px 14px rgba(0,0,0,0.1);
+}
+
+.rev-card h3 {
+    font-size:14px;
+    font-weight:800;
+}
+
+.rev-card span {
+    font-size:20px;
+    font-weight:900;
+}
+
+/* Different colors */
+.ticket-card { background:linear-gradient(135deg,#6C64FF,#4A42E8); }
+.pass-card   { background:linear-gradient(135deg,#22C55E,#16A34A); }
+.fuel-card   { background:linear-gradient(135deg,#F59E0B,#EF4444); }
+.other-card  { background:linear-gradient(135deg,#6366F1,#8B5CF6); }
+
+/* TOTAL */
+.total-revenue {
+    background:linear-gradient(135deg,#10B981,#059669);
+    border-radius:22px;
+    padding:24px;
+    color:#fff;
+    text-align:center;
+    margin-bottom:14px;
+}
+.total-revenue .amount {
+    font-size:34px;
+    font-weight:900;
+}
+.total-revenue .label {
+    font-size:13px;
+    font-weight:700;
+    opacity:0.8;
+}
 </style>
 </head>
 <body>
@@ -360,7 +448,7 @@ body { font-family:"Nunito",sans-serif; background:#F0F2FF; min-height:100vh; }
     <!-- TAB NAV -->
     <div class="tab-nav">
         <button class="tab-btn active" onclick="switchTab('busInfo',this)"><i class="fa-solid fa-bus"></i> Bus Info</button>
-        <button class="tab-btn" onclick="switchTab('location',this)"><i class="fa-solid fa-location-dot"></i> Location</button>
+        
         <button class="tab-btn" onclick="switchTab('revenue',this)"><i class="fa-solid fa-indian-rupee-sign"></i> Revenue</button>
         <button class="tab-btn" onclick="switchTab('fuel',this)"><i class="fa-solid fa-gas-pump"></i> Fuel</button>
         <button class="tab-btn" onclick="switchTab('incidents',this)"><i class="fa-solid fa-triangle-exclamation"></i> Incidents</button>
@@ -371,51 +459,47 @@ body { font-family:"Nunito",sans-serif; background:#F0F2FF; min-height:100vh; }
     <div class="tab-panel active" id="tab-busInfo">
         <p class="sec-label">Fleet Overview</p>
         <div class="card">
-            <div class="table-wrap">
-                <table class="bus-table">
-                    <thead>
-                        <tr>
-                            <th>Bus No.</th>
-                            <th>Plate</th>
-                            <th>Driver Name</th>
-                            <th>Driver Phone</th>
-                            <th>Route</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="busTableBody">
-                        <tr><td colspan="7" style="text-align:center;color:#AAAACC;padding:20px;">Loading buses…</td></tr>
-                    </tbody>
-                </table>
-            </div>
+            <div id="busCardContainer"></div>
+
+            <!-- View Buses Button -->
+            <button class="open-map-btn" onclick="window.location.href='/map'">
+            <i class="fa-solid fa-map"></i> View Buses on Map
+            </button>
         </div>
     </div>
 
-    <!-- ══ LOCATION ══ -->
-    <div class="tab-panel" id="tab-location">
-        <div class="location-hero">
-            <div class="loc-stat"><div class="lv" id="locTotal">—</div><div class="ll">Total Buses</div></div>
-            <div class="loc-divider"></div>
-            <div class="loc-stat"><div class="lv" id="locActive">—</div><div class="ll">GPS Active</div></div>
-            <div class="loc-divider"></div>
-            <div class="loc-stat"><div class="lv" id="locOffline">—</div><div class="ll">No Signal</div></div>
-        </div>
-        <button class="open-map-btn" onclick="window.location.href='/map'">
-            <i class="fa-solid fa-map-location-dot"></i> Open Live Map
-        </button>
-        <p class="sec-label">Bus Positions</p>
-        <div class="card" id="busLocationList">
-            <p style="text-align:center;color:#AAAACC;padding:10px;">Loading locations…</p>
-        </div>
-    </div>
+    
 
     <!-- ══ REVENUE ══ -->
     <div class="tab-panel" id="tab-revenue">
-        <div class="revenue-hero">
-            <div class="rev-amount" id="revToday">₹ —</div>
-            <div class="rev-label">Today's Revenue</div>
-        </div>
+        <!-- TOTAL REVENUE -->
+<div class="total-revenue">
+    <div class="amount" id="totalRevenue">₹ —</div>
+    <div class="label">Total Revenue</div>
+</div>
+
+<!-- REVENUE CARDS -->
+<div class="revenue-cards">
+    <div class="rev-card ticket-card">
+        <h3>🎫 Ticket Revenue</h3>
+        <span id="ticketRevenue">₹ —</span>
+    </div>
+
+    <div class="rev-card pass-card">
+        <h3>🪪 Pass Revenue</h3>
+        <span id="passRevenue">₹ —</span>
+    </div>
+
+    <div class="rev-card fuel-card">
+        <h3>⛽ Fuel Revenue</h3>
+        <span id="fuelRevenue">₹ —</span>
+    </div>
+
+    <div class="rev-card other-card">
+        <h3>📦 Other Revenue</h3>
+        <span id="otherRevenue">₹ 15000</span>
+    </div>
+</div>
         <div class="rev-stats">
             <div class="rev-stat-card"><div class="rev-stat-val" id="revWeekly">—</div><div class="rev-stat-lbl">This Week</div></div>
             <div class="rev-stat-card"><div class="rev-stat-val" id="revAvg">—</div><div class="rev-stat-lbl">Daily Avg</div></div>
@@ -623,36 +707,64 @@ async function loadBusInfo() {
     try {
         const data  = await fetch('/get_buses').then(r=>r.json());
         const buses = data.buses || [];
-        const tbody = document.getElementById('busTableBody');
+        const container = document.getElementById('busCardContainer');
+
         if (!buses.length) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#AAAACC;padding:20px;">No buses found</td></tr>';
+            container.innerHTML = '<p style="text-align:center;color:#AAAACC;">No buses found</p>';
             return;
         }
-        tbody.innerHTML = buses.map(b => `
-            <tr>
-                <td><strong>${b.bus_no||'—'}</strong></td>
-                <td style="color:#888;">${b.no_plate||'—'}</td>
-                <td>${b.driver_name||'<span style="color:#AAAACC">—</span>'}</td>
-                <td style="color:#6C64FF;">${b.driver_phone||'<span style="color:#AAAACC">—</span>'}</td>
-                <td><span class="route-badge">${b.route||'—'}</span></td>
-                <td><span class="status-dot ${b.latitude?'online':'offline'}">${b.latitude?'Online':'Offline'}</span></td>
-                <td>
-                    <div class="action-btns">
-                        <button class="act-btn edit" onclick="openEdit(${b.id},'${esc(b.driver_name)}','${esc(b.driver_phone)}','${esc(b.route)}')">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button class="act-btn del" onclick="deleteBus(${b.id})">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
+
+        container.innerHTML = buses.map(b => {
+
+            let routeName = '';
+            if (b.route == 1) routeName = 'Kokan';
+            else if (b.route == 2) routeName = 'Highway';
+            else if (b.route == 3) routeName = 'Nachane';
+            else if (b.route == 4) routeName = 'Railway';
+            else routeName = 'Unknown';
+
+            return `
+            <div class="bus-card">
+                
+                <div class="bus-card-header">
+                    <div>
+                        <div class="bus-title">Bus ${b.bus_no}</div>
+                        <div class="bus-plate">${b.no_plate}</div>
                     </div>
-                </td>
-            </tr>`).join('');
+                    <span class="status-dot ${b.latitude ? 'online':'offline'}">
+                        ${b.latitude ? 'Online':'Offline'}
+                    </span>
+                </div>
+
+                <div class="bus-details">
+                    <strong>Route:</strong> ${routeName}
+                </div>
+
+                <div class="bus-details">
+                    <strong>Last Seen:</strong> ${b.last_seen || '—'}
+                </div>
+
+                <div class="bus-actions">
+                    <button class="act-btn edit"
+                        onclick="openEdit(${b.id}, '', '', '${routeName}')">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+
+                    <button class="act-btn del"
+                        onclick="deleteBus(${b.id})">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+
+            </div>
+            `;
+        }).join('');
+
     } catch(e) {
-        document.getElementById('busTableBody').innerHTML =
-            '<tr><td colspan="7" style="text-align:center;color:#EF4444;padding:20px;">Failed to load buses</td></tr>';
+        document.getElementById('busCardContainer').innerHTML =
+            '<p style="color:#EF4444;text-align:center;">Failed to load buses</p>';
     }
 }
-
 function openEdit(id, dn, dp, rt) {
     document.getElementById('editBusId').value       = id;
     document.getElementById('editDriverName').value  = dn||'';
@@ -682,86 +794,46 @@ async function deleteBus(id) {
     } catch(e) { showToast('❌ Network error'); }
 }
 
-// ── LOCATION ──
-async function loadLocation() {
-    try {
-        const data  = await fetch('/get_buses').then(r=>r.json());
-        const buses = data.buses || [];
-        const active  = buses.filter(b=>b.latitude&&b.longitude);
-        const offline = buses.filter(b=>!b.latitude||!b.longitude);
-        document.getElementById('locTotal').textContent   = buses.length;
-        document.getElementById('locActive').textContent  = active.length;
-        document.getElementById('locOffline').textContent = offline.length;
-        const list = document.getElementById('busLocationList');
-        if (!buses.length) { list.innerHTML='<p style="text-align:center;color:#AAAACC;padding:10px;">No buses</p>'; return; }
-        list.innerHTML = buses.map(b=>`
-            <div class="bus-location-row">
-                <div class="bus-icon-wrap"><i class="fa-solid fa-bus"></i></div>
-                <div class="bus-loc-info">
-                    <div class="bus-loc-name">${b.bus_no||'—'} &nbsp;<span class="route-badge">${b.route||''}</span></div>
-                    <div class="bus-loc-coords">${b.latitude?`${parseFloat(b.latitude).toFixed(5)}, ${parseFloat(b.longitude).toFixed(5)}`:'No GPS signal'}</div>
-                </div>
-                <span class="status-dot ${b.latitude?'online':'offline'}">${b.latitude?'Live':'Off'}</span>
-            </div>`).join('');
-    } catch(e) {
-        document.getElementById('busLocationList').innerHTML='<p style="color:#EF4444;text-align:center;padding:10px;">Failed to load</p>';
-    }
-}
-
 // ── REVENUE ──
 async function loadRevenue() {
     try {
-        const data    = await fetch('/get_all_tickets').then(r=>r.json());
-        const tickets = data.tickets || [];
-        const now     = new Date();
-        const todayRev = tickets.filter(t=>isToday(t.purchase_date||t.date))
-            .reduce((s,t)=>s+parseFloat(t.amount_paid||0),0);
-        const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-        const weekRevs = [0,0,0,0,0,0,0];
-        tickets.forEach(t=>{
-            const d=new Date(t.purchase_date||t.date);
-            if(isNaN(d)) return;
-            const diff=Math.floor((now-d)/86400000);
-            if(diff>=0&&diff<7) weekRevs[6-diff]+=parseFloat(t.amount_paid||0);
-        });
-        const weekTotal=weekRevs.reduce((a,b)=>a+b,0);
-        const maxRev=Math.max(...weekRevs,1);
-        const todayDow=now.getDay();
-        const orderedDays=[];
-        for(let i=6;i>=0;i--) orderedDays.push(dayNames[(todayDow-i+7)%7]);
+        const [ticketData, passData, fuelData] = await Promise.all([
+            fetch('/get_all_tickets').then(r=>r.json()),
+            fetch('/get_all_passes').then(r=>r.json()),
+            fetch('/get_fuel_data').then(r=>r.json())
+        ]);
 
-        document.getElementById('revToday').textContent  = '₹ '+todayRev.toFixed(0);
-        document.getElementById('revWeekly').textContent = '₹'+weekTotal.toFixed(0);
-        document.getElementById('revAvg').textContent    = '₹'+(weekTotal/7).toFixed(0);
+        console.log(ticketData, passData, fuelData); // DEBUG
 
-        try {
-            const pd=await fetch('/get_all_passes').then(r=>r.json());
-            document.getElementById('revPasses').textContent=pd.count||0;
-        } catch { document.getElementById('revPasses').textContent='—'; }
+        const tickets = ticketData.tickets || [];
+        const passes  = passData.passes  || [];
+        const fuels   = fuelData.fuels   || [];
 
-        document.getElementById('revChart').innerHTML = weekRevs.map((v,i)=>`
-            <div class="bar-row">
-                <span class="bar-day">${orderedDays[i]}</span>
-                <div class="bar-track">
-                    <div class="bar-fill" style="width:${(v/maxRev*100).toFixed(1)}%">
-                        ${v>0?`<span>₹${v.toFixed(0)}</span>`:''}
-                    </div>
-                </div>
-            </div>`).join('');
+        // ✅ SAFE SUM (handles null / string)
+        const ticketRevenue = tickets.reduce((sum, t) =>
+            sum + Number(t.amount_paid || 0), 0);
 
-        const recent=[...tickets].reverse().slice(0,8);
-        document.getElementById('txnList').innerHTML = recent.length ? recent.map(t=>`
-            <div class="txn-row">
-                <div class="txn-icon"><i class="fa-solid fa-ticket"></i></div>
-                <div class="txn-info">
-                    <div class="txn-name">${t.start_dest||'—'} → ${t.final_dest||'—'}</div>
-                    <div class="txn-time">${t.purchase_date||t.date||'—'} · ${t.no_of_tickets||1} ticket(s)</div>
-                </div>
-                <div class="txn-amt">₹${parseFloat(t.amount_paid||0).toFixed(0)}</div>
-            </div>`).join('') :
-            '<p style="text-align:center;color:#AAAACC;padding:10px;">No transactions yet</p>';
-    } catch(e) { console.error('Revenue:',e); }
+        const passRevenue = passes.reduce((sum, p) =>
+            sum + Number(p.amount_paid || 0), 0);
+
+        const fuelRevenue = fuels.reduce((sum, f) =>
+            sum + Number(f.cost || 0), 0);
+
+        const otherRevenue = 15000;
+
+        const totalRevenue = ticketRevenue + passRevenue + fuelRevenue + otherRevenue;
+
+        // ✅ UPDATE UI
+        document.getElementById('ticketRevenue').textContent = '₹ ' + ticketRevenue;
+        document.getElementById('passRevenue').textContent   = '₹ ' + passRevenue;
+        document.getElementById('fuelRevenue').textContent   = '₹ ' + fuelRevenue;
+        document.getElementById('totalRevenue').textContent  = '₹ ' + totalRevenue;
+
+    } catch(e) {
+        console.error("Revenue error:", e);
+    }
 }
+
 
 // ── FUEL (localStorage) ──
 function loadFuelData() {

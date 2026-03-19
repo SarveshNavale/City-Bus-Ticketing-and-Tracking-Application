@@ -3,9 +3,7 @@ from flask import Flask, render_template, send_from_directory, request, jsonify,
 from dotenv import load_dotenv
 from groq import Groq
 import json
-
 from qr_utils import generate_pass_qr,  extract_pass_number_from_qr
-
 import random
 import string
 import os
@@ -24,12 +22,9 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-
         password="Parth@123",
-
         database="RotaryClub_Database"
     )
- 
  
 # ---------- normal routes ----------
 @app.route('/')
@@ -48,12 +43,12 @@ def view_c():
 
 @app.route('/admin_dashboard')
 def admin_dashboard():
-    return render_template("tc_login.html")
+    return render_template("admin_dashboard.html")
 
 
 @app.route('/admin_dashboard_actual')
 def admin_dashboard_actual():
-    return render_template(admin_dashboard.html)
+    return render_template("admin_dashboard.html")
 
 
 @app.route('/select')
@@ -481,13 +476,37 @@ def get_location(user_id):
 
 @app.route('/get_buses')
 def get_buses():
-    db = get_db()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT id, bus_no, no_plate, route, latitude, longitude FROM bus_info")
+    conn = get_db()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM bus_info")
     buses = cursor.fetchall()
+
     cursor.close()
-    db.close()
-    return jsonify(buses)
+    conn.close()
+
+    return jsonify({"buses": buses})
+
+@app.route('/get_all_passes')
+def get_all_passes():
+    conn = get_db()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM passes_info")
+    passes = cursor.fetchall()
+
+    return jsonify({"passes": passes})
+
+
+@app.route('/get_fuel_data')
+def get_fuel_data():
+    conn = get_db()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM fuel_consumption")
+    fuels = cursor.fetchall()
+
+    return jsonify({"fuels": fuels})
 
 
 @app.route('/update_bus_location', methods=['POST'])
@@ -1729,7 +1748,7 @@ def fetch_location():
             db = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="#SAR1807",
+                password="Parth@123",
                 database="RotaryClub_Database"
             )
 

@@ -168,7 +168,6 @@ CREATE TABLE bus_info1 (
     driver_name VARCHAR(100) DEFAULT '',
 	driver_phone VARCHAR(15) DEFAULT ''
     
-   
 );
 
 
