@@ -13,6 +13,53 @@
 
     <!-- NEW CSS FILE -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/timetable.css') }}">
+
+
+<style>
+        
+.circle1 {
+    position: absolute;
+    width: 190px; height: 190px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.10);
+    top: -55px; right: -45px;
+}
+.circle2 {
+    position: absolute;
+    width: 115px; height: 115px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    top: 45px; right: 25px;
+}
+
+.backbutton {
+    position: absolute;
+    top: 45px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 49px;
+}
+
+.backbutton img {
+    width: 42px; height: 42px;
+    object-fit: contain;
+    display: block;
+}
+
+.bluebg {
+    background: linear-gradient(135deg, #6C64FF 0%, #8B84FF 100%);
+    height: 180px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+.bluebg h1 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-top: 20px;
+}
+</style>
 </head>
 <body>
 
