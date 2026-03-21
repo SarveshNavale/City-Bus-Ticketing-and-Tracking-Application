@@ -50,8 +50,8 @@ def view_c():
 def admin_dashboard():
     return render_template("tc_login.html")
 
-@app.route('/admin_dashboard_actual')
-def admin_dashboard_actual():
+@app.route('/adminspage')
+def adminspage():
     return render_template(admin_dashboard.html)
 
 @app.route('/select')
@@ -1937,7 +1937,10 @@ def fetch_location():
 thread = threading.Thread(target=fetch_location)
 thread.daemon = True
 thread.start()
-
+@app.route("/tourist")
+def tourist():
+    return render_template("tourist.html")
+#task completed
 
 
 
@@ -1947,7 +1950,3 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 
 
-@app.route("/tourist")
-def tourist():
-    return render_template("tourist.html")
-#task completed
