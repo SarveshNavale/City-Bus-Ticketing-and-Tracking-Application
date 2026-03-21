@@ -3,14 +3,16 @@ from flask import Flask, render_template, send_from_directory, request, jsonify,
 from dotenv import load_dotenv
 from groq import Groq
 import json
-from qr_utils import generate_pass_qr,  extract_pass_number_from_qr
+import requests
+
+from qr_utils import generate_pass_qr,  extract_pass_number_from_qr, generate_ticket_qr
+
 import random
 import string
 import os
 import mysql.connector
-from datetime import datetime, date, timedelta
-import time
-import requests
+from datetime import datetime, date, time, timedelta
+import time  # This is the time module for sleep()
 import threading
 from math import radians, sin, cos, sqrt, atan2
 
@@ -22,14 +24,17 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Parth@123",
+
+        password="hrishi@123",
+
         database="RotaryClub_Database"
     )
+ 
  
 # ---------- normal routes ----------
 @app.route('/')
 def home():
-    return render_template("homepage.html")
+    return render_template("Registration.html")
 
 @app.route('/robo')
 def robo():
@@ -43,13 +48,11 @@ def view_c():
 
 @app.route('/admin_dashboard')
 def admin_dashboard():
-    return render_template("admin_dashboard.html")
-
+    return render_template("tc_login.html")
 
 @app.route('/admin_dashboard_actual')
 def admin_dashboard_actual():
-    return render_template("admin_dashboard.html")
-
+    return render_template(admin_dashboard.html)
 
 @app.route('/select')
 def select():
@@ -476,37 +479,13 @@ def get_location(user_id):
 
 @app.route('/get_buses')
 def get_buses():
-    conn = get_db()
-    cursor = conn.cursor(dictionary=True)
-
-    cursor.execute("SELECT * FROM bus_info")
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT id, bus_no, no_plate, route, latitude, longitude FROM bus_info")
     buses = cursor.fetchall()
-
     cursor.close()
-    conn.close()
-
-    return jsonify({"buses": buses})
-
-@app.route('/get_all_passes')
-def get_all_passes():
-    conn = get_db()
-    cursor = conn.cursor(dictionary=True)
-
-    cursor.execute("SELECT * FROM passes_info")
-    passes = cursor.fetchall()
-
-    return jsonify({"passes": passes})
-
-
-@app.route('/get_fuel_data')
-def get_fuel_data():
-    conn = get_db()
-    cursor = conn.cursor(dictionary=True)
-
-    cursor.execute("SELECT * FROM fuel_consumption")
-    fuels = cursor.fetchall()
-
-    return jsonify({"fuels": fuels})
+    db.close()
+    return jsonify(buses)
 
 
 @app.route('/update_bus_location', methods=['POST'])
@@ -1236,8 +1215,6 @@ def complaint():
     db.close()
     return render_template("Complaint page.html", complaint=data)
 
-
-
 @app.route('/save_ticket', methods=['POST'])
 def save_ticket():
     try:
@@ -1288,6 +1265,30 @@ def save_ticket():
         ))
 
         db.commit()
+        
+        ticket_id = cursor.lastrowid
+        
+        ticket_data = {
+            'ticket_number': ticket_number,
+            'ticket_holder': user['cust_name'],
+            'mobile_no': mobile_no,
+            'amount_paid': amount_paid,
+            'start_dest': start_dest,
+            'final_dest': final_dest,
+            'issue_date': str(current_datetime.date()),
+            'issue_time': str(current_datetime.time())
+        }
+        
+        qr_image = generate_ticket_qr(ticket_data)
+        
+        try:
+            cursor.execute("""
+                UPDATE tickets_info SET qr_code = %s WHERE id = %s
+            """, (qr_image, ticket_id))
+            db.commit()
+        except Exception as qr_error:
+            print(f"Could not store QR code: {qr_error}")
+        
         cursor.close()
         db.close()
 
@@ -1305,8 +1306,133 @@ def save_ticket():
         traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)})
 
+@app.route('/generate_ticket_qr/<ticket_number>')
+def generate_ticket_qr_route(ticket_number):
+    """Generate QR code for a specific ticket"""
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT ticket_number, ticket_holder, mobile_no, amount_paid, start_dest, final_dest, issue_date, issue_time 
+            FROM tickets_info 
+            WHERE ticket_number = %s
+        """, (ticket_number,))
+        
+        ticket_data = cursor.fetchone()
+        cursor.close()
+        db.close()
+        
+        if not ticket_data:
+            return jsonify({'success': False, 'error': 'Ticket not found'})
+        
+        ticket_data['amount_paid'] = float(ticket_data['amount_paid'])
+        ticket_data['issue_date'] = str(ticket_data['issue_date'])
+        ticket_data['issue_time'] = str(ticket_data['issue_time'])
+        
+        qr_image = generate_ticket_qr(ticket_data)
+        
+        return jsonify({
+            'success': True,
+            'qr_image': qr_image,
+            'ticket_data': ticket_data
+        })
+        
+    except Exception as e:
+        print(f"Ticket QR generation error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+    
+@app.route('/verify_ticket', methods=['POST'])
+def verify_ticket():
+    """Verify a ticket number"""
+    try:
+        data = request.get_json()
+        ticket_number = data.get('ticket_number', '').strip()
+        
+        if not ticket_number:
+            return jsonify({'success': False, 'error': 'Ticket number required'})
+        
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT * FROM tickets_info 
+            WHERE ticket_number = %s
+        """, (ticket_number,))
+        
+        ticket_data = cursor.fetchone()
+        cursor.close()
+        db.close()
+        
+        if ticket_data:
+            ticket_data['issue_date'] = str(ticket_data['issue_date'])
+            ticket_data['issue_time'] = str(ticket_data['issue_time'])
+            ticket_data['amount_paid'] = float(ticket_data['amount_paid'])
+            
+            return jsonify({
+                'success': True,
+                'found': True,
+                'ticket': ticket_data
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'found': False
+            })
+            
+    except Exception as e:
+        print(f"Verify ticket error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
 
-# ── Admin ─────────────────────────────────────────────────────────────────────
+
+@app.route('/verify_ticket_qr', methods=['POST'])
+def verify_ticket_qr():
+    """Verify ticket from QR code scan data"""
+    try:
+        data = request.get_json()
+        qr_data = data.get('qr_data', '')
+        
+        try:
+            qr_json = json.loads(qr_data)
+            ticket_number = qr_json.get('tn') or qr_json.get('ticket_number')
+        except:
+            ticket_number = qr_data
+        
+        if not ticket_number:
+            return jsonify({'success': False, 'error': 'Invalid QR code'})
+        
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT * FROM tickets_info 
+            WHERE ticket_number = %s
+        """, (ticket_number,))
+        
+        ticket_data = cursor.fetchone()
+        cursor.close()
+        db.close()
+        
+        if ticket_data:
+            ticket_data['issue_date'] = str(ticket_data['issue_date'])
+            ticket_data['issue_time'] = str(ticket_data['issue_time'])
+            ticket_data['amount_paid'] = float(ticket_data['amount_paid'])
+            
+            return jsonify({
+                'success': True,
+                'found': True,
+                'ticket': ticket_data
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'found': False
+            })
+            
+    except Exception as e:
+        print(f"Ticket QR verify error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+    
 @app.route('/admin_login', methods=['POST'])
 def admin_login():
     username = request.form.get('admin_id')
@@ -1329,21 +1455,10 @@ def admin_login():
 def admin_login_page():
     return render_template("admin_login.html")
 
-
-
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# VIEW TICKET — renders the page shell, JS calls /get_all_tickets
-# ─────────────────────────────────────────────────────────────────────────────
 @app.route('/view_ticket')
 def view_ticket():
     return render_template("view_ticket.html")
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# GET ALL TICKETS — returns every ticket for the logged-in user
-# ─────────────────────────────────────────────────────────────────────────────
 @app.route('/get_all_tickets')
 def get_all_tickets():
     """API: Returns ALL tickets of the currently logged-in user from tickets_info"""
@@ -1564,12 +1679,12 @@ atexit.register(cleanup_on_shutdown)
 # ─────────────────────────────────────────────────────────────────────────────
 start_notification_service()
 
-GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-if not GROQ_API_KEY:
- raise ValueError("GROQ_API_KEY not found in .env file")
+# GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+# if not GROQ_API_KEY:
+#  raise ValueError("GROQ_API_KEY not found in .env file")
 
 
-groq_client = Groq(api_key=GROQ_API_KEY)
+# groq_client = Groq(api_key=GROQ_API_KEY)
 
 
 
@@ -1748,7 +1863,7 @@ def fetch_location():
             db = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="Parth@123",
+                password="hrishi@123",
                 database="RotaryClub_Database"
             )
 
@@ -1767,7 +1882,6 @@ def fetch_location():
 
         time.sleep(5)
 
-
 thread = threading.Thread(target=fetch_location)
 thread.daemon = True
 thread.start()
@@ -1784,53 +1898,4 @@ if __name__ == "__main__":
 @app.route("/tourist")
 def tourist():
     return render_template("tourist.html")
-
-
-
-
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
-
-
-@app.route('/add_bus', methods=['POST'])
-def add_bus():
-    data = request.get_json()
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute(
-        "INSERT INTO bus_info (bus_no, no_plate, route, driver_name, driver_phone) VALUES (%s, %s, %s, %s, %s)",
-        (
-            data.get('bus_no', ''),
-            data.get('no_plate', ''),
-            data.get('route', ''),
-            data.get('driver_name', ''),
-            data.get('driver_phone', '')
-        )
-    )
-    db.commit()
-    cursor.close()
-    db.close()
-    return jsonify({'success': True})
-
-
-@app.route('/update_bus', methods=['POST'])
-def update_bus():
-    data = request.get_json()
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute(
-        "UPDATE bus_info SET driver_name=%s, driver_phone=%s, route=%s WHERE id=%s",
-        (
-            data.get('driver_name', ''),
-            data.get('driver_phone', ''),
-            data.get('route', ''),
-            data.get('bus_id')
-        )
-    )
-    db.commit()
-    cursor.close()
-    db.close()
-    return jsonify({'success': True})
-
+#task completed
