@@ -25,7 +25,7 @@ def get_db():
         host="localhost",
         user="root",
 
-        password="hrishi@123",
+        password="#SAR1807",
 
         database="RotaryClub_Database"
     )
@@ -485,7 +485,7 @@ def get_buses():
     buses = cursor.fetchall()
     cursor.close()
     db.close()
-    return jsonify(buses)
+    return jsonify({"buses": buses})  
 
 
 @app.route('/update_bus_location', methods=['POST'])
@@ -1863,7 +1863,7 @@ def fetch_location():
             db = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="hrishi@123",
+                password="#SAR1807",
                 database="RotaryClub_Database"
             )
 
