@@ -25,7 +25,7 @@ def get_db():
         host="localhost",
         user="root",
 
-        password="#SAR1807",
+        password="hrishi@123",
 
         database="RotaryClub_Database"
     )
@@ -1828,21 +1828,6 @@ def delete_complaint(id):
         print("Delete Error:", e)
         return jsonify({"success": False})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @app.route('/update_profile_field', methods=['POST'])
 def update_profile_field():
     try:
@@ -1915,7 +1900,7 @@ def fetch_location():
             db = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="#SAR1807",
+                password="hrishi@123",
                 database="RotaryClub_Database"
             )
 
@@ -1940,11 +1925,52 @@ thread.start()
 @app.route("/tourist")
 def tourist():
     return render_template("tourist.html")
-#task completed
 
+@app.route('/women_safety')
+def women_safety():
+    return render_template("women_safety.html")
 
+@app.route('/send_sos_alert', methods=['POST'])
+def send_sos_alert():
+    """Store SOS alert in complaints table"""
+    try:
+        data = request.get_json()
+        
+        now = datetime.now()
+        
+        sos_text = f"""
+SOS ALERT!
 
+User: {data.get('user_name', 'Unknown')}
+Mobile: {data.get('user_mobile', 'Unknown')}
+Time: {data.get('timestamp', now.strftime('%Y-%m-%d %H:%M:%S'))}
+Location: {data.get('latitude', 0)}, {data.get('longitude', 0)}
+Map Link: {data.get('location_url', '')}
 
+URGENT: This is an SOS alert from a passenger. Please take immediate action.
+        """.strip()
+        
+        db = get_db()
+        cursor = db.cursor()
+        
+        cursor.execute("""
+            INSERT INTO complaint (comp_text, comp_time, comp_date, comp_status)
+            VALUES (%s, %s, %s, %s)
+        """, (sos_text, now.strftime("%H:%M:%S"), now.strftime("%Y-%m-%d"), 'SOS_PENDING'))
+        
+        db.commit()
+        cursor.close()
+        db.close()
+        
+        print(f"SOS Alert saved for user: {data.get('user_name')} at {now}")
+        
+        return jsonify({'success': True, 'message': 'SOS alert sent to admin'})
+        
+    except Exception as e:
+        print(f"SOS error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

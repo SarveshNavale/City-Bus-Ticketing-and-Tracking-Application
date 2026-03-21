@@ -260,54 +260,48 @@ function init(){
 }
 
 /* ───────── RENDER ───────── */
-
 function renderComplaints(list){
-
-
- const container=document.getElementById('complaints-container');
-if(list.length === 0){
-  container.innerHTML = "<p style='text-align:center;color:gray;'>No complaints found</p>";
-  return;
-}
- container.innerHTML=list.map(c=>`
-
- <div class="ticket-card">
-
-   <div class="route-strip">
-     <div class="stop-pill">
-       <div class="label">Complaint Status</div>
-       <div class="name">${c.comp_status}</div>
-     </div>
-   </div>
-
-   <div class="ticket-details">
-     <div class="detail-grid">
-
-       <div class="detail-item full">
-         <div class="d-label">Complaint</div>
-         <div class="d-value">${c.comp_text}</div>
-       </div>
-
-       <div class="detail-item">
-         <div class="d-label">Date</div>
-         <div class="d-value">${c.comp_date}</div>
-       </div>
-
-       <div class="detail-item">
-         <div class="d-label">Time</div>
-         <div class="d-value">${c.comp_time}</div>
-       </div>
-
-     </div>
-   </div>
-
-   <button class="tick-btn" onclick="markChecked(${c.id})">
-✔ Mark Solved
-</button>
-
- </div>
-
- `).join('');
+    const container=document.getElementById('complaints-container');
+    if(list.length === 0){
+        container.innerHTML = "<p style='text-align:center;color:gray;'>No complaints found</p>";
+        return;
+    }
+    
+    container.innerHTML=list.map(c=>{
+        const isSOS = c.comp_text && c.comp_text.includes('🚨 SOS ALERT 🚨');
+        const statusColor = isSOS ? '#FF4444' : '#6C64FF';
+        const statusText = isSOS ? '🚨 SOS ALERT' : (c.comp_status || 'PENDING');
+        
+        return `
+        <div class="ticket-card" style="border-left: 4px solid ${statusColor};">
+            <div class="route-strip" style="background: ${isSOS ? 'linear-gradient(135deg,#FF4444,#CC0000)' : 'linear-gradient(135deg,#6C64FF,#8B84FF)'}">
+                <div class="stop-pill">
+                    <div class="label">${isSOS ? 'EMERGENCY SOS' : 'Complaint Status'}</div>
+                    <div class="name">${statusText}</div>
+                </div>
+            </div>
+            <div class="ticket-details">
+                <div class="detail-grid">
+                    <div class="detail-item full">
+                        <div class="d-label">${isSOS ? 'SOS Alert Details' : 'Complaint'}</div>
+                        <div class="d-value" style="white-space: pre-wrap; font-size: 12px;">${c.comp_text}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="d-label">Date</div>
+                        <div class="d-value">${c.comp_date}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="d-label">Time</div>
+                        <div class="d-value">${c.comp_time}</div>
+                    </div>
+                </div>
+            </div>
+            <button class="tick-btn" onclick="markChecked(${c.id})">
+                ✔ Mark Resolved
+            </button>
+        </div>
+        `;
+    }).join('');
 }
 function markChecked(id){
 

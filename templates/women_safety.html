@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<title>Women Safety - Rotary Bus</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: "Nunito", sans-serif;
+    background: #F0F2FF;
+    min-height: 100vh;
+}
+.bluebg {
+    background: linear-gradient(135deg, #6C64FF 0%, #8B84FF 100%);
+    height: 180px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.circle1 {
+    position: absolute;
+    width: 190px; height: 190px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.10);
+    top: -55px; right: -45px;
+}
+
+.circle2 {
+    position: absolute;
+    width: 115px; height: 115px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    top: 45px; right: 25px;
+}
+
+.backbutton {
+    position: absolute;
+    top: 45px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 49px;
+    text-decoration: none;
+}
+
+.backbutton img {
+    width: 42px; height: 42px;
+    object-fit: contain;
+    display: block;
+}
+.content {
+    margin: -28px 16px 30px 16px;
+}
+.sos-section {
+    margin-bottom: 24px;
+}
+
+.sos-button {
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(135deg, #FF4444, #CC0000);
+    border: none;
+    border-radius: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 8px 30px rgba(255,68,68,0.4);
+}
+
+.sos-button:active {
+    transform: scale(0.98);
+}
+
+.sos-button i {
+    font-size: 64px;
+    color: white;
+}
+
+.sos-button span {
+    font-size: 20px;
+    font-weight: 900;
+    color: white;
+    letter-spacing: 2px;
+}
+
+.sos-note {
+    text-align: center;
+    font-size: 12px;
+    color: #FF4444;
+    margin-top: 8px;
+    font-weight: 600;
+}
+
+.card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 18px rgba(108,100,255,0.10);
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #333;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #F0F2FF;
+}
+
+.card-title i {
+    color: #FF4444;
+    font-size: 20px;
+}
+
+.helpline-grid {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.helpline-card {
+    flex: 1;
+    min-width: 100px;
+    background: #F8F9FF;
+    border-radius: 16px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.helpline-card:active {
+    transform: scale(0.96);
+}
+
+.helpline-card i {
+    font-size: 28px;
+    color: #6C64FF;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.helpline-card .helpline-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: #666;
+}
+
+.helpline-card .helpline-number {
+    font-size: 14px;
+    font-weight: 800;
+    color: #333;
+    margin-top: 4px;
+}
+
+.location-card {
+    background: #F8F9FF;
+}
+
+.location-text {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.location-coords {
+    font-size: 12px;
+    font-weight: 700;
+    color: #6C64FF;
+    font-family: monospace;
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-box {
+    background: #fff;
+    border-radius: 28px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.modal-icon {
+    font-size: 48px;
+    color: #FF4444;
+    margin-bottom: 16px;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.modal-text {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.modal-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    background: #6C64FF;
+    color: white;
+}
+
+.modal-btn.cancel {
+    background: #F0F2FF;
+    color: #666;
+    margin-top: 8px;
+}
+
+.toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 300;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.toast.show {
+    opacity: 1;
+}
+</style>
+</head>
+
+<body>
+
+<div class="bluebg">
+    <div class="circle1"></div>
+    <div class="circle2"></div>
+    <a href="/home" class="backbutton">
+        <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+        <p style="font-size:22px;font-weight:600;color:white;">Safety Alert</p>
+    </a>
+</div>
+
+<div class="content">
+
+    <div class="sos-section">
+        <button class="sos-button" id="sosButton">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>SOS</span>
+        </button>
+        <p class="sos-note">⚠️ Press in emergency. Location will be sent to admin.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">
+            <i class="fa-solid fa-hand-holding-heart"></i>
+            Emergency Helpline Numbers
+        </div>
+        <div class="helpline-grid" id="helplineGrid"></div>
+    </div>
+
+    <div class="card location-card">
+        <div class="card-title">
+            <i class="fa-solid fa-location-dot"></i>
+            Your Location
+        </div>
+        <div class="location-text">Current coordinates:</div>
+        <div class="location-coords" id="locationCoords">Fetching location...</div>
+    </div>
+
+</div>
+
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal-box">
+        <div class="modal-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <div class="modal-title">Send SOS Alert?</div>
+        <div class="modal-text">Your current location will be sent to the admin for immediate assistance.</div>
+        <button class="modal-btn" id="confirmSOS">Send SOS</button>
+        <button class="modal-btn cancel" id="cancelSOS">Cancel</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="successModal">
+    <div class="modal-box">
+        <div class="modal-icon" style="color: #4CAF50;"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="modal-title">Alert Sent!</div>
+        <div class="modal-text" id="successText">SOS alert has been sent to admin.</div>
+        <button class="modal-btn" id="closeSuccess">OK</button>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// HELPLINE NUMBERS
+const helplines = [
+    { name: "POLICE", number: "100", icon: "fa-solid fa-shield" },
+    { name: "WOMEN HELPLINE", number: "1091", icon: "fa-solid fa-venus" },
+    { name: "AMBULANCE", number: "108", icon: "fa-solid fa-truck-medical" },
+    { name: "CHILD HELPLINE", number: "1098", icon: "fa-solid fa-child" }
+];
+
+let currentLocation = null;
+
+// Render helplines
+function renderHelplines() {
+    const container = document.getElementById('helplineGrid');
+    container.innerHTML = helplines.map(help => `
+        <div class="helpline-card" onclick="makeCall('${help.number}')">
+            <i class="${help.icon}"></i>
+            <div class="helpline-name">${help.name}</div>
+            <div class="helpline-number">${help.number}</div>
+        </div>
+    `).join('');
+}
+
+// Make a call (opens dialer)
+function makeCall(number) {
+    window.location.href = `tel:${number}`;
+    showToast(`Calling ${number}...`);
+}
+
+// Get current location
+function getCurrentLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                currentLocation = {
+                    lat: position.coords.latitude,
+                    lon: position.coords.longitude
+                };
+                document.getElementById('locationCoords').innerHTML = 
+                    `${currentLocation.lat.toFixed(6)}, ${currentLocation.lon.toFixed(6)}`;
+                console.log('Location updated:', currentLocation);
+            },
+            function(error) {
+                console.error('Geolocation error:', error);
+                document.getElementById('locationCoords').innerHTML = 'Unable to get location. Please enable GPS.';
+                currentLocation = { lat: 0, lon: 0 };
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    } else {
+        document.getElementById('locationCoords').innerHTML = 'Geolocation not supported';
+    }
+}
+
+// Get current user mobile
+async function getCurrentUserMobile() {
+    try {
+        const response = await fetch('/get_current_user');
+        const data = await response.json();
+        if (data.success && data.logged_in) {
+            return data.user.mobile;
+        }
+    } catch (e) {
+        console.error(e);
+    }
+    return 'Unknown';
+}
+
+// Get current user name
+async function getCurrentUserName() {
+    try {
+        const response = await fetch('/get_current_user');
+        const data = await response.json();
+        if (data.success && data.logged_in) {
+            return data.user.name;
+        }
+    } catch (e) {
+        console.error(e);
+    }
+    return 'User';
+}
+
+// Send SOS alert to admin
+// Send SOS alert to admin
+async function sendSOSAlert() {
+    if (!currentLocation) {
+        showToast('Fetching location...');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+    
+    const location = currentLocation || { lat: 0, lon: 0 };
+    
+    const sosData = {
+        type: 'SOS_ALERT',
+        user_mobile: await getCurrentUserMobile(),
+        user_name: await getCurrentUserName(),
+        latitude: location.lat,
+        longitude: location.lon,
+        location_url: `https://www.google.com/maps?q=${location.lat},${location.lon}`,
+        timestamp: new Date().toLocaleString()
+        // NO emergency_contacts field
+    };
+    
+    try {
+        const response = await fetch('/send_sos_alert', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(sosData)
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+            document.getElementById('successText').innerHTML = 
+                `SOS alert sent to admin!<br><br>Location: ${location.lat.toFixed(6)}, ${location.lon.toFixed(6)}`;
+            document.getElementById('successModal').classList.add('show');
+        } else {
+            showToast('Failed to send SOS. Please try again.');
+        }
+    } catch (error) {
+        console.error('SOS error:', error);
+        showToast('Network error. Please try again.');
+    }
+}
+
+// Show toast message
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// SOS Button click
+document.getElementById('sosButton').addEventListener('click', () => {
+    document.getElementById('confirmModal').classList.add('show');
+});
+
+document.getElementById('confirmSOS').addEventListener('click', () => {
+    document.getElementById('confirmModal').classList.remove('show');
+    sendSOSAlert();
+});
+
+document.getElementById('cancelSOS').addEventListener('click', () => {
+    document.getElementById('confirmModal').classList.remove('show');
+});
+
+document.getElementById('closeSuccess').addEventListener('click', () => {
+    document.getElementById('successModal').classList.remove('show');
+});
+
+// Initialize
+renderHelplines();
+getCurrentLocation();
+
+// Update location every 30 seconds
+setInterval(getCurrentLocation, 30000);
+</script>
+
+</body>
+</html>
