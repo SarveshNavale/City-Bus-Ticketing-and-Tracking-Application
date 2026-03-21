@@ -407,20 +407,20 @@ body {
 
         <!-- About us -->
         <a href="/about_us" class="popup-item">
-            <div class="popup-item-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="popup-item-icon"><i class="fa-solid fa-circle-info"></i></div>
             <div>
-                <div class="popup-item-text">About us</div>
+                <div class="popup-item-text">About Us</div>
                 <div class="popup-item-sub">Learn more about our system</div>
             </div>
         </a>
 
         <div class="popup-divider"></div>
    
-         <!-- customer helpline -->
+        <!-- Customer Helpline -->
         <a href="/customer_helpline" class="popup-item">
-            <div class="popup-item-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="popup-item-icon"><i class="fa-solid fa-headset"></i></div>
             <div>
-                <div class="popup-item-text">customer helpline</div>
+                <div class="popup-item-text">Customer Helpline</div>
                 <div class="popup-item-sub">Get help and support</div>
             </div>
         </a>
@@ -429,7 +429,7 @@ body {
 
         <!-- Terms & Conditions -->
         <a href="/terms_conditions" class="popup-item">
-            <div class="popup-item-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="popup-item-icon"><i class="fa-solid fa-file-lines"></i></div>
             <div>
                 <div class="popup-item-text">Terms and Conditions</div>
                 <div class="popup-item-sub">Read our rules and policies</div>
@@ -438,16 +438,27 @@ body {
 
         <div class="popup-divider"></div>
 
-        <!-- Dev’s Corner -->
+        <!-- Dev's Corner -->
         <a href="/devs_corner" class="popup-item">
-            <div class="popup-item-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="popup-item-icon"><i class="fa-solid fa-code"></i></div>
             <div>
-                <div class="popup-item-text">Dev’s Corner</div>
+                <div class="popup-item-text">Dev's Corner</div>
                 <div class="popup-item-sub">App version and technical info</div>
             </div>
         </a>
 
         <div class="popup-divider"></div>
+
+        <!-- Log Out -->
+        <div class="popup-item" onclick="logOut()" style="background:#FFF0F0;">
+            <div class="popup-item-icon" style="background:#FFE0E0;">
+                <i class="fa-solid fa-right-from-bracket" style="color:#E05555;"></i>
+            </div>
+            <div>
+                <div class="popup-item-text" style="color:#E05555;">Log Out</div>
+                <div class="popup-item-sub">Sign out of your account</div>
+            </div>
+        </div>
 
     </div>
 </div>
@@ -557,6 +568,23 @@ function handleOverlayClick(e) {
         closeSettingsPopup();
     }
 }
+
+// ── LOG OUT ──
+function logOut() {
+    if (!confirm('Are you sure you want to log out?')) return;
+
+    fetch('/clear_login', { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+            console.log('Logout response:', data);
+            window.location.href = '/';
+        })
+        .catch(err => {
+            console.error('Logout error:', err);
+            // Redirect anyway even if the request fails
+            window.location.href = '/';
+        });
+}
 </script>
 
 <!-- ── BILINGUAL SCRIPT ── -->
@@ -574,10 +602,6 @@ function changeLang(lang) {
     const saved = localStorage.getItem("lang");
     if (saved && saved !== 'en') { changeLang(saved); }
 })();
-
-
-
-
 
 
 const fieldMap = {
@@ -644,7 +668,6 @@ function saveField(field, value, btn, input) {
         btn.textContent = '✔ Save';
     });
 }
-
 </script>
 
 </body>
