@@ -1843,7 +1843,59 @@ def delete_complaint(id):
 
 
 
+@app.route('/update_profile_field', methods=['POST'])
+def update_profile_field():
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
 
+        cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+        current_login = cursor.fetchone()
+
+        if not current_login:
+            return jsonify({'success': False, 'error': 'No user logged in'})
+
+        mobile_no = current_login['mobile_no']
+
+        data = request.get_json()
+        field = data.get('field', '').strip()
+        value = data.get('value', '').strip()
+
+        # Whitelist — only these fields are allowed to be updated
+        allowed_fields = {
+            'name':   'cust_name',
+            'age':    'cust_age',
+            'mobile': 'cust_number',
+            'email':  'cust_email'
+        }
+
+        if field not in allowed_fields:
+            return jsonify({'success': False, 'error': 'Invalid field'})
+
+        db_column = allowed_fields[field]
+
+        cursor.execute(
+            f"UPDATE cust_info SET {db_column} = %s WHERE cust_number = %s",
+            (value, mobile_no)
+        )
+        db.commit()
+
+        # If mobile number was changed, update current_login too
+        if field == 'mobile':
+            cursor.execute(
+                "UPDATE current_login SET mobile_no = %s WHERE mobile_no = %s",
+                (value, mobile_no)
+            )
+            db.commit()
+
+        cursor.close()
+        db.close()
+
+        return jsonify({'success': True})
+
+    except Exception as e:
+        print(f"update_profile_field error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
 
 
 
