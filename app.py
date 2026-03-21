@@ -34,7 +34,7 @@ def get_db():
 # ---------- normal routes ----------
 @app.route('/')
 def home():
-    return render_template("Registration.html")
+    return render_template("registration.html")
 
 @app.route('/robo')
 def robo():
