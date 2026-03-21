@@ -22,14 +22,14 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Parth@123",
+        password="#SAR1807",
         database="RotaryClub_Database"
     )
  
 # ---------- normal routes ----------
 @app.route('/')
 def home():
-    return render_template("homepage.html")
+    return render_template("registration.html")
 
 @app.route('/robo')
 def robo():
@@ -1748,7 +1748,7 @@ def fetch_location():
             db = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="Parth@123",
+                password="#SAR1807",
                 database="RotaryClub_Database"
             )
 

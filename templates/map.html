@@ -292,8 +292,8 @@ function routeArrayFor(dbRoute, busNo) {
   return ROUTE_1;
 }
 
-fetch('/get_buses').then(r=>r.json()).then(rows=>{
-  rows.forEach(rw=>{
+fetch('/get_buses').then(r=>r.json()).then(data=>{
+  data.buses.forEach(rw=>{
     var arr = routeArrayFor(rw.route, rw.bus_no);
     var spawnIdx = Math.floor(Math.random() * (arr.length - 1));
     var latlng = arr[spawnIdx];
