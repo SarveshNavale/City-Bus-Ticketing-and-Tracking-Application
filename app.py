@@ -2053,16 +2053,25 @@ def get_stops_between():
         diff = abs(dest_no - src_no)
 
         quotient = diff / 2
+
         fare = quotient * 5
 
+        # Apply minimum fare
+        if fare < 5:
+            fare = 5
+
         return jsonify({
-            'success': True,
-            'fare': int(round(fare)),
-            'stops_diff': diff
+        'success': True,
+        'fare': int(round(fare)),
+        'stops_diff': diff
         })
 
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+
+
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 
