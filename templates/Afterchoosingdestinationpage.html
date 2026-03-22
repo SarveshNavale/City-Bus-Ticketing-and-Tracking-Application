@@ -764,9 +764,8 @@ const destSearch   = makeStopSearch('destInput',   'destDropdown');
 //  FARE CALCULATION
 // ════════════════════════════════════════════════
 
-let pricePerTicket = 10.00;
+let pricePerTicket = 5.00;
 let stopsDiff = '—';
-
 async function recalcFare() {
     const src  = sourceSearch.getStop();
     const dest = destSearch.getStop();
@@ -774,7 +773,7 @@ async function recalcFare() {
     if (!src || !dest || src === dest) {
         document.getElementById('farePerTicket').textContent = '₹ —';
         document.getElementById('stopsCount').textContent = '—';
-        pricePerTicket = 5.00;
+        pricePerTicket = 0;
         updateTotal();
         return;
     }
@@ -783,19 +782,19 @@ async function recalcFare() {
         const res = await fetch(`/get_stops_between?src=${encodeURIComponent(src)}&dest=${encodeURIComponent(dest)}`);
         const data = await res.json();
 
-        if (data.success && data.stops_away > 0) {
-            stopsDiff = data.stops_away;
-            pricePerTicket = 5 + (stopsDiff * 5); // ₹10 base + ₹5 per stop
+        if (data.success) {
+            stopsDiff = data.stops_diff;
+            pricePerTicket = data.fare;
         } else {
             stopsDiff = '—';
-            pricePerTicket = 5.00;
+            pricePerTicket = 0;
         }
     } catch {
         stopsDiff = '—';
-        pricePerTicket = 5.00;
+        pricePerTicket = 0;
     }
 
-    document.getElementById('farePerTicket').textContent = '₹ ' + pricePerTicket.toFixed(2);
+    document.getElementById('farePerTicket').textContent = '₹ ' + Math.round(pricePerTicket);
     document.getElementById('stopsCount').textContent = stopsDiff;
     updateTotal();
 }
@@ -811,7 +810,7 @@ function dec() { if (count > 1) { count--; updateTotal(); } }
 
 function updateTotal() {
     document.getElementById('ticketCount').textContent = count;
-    document.getElementById('totalAmount').textContent = '₹ ' + (count * pricePerTicket).toFixed(2);
+    document.getElementById('totalAmount').textContent = '₹ ' + Math.round(count * pricePerTicket);
 }
 
 

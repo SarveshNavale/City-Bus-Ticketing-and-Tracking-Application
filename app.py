@@ -25,7 +25,7 @@ def get_db():
         host="localhost",
         user="root",
 
-        password="hrishi@123",
+        password="Parth@123",
 
         database="RotaryClub_Database"
     )
@@ -50,9 +50,9 @@ def view_c():
 def admin_dashboard():
     return render_template("tc_login.html")
 
-@app.route('/adminspage')
-def adminspage():
-    return render_template(admin_dashboard.html)
+@app.route('/admin_dashboard_actual')
+def admin_dashboard_actual():
+    return render_template("admin_dashboard.html")
 
 @app.route('/select')
 def select():
@@ -1857,6 +1857,7 @@ def update_profile_field():
         if field not in allowed_fields:
             return jsonify({'success': False, 'error': 'Invalid field'})
 
+
         db_column = allowed_fields[field]
 
         cursor.execute(
@@ -1884,13 +1885,16 @@ def update_profile_field():
 
 
 
+
 def fetch_location():
 
     while True:
 
         try:
 
-            response = requests.get("https://drivertracker-a4290-default-rtdb.firebaseio.com/location.json")
+            url = "https://drivertracker-a4290-default-rtdb.firebaseio.com/location.json"
+
+            response = requests.get(url, timeout=5, verify=False) 
 
             data = response.json()
 
@@ -1900,7 +1904,7 @@ def fetch_location():
             db = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="hrishi@123",
+                password="Parth@123",
                 database="RotaryClub_Database"
             )
 
@@ -1922,6 +1926,7 @@ def fetch_location():
 thread = threading.Thread(target=fetch_location)
 thread.daemon = True
 thread.start()
+
 @app.route("/tourist")
 def tourist():
     return render_template("tourist.html")
@@ -1972,7 +1977,90 @@ URGENT: This is an SOS alert from a passenger. Please take immediate action.
         traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)})
 
+
+
+
+@app.route('/add_bus', methods=['POST'])
+def add_bus():
+    data = request.get_json()
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+        "INSERT INTO bus_info (bus_no, no_plate, route, driver_name, driver_phone) VALUES (%s, %s, %s, %s, %s)",
+        (
+            data.get('bus_no', ''),
+            data.get('no_plate', ''),
+            data.get('route', ''),
+            data.get('driver_name', ''),
+            data.get('driver_phone', '')
+        )
+    )
+    db.commit()
+    cursor.close()
+    db.close()
+    return jsonify({'success': True})
+
+
+@app.route('/update_bus', methods=['POST'])
+def update_bus():
+    data = request.get_json()
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+        "UPDATE bus_info SET driver_name=%s, driver_phone=%s, route=%s WHERE id=%s",
+        (
+            data.get('driver_name', ''),
+            data.get('driver_phone', ''),
+            data.get('route', ''),
+            data.get('bus_id')
+        )
+    )
+    db.commit()
+    cursor.close()
+    db.close()
+    return jsonify({'success': True})
+
+@app.route('/get_stops_between')
+def get_stops_between():
+    src = request.args.get('src')
+    dest = request.args.get('dest')
+
+    try:
+        conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="Parth@123",
+            database="RotaryClub_Database"
+        )
+        cursor = conn.cursor(dictionary=True)
+
+        # Get stop_no of source
+        cursor.execute("SELECT stop_no FROM stops_info WHERE stop_name = %s", (src,))
+        src_data = cursor.fetchone()
+
+        # Get stop_no of destination
+        cursor.execute("SELECT stop_no FROM stops_info WHERE stop_name = %s", (dest,))
+        dest_data = cursor.fetchone()
+
+        if not src_data or not dest_data:
+            return jsonify({'success': False})
+
+        src_no = src_data['stop_no']
+        dest_no = dest_data['stop_no']
+
+        diff = abs(dest_no - src_no)
+
+        quotient = diff / 2
+        fare = quotient * 5
+
+        return jsonify({
+            'success': True,
+            'fare': int(round(fare)),
+            'stops_diff': diff
+        })
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
-
 

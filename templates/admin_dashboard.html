@@ -500,17 +500,7 @@ body { font-family:"Nunito",sans-serif; background:#F0F2FF; min-height:100vh; }
         <span id="otherRevenue">₹ 15000</span>
     </div>
 </div>
-        <div class="rev-stats">
-            <div class="rev-stat-card"><div class="rev-stat-val" id="revWeekly">—</div><div class="rev-stat-lbl">This Week</div></div>
-            <div class="rev-stat-card"><div class="rev-stat-val" id="revAvg">—</div><div class="rev-stat-lbl">Daily Avg</div></div>
-            <div class="rev-stat-card"><div class="rev-stat-val" id="revPasses">—</div><div class="rev-stat-lbl">Passes Sold</div></div>
-        </div>
-        <p class="sec-label">Weekly Chart</p>
-        <div class="card" id="revChart"></div>
-        <p class="sec-label" style="margin-top:14px;">Recent Transactions</p>
-        <div class="card" id="txnList">
-            <p style="text-align:center;color:#AAAACC;padding:10px;">Loading…</p>
-        </div>
+        
     </div>
 
     <!-- ══ FUEL ══ -->
@@ -519,16 +509,10 @@ body { font-family:"Nunito",sans-serif; background:#F0F2FF; min-height:100vh; }
             <div><div class="fuel-val" id="fuelTotal">— L</div><div class="fuel-sub">Total fleet consumption</div></div>
             <div style="text-align:right;"><div class="fuel-val" id="fuelCost">₹ —</div><div class="fuel-sub">Estimated cost</div></div>
         </div>
-        <p class="sec-label">Per Bus Consumption</p>
-        <div class="card" id="fuelBusList">
-            <p style="text-align:center;color:#AAAACC;padding:10px;">No fuel logs yet.</p>
-        </div>
+        
         <p class="sec-label" style="margin-top:14px;">Log Fuel Fill-Up</p>
         <div class="card">
-            <div class="form-group">
-                <label class="form-label">Bus Number</label>
-                <input class="form-input" id="fuelBusNo" placeholder="e.g. TT-01">
-            </div>
+            
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Litres</label>
@@ -969,13 +953,25 @@ async function loadDiscardList() {
 document.addEventListener('DOMContentLoaded', () => {
     loadOverviewStats();
     loadBusInfo();
-    loadLocation();
+    //loadLocation();
     loadRevenue();
     loadFuelData();
     loadIncidents();
     loadDiscardList();
-    setInterval(() => { loadOverviewStats(); loadLocation(); }, 30000);
+    setInterval(() => { loadOverviewStats(); 
+        //loadLocation(); 
+    }, 30000);
 });
+
+async function loadLocation() {
+    try {
+        const res = await fetch('/get_location');
+        const data = await res.json();
+        console.log(data);
+    } catch(e) {
+        console.error("Location error:", e);
+    }
+}
 </script>
 </body>
 </html>
