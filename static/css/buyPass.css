@@ -6,7 +6,7 @@ body {
 }
 
 .bluebg {
-    background-color: #6C64FF;
+    background:linear-gradient(135deg,#6C64FF 0%,#8B84FF 100%);
     height: 220px;
     width: 100%;
     position: relative;
@@ -251,43 +251,20 @@ body {
     cursor: not-allowed;
 }
 
-.ad-section {
-    background: #f0f0f0;
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-    border: 1px solid #e0e0e0;
+.advertise-card {
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: 0 4px 18px rgba(108,100,255,0.10);
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 40px;
 }
 
-.ad-title {
-    color: #333;
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 10px;
-}
-
-.ad-content {
-    color: #555;
-    font-size: 14px;
-    line-height: 1.5;
-    margin-bottom: 15px;
-}
-
-.ad-btn {
-    background: white;
-    color: #333;
-    border: 1px solid #ccc;
-    border-radius: 44px;
-    padding: 10px 25px;
-    font-family: 'Hind Guntur', sans-serif;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.ad-btn:hover {
-    background: #e0e0e0;
-}
+.advertise-card i { font-size: 24px; color: #DDD; }
+.advertise-card p { font-size: 14px; font-weight: 800; color: #CCCCCC; }
 
 .modal {
     display: none;

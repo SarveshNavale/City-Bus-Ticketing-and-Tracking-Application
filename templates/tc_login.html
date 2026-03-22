@@ -113,7 +113,41 @@
             opacity: 0.8;
         }
 
-        /* Tab Navigation */
+        /* Verification Type Tabs */
+        .verification-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 50px;
+            background: #ffffff;
+            padding: 5px;
+            gap: 5px;
+        }
+
+        .verification-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 5px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .verification-tab.active {
+            background: #6C64FF;
+            color: white;
+        }
+
+        .verification-tab i {
+            margin-right: 5px;
+        }
+
+        /* Method Tabs (Scan/Manual) */
+        .method-container {
+            margin-top: 15px;
+        }
+
         .tab-container {
             display: flex;
             margin-bottom: 20px;
@@ -143,13 +177,16 @@
         }
 
         /* QR Scanner Styles */
-        #qrScanner {
-            width: 100%;
+        .verification-content {
             display: none;
         }
 
-        #qrScanner.active {
+        .verification-content.active {
             display: block;
+        }
+
+        #qrScanner {
+            width: 100%;
         }
 
         .scanner-container {
@@ -260,7 +297,7 @@
             margin-right: 10px;
         }
 
-        #passNumberInput {
+        #passNumberInput, #ticketNumberInput {
             flex: 1;
             height: 48px;
             background: transparent;
@@ -270,11 +307,11 @@
             font-family: "Hind Guntur", sans-serif;
         }
 
-        #passNumberInput:focus {
+        #passNumberInput:focus, #ticketNumberInput:focus {
             outline: none;
         }
 
-        #searchBtn {
+        #searchBtn, #searchTicketBtn {
             width: 100%;
             height: 54px;
             background: #6C64FF;
@@ -294,12 +331,12 @@
             transition: all 0.2s;
         }
 
-        #searchBtn:active {
+        #searchBtn:active, #searchTicketBtn:active {
             transform: scale(0.98);
         }
 
-        /* Pass Info Card */
-        .pass-info-card {
+        /* Info Cards */
+        .info-card {
             background: #FFFFFF;
             border-radius: 40px;
             padding: 1.8rem;
@@ -308,7 +345,7 @@
             display: none;
         }
 
-        .pass-info-card.active {
+        .info-card.active {
             display: block;
             animation: fadeUp 0.3s ease;
         }
@@ -331,7 +368,7 @@
             margin-bottom: 20px;
         }
 
-        .pass-detail-row {
+        .detail-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -339,17 +376,17 @@
             border-bottom: 1px solid rgba(99, 98, 99, 0.1);
         }
 
-        .pass-detail-row:last-of-type {
+        .detail-row:last-of-type {
             border-bottom: none;
         }
 
-        .pass-detail-label {
+        .detail-label {
             color: #636263;
             font-weight: 500;
             font-size: 0.95rem;
         }
 
-        .pass-detail-value {
+        .detail-value {
             color: #6C64FF;
             font-weight: 600;
             font-size: 0.95rem;
@@ -381,6 +418,12 @@
             background: #f0f0ff;
         }
 
+        .action-btn.used {
+            background: #E8F5E9;
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+
         .no-result {
             background: #FFFFFF;
             border-radius: 40px;
@@ -407,6 +450,12 @@
             color: #6C64FF;
             margin-bottom: 15px;
         }
+
+        .route-info {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -426,368 +475,489 @@
                     <i class="fas fa-ticket-alt"></i>
                 </div>
                 <div>
-                    <h3>Verify Pass</h3>
-                    <p>Scan QR or enter pass number</p>
+                    <h3>Verify</h3>
+                    <p>Scan QR or enter number</p>
                 </div>
             </div>
-            <div class="tab-container">
-                <div class="tab active" id="scanTab" onclick="switchMode('scan')">
-                    <i class="fas fa-qrcode"></i> Scan QR
+
+            <!-- Verification Type Tabs -->
+            <div class="verification-tabs">
+                <div class="verification-tab active" id="passTab" onclick="switchVerificationType('pass')">
+                    <i class="fas fa-id-card"></i> Pass
                 </div>
-                <div class="tab" id="manualTab" onclick="switchMode('manual')">
-                    <i class="fas fa-keyboard"></i> Manual
+                <div class="verification-tab" id="ticketTab" onclick="switchVerificationType('ticket')">
+                    <i class="fas fa-ticket"></i> Ticket
                 </div>
             </div>
-            <div id="qrScanner" class="active">
-                <div class="scanner-container" id="scannerContainer">
-                    <video id="video" playsinline></video>
-                    <div class="scanner-overlay">
-                        <div class="scanner-frame"></div>
-                        <div class="scanner-line"></div>
+
+            <!-- Pass Verification Content -->
+            <div id="passVerification" class="verification-content active">
+                <div class="method-container">
+                    <div class="tab-container">
+                        <div class="tab active" id="passScanTab" onclick="switchPassMode('scan')">
+                            <i class="fas fa-qrcode"></i> Scan QR
+                        </div>
+                        <div class="tab" id="passManualTab" onclick="switchPassMode('manual')">
+                            <i class="fas fa-keyboard"></i> Manual
+                        </div>
+                    </div>
+
+                    <div id="passQrScanner" class="active">
+                        <div class="scanner-container" id="passScannerContainer">
+                            <video id="passVideo" playsinline></video>
+                            <div class="scanner-overlay">
+                                <div class="scanner-frame"></div>
+                                <div class="scanner-line"></div>
+                            </div>
+                        </div>
+                        
+                        <div id="passCameraPermissionMsg" class="camera-permission-msg" style="display: none;">
+                        </div>
+
+                        <button class="scanner-btn" id="startPassScannerBtn">
+                            <i class="fas fa-camera"></i> Start Camera
+                        </button>
+                        <button class="scanner-btn stop" id="stopPassScannerBtn" style="display: none;">
+                            <i class="fas fa-stop"></i> Stop Camera
+                        </button>
+                    </div>
+
+                    <div class="search-container" id="passManualEntry">
+                        <div class="input-wrapper">
+                            <i class="fas fa-hashtag"></i>
+                            <input type="text" 
+                                id="passNumberInput"
+                                placeholder="Enter pass number (e.g., PS8K2M9)"
+                                autocomplete="off">
+                        </div>
+                        <button id="searchPassBtn">
+                            <i class="fas fa-check-circle"></i> Verify Pass
+                        </button>
+                    </div>
+
+                    <div class="info-card" id="passInfoCard">
+                        <div class="verify-badge">
+                            <i class="fas fa-check-circle"></i> VALID PASS
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Pass Number</span>
+                            <span class="detail-value" id="displayPassNumber"></span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Pass Holder</span>
+                            <span class="detail-value" id="displayPassHolder"></span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Mobile Number</span>
+                            <span class="detail-value" id="displayPassMobile"></span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Amount Paid</span>
+                            <span class="detail-value" id="displayPassAmount"></span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Issue Date</span>
+                            <span class="detail-value" id="displayPassDate"></span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Issue Time</span>
+                            <span class="detail-value" id="displayPassTime"></span>
+                        </div>
+                        
+                        <button class="action-btn" id="markPassUsedBtn">
+                            <i class="fas fa-check-circle"></i> Mark as Used
+                        </button>
+                    </div>
+
+                    <div class="no-result" id="passNoResult">
+                        <i class="fas fa-exclamation-circle fa-3x"></i>
+                        <h4>Pass Not Found</h4>
+                        <p>The pass number you entered does not exist in our system.</p>
                     </div>
                 </div>
-                
-                <div id="cameraPermissionMsg" class="camera-permission-msg" style="display: none;">
-                </div>
-
-                <button class="scanner-btn" id="startScannerBtn">
-                    <i class="fas fa-camera"></i> Start Camera
-                </button>
-                <button class="scanner-btn stop" id="stopScannerBtn" style="display: none;">
-                    <i class="fas fa-stop"></i> Stop Camera
-                </button>
-                
-                <p style="text-align: center; color: #888; font-size: 14px; margin-top: 10px;">
-                    <i class="fas fa-info-circle"></i> Center the QR code in the frame
-                </p>
-            </div>
-            <div class="search-container" id="manualEntry">
-                <div class="input-wrapper">
-                    <i class="fas fa-hashtag"></i>
-                    <input type="text" 
-                        id="passNumberInput"
-                        placeholder="Enter pass number (e.g., PS8K2M9)"
-                        autocomplete="off">
-                </div>
-
-                <button id="searchBtn">
-                    <i class="fas fa-check-circle"></i> Verify Pass
-                </button>
-            </div>
-            <div class="pass-info-card" id="passInfoCard">
-                <div class="verify-badge">
-                    <i class="fas fa-check-circle"></i> VALID PASS
-                </div>
-                
-                <div class="pass-detail-row">
-                    <span class="pass-detail-label">Pass Number</span>
-                    <span class="pass-detail-value" id="displayPassNumber"></span>
-                </div>
-                
-                <div class="pass-detail-row">
-                    <span class="pass-detail-label">Pass Holder</span>
-                    <span class="pass-detail-value" id="displayPassHolder"></span>
-                </div>
-                
-                <div class="pass-detail-row">
-                    <span class="pass-detail-label">Mobile Number</span>
-                    <span class="pass-detail-value" id="displayMobile"></span>
-                </div>
-                
-                <div class="pass-detail-row">
-                    <span class="pass-detail-label">Amount Paid</span>
-                    <span class="pass-detail-value" id="displayAmount"></span>
-                </div>
-                
-                <div class="pass-detail-row">
-                    <span class="pass-detail-label">Issue Date</span>
-                    <span class="pass-detail-value" id="displayDate"></span>
-                </div>
-                
-                <div class="pass-detail-row">
-                    <span class="pass-detail-label">Issue Time</span>
-                    <span class="pass-detail-value" id="displayTime"></span>
-                </div>
-                
-                <button class="action-btn" id="markUsedBtn">
-                    <i class="fas fa-check-circle"></i> Mark as Used
-                </button>
             </div>
 
-            <div class="no-result" id="noResult">
-                <i class="fas fa-exclamation-circle fa-3x"></i>
-                <h4>Pass Not Found</h4>
-                <p>The pass number you entered does not exist in our system.</p>
+            <!-- Ticket Verification Content -->
+            <div id="ticketVerification" class="verification-content">
+                <div class="method-container">
+                    <div class="tab-container">
+                        <div class="tab active" id="ticketScanTab" onclick="switchTicketMode('scan')">
+                            <i class="fas fa-qrcode"></i> Scan QR
+                        </div>
+                        <div class="tab" id="ticketManualTab" onclick="switchTicketMode('manual')">
+                            <i class="fas fa-keyboard"></i> Manual
+                        </div>
+                    </div>
+
+                    <div id="ticketQrScanner" class="active">
+                        <div class="scanner-container" id="ticketScannerContainer">
+                            <video id="ticketVideo" playsinline></video>
+                            <div class="scanner-overlay">
+                                <div class="scanner-frame"></div>
+                                <div class="scanner-line"></div>
+                            </div>
+                        </div>
+                        
+                        <div id="ticketCameraPermissionMsg" class="camera-permission-msg" style="display: none;">
+                        </div>
+
+                        <button class="scanner-btn" id="startTicketScannerBtn">
+                            <i class="fas fa-camera"></i> Start Camera
+                        </button>
+                        <button class="scanner-btn stop" id="stopTicketScannerBtn" style="display: none;">
+                            <i class="fas fa-stop"></i> Stop Camera
+                        </button>
+                    </div>
+
+                    <div class="search-container" id="ticketManualEntry">
+                        <div class="input-wrapper">
+                            <i class="fas fa-hashtag"></i>
+                            <input type="text" 
+                                id="ticketNumberInput"
+                                placeholder="Enter ticket number (e.g., TC9763772464_1234567890)"
+                                autocomplete="off">
+                        </div>
+                        <button id="searchTicketBtn">
+                            <i class="fas fa-check-circle"></i> Verify Ticket
+                        </button>
+                    </div>
+
+                    <div class="info-card" id="ticketInfoCard">
+                        <div class="verify-badge">
+                            <i class="fas fa-check-circle"></i> VALID TICKET
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Ticket Number</span>
+                            <span class="detail-value" id="displayTicketNumber"></span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Ticket Holder</span>
+                            <span class="detail-value" id="displayTicketHolder"></span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Mobile Number</span>
+                            <span class="detail-value" id="displayTicketMobile"></span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">From</span>
+                            <span class="detail-value" id="displayStartDest"></span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">To</span>
+                            <span class="detail-value" id="displayFinalDest"></span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Tickets Count</span>
+                            <span class="detail-value" id="displayTicketCount"></span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Amount Paid</span>
+                            <span class="detail-value" id="displayTicketAmount"></span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Issue Date</span>
+                            <span class="detail-value" id="displayTicketDate"></span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Issue Time</span>
+                            <span class="detail-value" id="displayTicketTime"></span>
+                        </div>
+                        
+                        <button class="action-btn" id="markTicketUsedBtn">
+                            <i class="fas fa-check-circle"></i> Mark as Used
+                        </button>
+                    </div>
+
+                    <div class="no-result" id="ticketNoResult">
+                        <i class="fas fa-exclamation-circle fa-3x"></i>
+                        <h4>Ticket Not Found</h4>
+                        <p>The ticket number you entered does not exist in our system.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     
     <script>
-    let scanning = false;
-    let videoStream = null;
-    let scanInterval = null;
-    const video = document.getElementById('video');
-    const scannerContainer = document.getElementById('scannerContainer');
-    const cameraPermissionMsg = document.getElementById('cameraPermissionMsg');
-    const startBtn = document.getElementById('startScannerBtn');
-    const stopBtn = document.getElementById('stopScannerBtn');
+    // Global variables
+    let passScanning = false;
+    let ticketScanning = false;
+    let passVideoStream = null;
+    let ticketVideoStream = null;
+    let passScanInterval = null;
+    let ticketScanInterval = null;
+    
+    const passVideo = document.getElementById('passVideo');
+    const ticketVideo = document.getElementById('ticketVideo');
+    const passStartBtn = document.getElementById('startPassScannerBtn');
+    const passStopBtn = document.getElementById('stopPassScannerBtn');
+    const ticketStartBtn = document.getElementById('startTicketScannerBtn');
+    const ticketStopBtn = document.getElementById('stopTicketScannerBtn');
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const isHTTPS = window.location.protocol === 'https:';
-    
-    console.log('Connection info:', {
-        hostname: window.location.hostname,
-        protocol: window.location.protocol,
-        isLocalhost: isLocalhost,
-        isHTTPS: isHTTPS
-    });
 
-    function isCameraSupported() {
-        return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
-    }
-
-    function updateCameraSupportMessage() {
-        const cameraMsg = document.getElementById('cameraPermissionMsg');
+    // Switch between Pass and Ticket verification
+    function switchVerificationType(type) {
+        const passTab = document.getElementById('passTab');
+        const ticketTab = document.getElementById('ticketTab');
+        const passVerification = document.getElementById('passVerification');
+        const ticketVerification = document.getElementById('ticketVerification');
         
-        if (!isCameraSupported()) {
-            let message = '';
-            if (!isHTTPS && !isLocalhost) {
-                message = `
-                    <i class="fas fa-lock"></i>
-                    <h4>HTTPS Required</h4>
-                    <p>Camera access requires HTTPS when accessing from network IP.<br>
-                    Please use:<br>
-                    • <strong>http://localhost:5000</strong> (for testing)<br>
-                    • Or access via HTTPS</p>
-                `;
-            } else {
-                message = `
-                    <i class="fas fa-camera"></i>
-                    <h4>Camera Not Supported</h4>
-                    <p>Your browser doesn't support camera access.<br>
-                    Please use the manual entry option.</p>
-                `;
-            }
-            cameraMsg.innerHTML = message;
-            cameraMsg.style.display = 'block';
-            startBtn.style.display = 'none';
-            return false;
+        if (type === 'pass') {
+            passTab.classList.add('active');
+            ticketTab.classList.remove('active');
+            passVerification.classList.add('active');
+            ticketVerification.classList.remove('active');
+            stopTicketScanner();
+        } else {
+            ticketTab.classList.add('active');
+            passTab.classList.remove('active');
+            ticketVerification.classList.add('active');
+            passVerification.classList.remove('active');
+            stopPassScanner();
         }
-        return true;
     }
 
-    function switchMode(mode) {
-        const scanTab = document.getElementById('scanTab');
-        const manualTab = document.getElementById('manualTab');
-        const qrScanner = document.getElementById('qrScanner');
-        const manualEntry = document.getElementById('manualEntry');
-
+    // Pass mode switching
+    function switchPassMode(mode) {
+        const scanTab = document.getElementById('passScanTab');
+        const manualTab = document.getElementById('passManualTab');
+        const qrScanner = document.getElementById('passQrScanner');
+        const manualEntry = document.getElementById('passManualEntry');
+        
         if (mode === 'scan') {
             scanTab.classList.add('active');
             manualTab.classList.remove('active');
             qrScanner.classList.add('active');
             manualEntry.classList.remove('active');
-            
-            if (!isCameraSupported()) {
-                updateCameraSupportMessage();
-            }
         } else {
             manualTab.classList.add('active');
             scanTab.classList.remove('active');
             qrScanner.classList.remove('active');
             manualEntry.classList.add('active');
-            stopScanner();
+            stopPassScanner();
         }
     }
 
-    async function startScanner() {
+    // Ticket mode switching
+    function switchTicketMode(mode) {
+        const scanTab = document.getElementById('ticketScanTab');
+        const manualTab = document.getElementById('ticketManualTab');
+        const qrScanner = document.getElementById('ticketQrScanner');
+        const manualEntry = document.getElementById('ticketManualEntry');
+        
+        if (mode === 'scan') {
+            scanTab.classList.add('active');
+            manualTab.classList.remove('active');
+            qrScanner.classList.add('active');
+            manualEntry.classList.remove('active');
+        } else {
+            manualTab.classList.add('active');
+            scanTab.classList.remove('active');
+            qrScanner.classList.remove('active');
+            manualEntry.classList.add('active');
+            stopTicketScanner();
+        }
+    }
+
+    // Pass Scanner Functions
+    async function startPassScanner() {
         try {
             document.getElementById('passInfoCard').classList.remove('active');
-            document.getElementById('noResult').classList.remove('active');
-            
-            if (!isCameraSupported()) {
-                updateCameraSupportMessage();
-                return;
-            }
-            
-            cameraPermissionMsg.style.display = 'none';
+            document.getElementById('passNoResult').classList.remove('active');
             
             const constraints = {
                 video: {
-                    facingMode: 'environment', 
+                    facingMode: 'environment',
                     width: { ideal: 1280 },
                     height: { ideal: 720 }
                 }
             };
-
-            console.log('Requesting camera access...');
             
-            videoStream = await navigator.mediaDevices.getUserMedia(constraints);
-            
-            console.log('Camera access granted');
-            
-            video.srcObject = videoStream;
+            passVideoStream = await navigator.mediaDevices.getUserMedia(constraints);
+            passVideo.srcObject = passVideoStream;
             
             await new Promise((resolve) => {
-                video.onloadedmetadata = () => {
-                    video.play()
-                        .then(resolve)
-                        .catch(e => console.error('Error playing video:', e));
+                passVideo.onloadedmetadata = () => {
+                    passVideo.play().then(resolve);
                 };
             });
-
-            scanning = true;
-            startBtn.style.display = 'none';
-            stopBtn.style.display = 'block';
             
-            scanFrame();
+            passScanning = true;
+            passStartBtn.style.display = 'none';
+            passStopBtn.style.display = 'block';
             
+            scanPassFrame();
         } catch (err) {
             console.error('Camera error:', err);
-            
-            let errorMessage = '';
-            if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-                errorMessage = `
-                    <i class="fas fa-ban"></i>
-                    <h4>Camera Access Denied</h4>
-                    <p>Please allow camera access in your browser settings.<br>
-                    On mobile: Look for camera permissions in site settings.</p>
-                `;
-            } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-                errorMessage = `
-                    <i class="fas fa-video-slash"></i>
-                    <h4>No Camera Found</h4>
-                    <p>No camera detected on this device.<br>
-                    Please use the manual entry option.</p>
-                `;
-            } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
-                errorMessage = `
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h4>Camera in Use</h4>
-                    <p>Camera is being used by another application.<br>
-                    Close other apps and try again.</p>
-                `;
-            } else if (err.name === 'OverconstrainedError') {
-                errorMessage = `
-                    <i class="fas fa-exclamation-circle"></i>
-                    <h4>Camera Not Compatible</h4>
-                    <p>Your camera doesn't support required settings.<br>
-                    Please use the manual entry option.</p>
-                `;
-            } else {
-                errorMessage = `
-                    <i class="fas fa-question-circle"></i>
-                    <h4>Camera Error</h4>
-                    <p>Could not access camera: ${err.message}<br>
-                    Please use the manual entry option.</p>
-                `;
-            }
-            
-            cameraPermissionMsg.innerHTML = errorMessage;
-            cameraPermissionMsg.style.display = 'block';
-            startBtn.style.display = 'block';
-            stopBtn.style.display = 'none';
+            const msg = document.getElementById('passCameraPermissionMsg');
+            msg.innerHTML = `<i class="fas fa-ban"></i><h4>Camera Access Denied</h4><p>Please allow camera access in your browser settings.</p>`;
+            msg.style.display = 'block';
+            passStartBtn.style.display = 'block';
+            passStopBtn.style.display = 'none';
         }
     }
 
-    function stopScanner() {
-        scanning = false;
-        
-        if (scanInterval) {
-            cancelAnimationFrame(scanInterval);
-            scanInterval = null;
+    function stopPassScanner() {
+        passScanning = false;
+        if (passScanInterval) cancelAnimationFrame(passScanInterval);
+        if (passVideoStream) {
+            passVideoStream.getTracks().forEach(track => track.stop());
+            passVideoStream = null;
         }
-        
-        if (videoStream) {
-            videoStream.getTracks().forEach(track => {
-                track.stop();
-                console.log('Camera track stopped');
-            });
-            videoStream = null;
-        }
-        
-        if (video.srcObject) {
-            video.srcObject = null;
-        }
-        
-        startBtn.style.display = 'block';
-        stopBtn.style.display = 'none';
+        if (passVideo.srcObject) passVideo.srcObject = null;
+        passStartBtn.style.display = 'block';
+        passStopBtn.style.display = 'none';
     }
 
-    function scanFrame() {
-        if (!scanning) return;
-
-        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+    function scanPassFrame() {
+        if (!passScanning) return;
+        
+        if (passVideo.readyState === passVideo.HAVE_ENOUGH_DATA) {
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
-            
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+            canvas.width = passVideo.videoWidth;
+            canvas.height = passVideo.videoHeight;
             
             if (canvas.width > 0 && canvas.height > 0) {
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
+                context.drawImage(passVideo, 0, 0, canvas.width, canvas.height);
                 const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: 'dontInvert' });
                 
-                try {
-                    const code = jsQR(imageData.data, canvas.width, canvas.height, {
-                        inversionAttempts: 'dontInvert'
-                    });
-
-                    if (code) {
-                        console.log('QR Code found:', code.data);
-                        
-                        if (navigator.vibrate) navigator.vibrate(200);
-                        
-                        stopScanner();
-                        
-                        verifyPassFromQR(code.data);
-                        return;
-                    }
-                } catch (qrError) {
-                    console.error('QR scanning error:', qrError);
+                if (code) {
+                    if (navigator.vibrate) navigator.vibrate(200);
+                    stopPassScanner();
+                    verifyPassFromQR(code.data);
+                    return;
                 }
             }
         }
-        
-        scanInterval = requestAnimationFrame(scanFrame);
+        passScanInterval = requestAnimationFrame(scanPassFrame);
     }
+
+    // Ticket Scanner Functions
+    async function startTicketScanner() {
+        try {
+            document.getElementById('ticketInfoCard').classList.remove('active');
+            document.getElementById('ticketNoResult').classList.remove('active');
+            
+            const constraints = {
+                video: {
+                    facingMode: 'environment',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            };
+            
+            ticketVideoStream = await navigator.mediaDevices.getUserMedia(constraints);
+            ticketVideo.srcObject = ticketVideoStream;
+            
+            await new Promise((resolve) => {
+                ticketVideo.onloadedmetadata = () => {
+                    ticketVideo.play().then(resolve);
+                };
+            });
+            
+            ticketScanning = true;
+            ticketStartBtn.style.display = 'none';
+            ticketStopBtn.style.display = 'block';
+            
+            scanTicketFrame();
+        } catch (err) {
+            console.error('Camera error:', err);
+            const msg = document.getElementById('ticketCameraPermissionMsg');
+            msg.innerHTML = `<i class="fas fa-ban"></i><h4>Camera Access Denied</h4><p>Please allow camera access in your browser settings.</p>`;
+            msg.style.display = 'block';
+            ticketStartBtn.style.display = 'block';
+            ticketStopBtn.style.display = 'none';
+        }
+    }
+
+    function stopTicketScanner() {
+        ticketScanning = false;
+        if (ticketScanInterval) cancelAnimationFrame(ticketScanInterval);
+        if (ticketVideoStream) {
+            ticketVideoStream.getTracks().forEach(track => track.stop());
+            ticketVideoStream = null;
+        }
+        if (ticketVideo.srcObject) ticketVideo.srcObject = null;
+        ticketStartBtn.style.display = 'block';
+        ticketStopBtn.style.display = 'none';
+    }
+
+    function scanTicketFrame() {
+        if (!ticketScanning) return;
+        
+        if (ticketVideo.readyState === ticketVideo.HAVE_ENOUGH_DATA) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = ticketVideo.videoWidth;
+            canvas.height = ticketVideo.videoHeight;
+            
+            if (canvas.width > 0 && canvas.height > 0) {
+                context.drawImage(ticketVideo, 0, 0, canvas.width, canvas.height);
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: 'dontInvert' });
+                
+                if (code) {
+                    if (navigator.vibrate) navigator.vibrate(200);
+                    stopTicketScanner();
+                    verifyTicketFromQR(code.data);
+                    return;
+                }
+            }
+        }
+        ticketScanInterval = requestAnimationFrame(scanTicketFrame);
+    }
+
+    // API Calls
     async function verifyPassFromQR(qrData) {
         try {
             const response = await fetch('/verify_pass_qr', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ qr_data: qrData })
             });
-
             const data = await response.json();
-
+            
             if (data.success && data.found) {
                 const pass = data.pass;
-                
                 document.getElementById('displayPassNumber').textContent = pass.pass_number;
                 document.getElementById('displayPassHolder').textContent = pass.pass_holder;
-                document.getElementById('displayMobile').textContent = pass.mobile_no;
-                document.getElementById('displayAmount').textContent = `₹${pass.amount_paid}`;
-                document.getElementById('displayDate').textContent = pass.issue_date;
-                document.getElementById('displayTime').textContent = pass.issue_time;
-                
+                document.getElementById('displayPassMobile').textContent = pass.mobile_no;
+                document.getElementById('displayPassAmount').textContent = `₹${pass.amount_paid}`;
+                document.getElementById('displayPassDate').textContent = pass.issue_date;
+                document.getElementById('displayPassTime').textContent = pass.issue_time;
                 document.getElementById('passInfoCard').classList.add('active');
-                document.getElementById('noResult').classList.remove('active');
+                document.getElementById('passNoResult').classList.remove('active');
             } else {
                 document.getElementById('passInfoCard').classList.remove('active');
-                document.getElementById('noResult').classList.add('active');
+                document.getElementById('passNoResult').classList.add('active');
             }
         } catch (error) {
             console.error('Error:', error);
             alert('Network error. Please try again.');
         }
     }
+
     async function searchPass() {
         const input = document.getElementById('passNumberInput');
         const passNumber = input.value.trim().toUpperCase();
@@ -797,7 +967,7 @@
             return;
         }
         
-        const searchBtn = document.getElementById('searchBtn');
+        const searchBtn = document.getElementById('searchPassBtn');
         const originalText = searchBtn.innerHTML;
         searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
         searchBtn.disabled = true;
@@ -805,29 +975,24 @@
         try {
             const response = await fetch('/verify_pass', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ pass_number: passNumber })
             });
-
             const data = await response.json();
-
+            
             if (data.success && data.found) {
                 const pass = data.pass;
-                
                 document.getElementById('displayPassNumber').textContent = pass.pass_number;
                 document.getElementById('displayPassHolder').textContent = pass.pass_holder;
-                document.getElementById('displayMobile').textContent = pass.mobile_no;
-                document.getElementById('displayAmount').textContent = `₹${pass.amount_paid}`;
-                document.getElementById('displayDate').textContent = pass.issue_date;
-                document.getElementById('displayTime').textContent = pass.issue_time;
-                
+                document.getElementById('displayPassMobile').textContent = pass.mobile_no;
+                document.getElementById('displayPassAmount').textContent = `₹${pass.amount_paid}`;
+                document.getElementById('displayPassDate').textContent = pass.issue_date;
+                document.getElementById('displayPassTime').textContent = pass.issue_time;
                 document.getElementById('passInfoCard').classList.add('active');
-                document.getElementById('noResult').classList.remove('active');
+                document.getElementById('passNoResult').classList.remove('active');
             } else {
                 document.getElementById('passInfoCard').classList.remove('active');
-                document.getElementById('noResult').classList.add('active');
+                document.getElementById('passNoResult').classList.add('active');
             }
         } catch (error) {
             console.error('Error:', error);
@@ -837,34 +1002,117 @@
             searchBtn.disabled = false;
         }
     }
-    document.getElementById('markUsedBtn').addEventListener('click', function() {
+
+    async function verifyTicketFromQR(qrData) {
+        try {
+            const response = await fetch('/verify_ticket_qr', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ qr_data: qrData })
+            });
+            const data = await response.json();
+            
+            if (data.success && data.found) {
+                const ticket = data.ticket;
+                document.getElementById('displayTicketNumber').textContent = ticket.ticket_number;
+                document.getElementById('displayTicketHolder').textContent = ticket.ticket_holder;
+                document.getElementById('displayTicketMobile').textContent = ticket.mobile_no;
+                document.getElementById('displayStartDest').textContent = ticket.start_dest;
+                document.getElementById('displayFinalDest').textContent = ticket.final_dest;
+                document.getElementById('displayTicketCount').textContent = ticket.no_of_tickets;
+                document.getElementById('displayTicketAmount').textContent = `₹${ticket.amount_paid}`;
+                document.getElementById('displayTicketDate').textContent = ticket.issue_date;
+                document.getElementById('displayTicketTime').textContent = ticket.issue_time;
+                document.getElementById('ticketInfoCard').classList.add('active');
+                document.getElementById('ticketNoResult').classList.remove('active');
+            } else {
+                document.getElementById('ticketInfoCard').classList.remove('active');
+                document.getElementById('ticketNoResult').classList.add('active');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Network error. Please try again.');
+        }
+    }
+
+    async function searchTicket() {
+        const input = document.getElementById('ticketNumberInput');
+        const ticketNumber = input.value.trim();
+        
+        if (!ticketNumber) {
+            alert('Please enter a ticket number');
+            return;
+        }
+        
+        const searchBtn = document.getElementById('searchTicketBtn');
+        const originalText = searchBtn.innerHTML;
+        searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+        searchBtn.disabled = true;
+        
+        try {
+            const response = await fetch('/verify_ticket', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ticket_number: ticketNumber })
+            });
+            const data = await response.json();
+            
+            if (data.success && data.found) {
+                const ticket = data.ticket;
+                document.getElementById('displayTicketNumber').textContent = ticket.ticket_number;
+                document.getElementById('displayTicketHolder').textContent = ticket.ticket_holder;
+                document.getElementById('displayTicketMobile').textContent = ticket.mobile_no;
+                document.getElementById('displayStartDest').textContent = ticket.start_dest;
+                document.getElementById('displayFinalDest').textContent = ticket.final_dest;
+                document.getElementById('displayTicketCount').textContent = ticket.no_of_tickets;
+                document.getElementById('displayTicketAmount').textContent = `₹${ticket.amount_paid}`;
+                document.getElementById('displayTicketDate').textContent = ticket.issue_date;
+                document.getElementById('displayTicketTime').textContent = ticket.issue_time;
+                document.getElementById('ticketInfoCard').classList.add('active');
+                document.getElementById('ticketNoResult').classList.remove('active');
+            } else {
+                document.getElementById('ticketInfoCard').classList.remove('active');
+                document.getElementById('ticketNoResult').classList.add('active');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Network error. Please try again.');
+        } finally {
+            searchBtn.innerHTML = originalText;
+            searchBtn.disabled = false;
+        }
+    }
+
+    passStartBtn.addEventListener('click', startPassScanner);
+    passStopBtn.addEventListener('click', stopPassScanner);
+    ticketStartBtn.addEventListener('click', startTicketScanner);
+    ticketStopBtn.addEventListener('click', stopTicketScanner);
+    document.getElementById('searchPassBtn').addEventListener('click', searchPass);
+    document.getElementById('searchTicketBtn').addEventListener('click', searchTicket);
+    
+    document.getElementById('passNumberInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') searchPass();
+    });
+    document.getElementById('ticketNumberInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') searchTicket();
+    });
+    
+    document.getElementById('markPassUsedBtn').addEventListener('click', function() {
         const passNumber = document.getElementById('displayPassNumber').textContent;
         alert(`Pass ${passNumber} marked as used successfully!`);
         document.getElementById('passInfoCard').classList.remove('active');
     });
-
-    startBtn.addEventListener('click', startScanner);
-    stopBtn.addEventListener('click', stopScanner);
-    document.getElementById('searchBtn').addEventListener('click', searchPass);
     
-    document.getElementById('passNumberInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            searchPass();
-        }
+    document.getElementById('markTicketUsedBtn').addEventListener('click', function() {
+        const ticketNumber = document.getElementById('displayTicketNumber').textContent;
+        alert(`Ticket ${ticketNumber} marked as used successfully!`);
+        document.getElementById('ticketInfoCard').classList.remove('active');
     });
-
+    
     window.addEventListener('beforeunload', function() {
-        stopScanner();
+        stopPassScanner();
+        stopTicketScanner();
     });
-    document.addEventListener('DOMContentLoaded', function() {
-        if (!isCameraSupported()) {
-            updateCameraSupportMessage();
-        }
-        
-        if (isMobile && document.getElementById('scanTab').classList.contains('active') && isCameraSupported()) {
-            setTimeout(startScanner, 1000);
-        }
-    });
-</script>
+    </script>
 </body>
 </html>

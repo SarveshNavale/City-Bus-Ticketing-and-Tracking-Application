@@ -1,62 +1,33 @@
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('City Bus Stand', 1, 16.9914520, 73.2950390);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Malnaka', 1, 16.9906412, 73.3059455);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Maruti Mandir (Kokan)', 1, 16.9908009, 73.3120636);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Godbole', 1, 16.9950168, 73.3190417);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Charmalay', 1, 16.9964154, 73.3208352);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Kokan Nagar', 1, 17.0016121, 73.3245508);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Radha Krishna Nagar', 1, 17.0035718, 73.3269559);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Aadishti', 1, 17.0099843, 73.3301266);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Finolex', 1, 17.0116948, 73.3353763);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Jambhul Phata', 1, 17.0173015, 73.3356863);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude,stop_no) VALUES ('City Bus Stand', 1, 16.9914520, 73.2950390, 1);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Malnaka', 1, 16.9906412, 73.3059455, 2);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Maruti Mandir', 0, 16.9914520, 73.2950390, 3);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Godbole', 1, 16.9950168, 73.3190417, 4);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Charmalay', 1, 16.9964154, 73.3208352 , 5);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Kokan Nagar', 1, 17.0016121, 73.3245508, 6);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Radha Krishna Nagar', 1, 17.0035718, 73.3269559, 7);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Aadishti', 1, 17.0099843, 73.3301266 , 8);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Finolex', 1, 17.0116948, 73.3353763 ,9 );
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Jambhul Phata', 1, 17.0173015, 73.3356863, 10);
 
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('MARUTI MANDIR', 0, 16.9914520, 73.2950390);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Shivaji Nagar', 2, 16.9913144, 73.3213231,4 );
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Salvi', 2, 16.9940142, 73.3273839, 5);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('JK Files', 2, 16.9955833, 73.3309237, 6);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Railway Station', 2, 16.9980804, 73.3578163, 7);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Mahalakshmi', 2, 17.0015264, 73.3720352, 8);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Khedshi', 2, 17.0139045, 73.3949133, 9 );
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Hatkhamba', 2, 17.0150127, 73.4054062, 10);
 
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('City Bus Stand', 2, 16.9914520, 73.2950390);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Malnaka', 2, 16.9906412, 73.3059455);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Maruti Mandir (Main Highway)', 2, 16.9904574, 73.3130624);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Shivaji Nagar', 2, 16.9913144, 73.3213231);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Salvi', 2, 16.9940142, 73.3273839);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('JK Files', 2, 16.9955833, 73.3309237);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Railway Station', 2, 16.9980804, 73.3578163);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Mahalakshmi', 2, 17.0015264, 73.3720352);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Khedshi', 2, 17.0139045, 73.3949133);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Hatkhamba', 2, 17.0150127, 73.4054062);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Jogalekar', 3, 16.9897621, 73.3145604, 4);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Power House', 3, 16.9885660, 73.3178680, 5);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('I.T.I', 3, 16.9867141, 73.3230856, 6);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Nachane', 3, 16.9853803, 73.3291087, 7);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Godown', 3, 16.9865191, 73.3334559, 8);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Shantinagar', 3, 16.9845721, 73.3396431, 9);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Kajarghati', 3, 16.9769149, 73.3674380, 10);
 
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('City Bus Stand', 3, 16.9914520, 73.2950390);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Malnaka', 3, 16.9906412, 73.3059455);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Maruti Mandir (Nachane Road)', 3, 16.9897810, 73.3128478);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Jogalekar', 3, 16.9897621, 73.3145604);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Power House', 3, 16.9885660, 73.3178680);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('I.T.I', 3, 16.9867141, 73.3230856);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Nachane', 3, 16.9853803, 73.3291087);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Godown', 3, 16.9865191, 73.3334559);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Shantinagar', 3, 16.9845721, 73.3396431);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Kajarghati', 3, 16.9769149, 73.3674380);
 
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('City Bus Stand', 4, 16.9914520, 73.2950390);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Malnaka', 4, 16.9906412, 73.3059455);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Maruti Mandir (Main Highway)', 4, 16.9904574, 73.3130624);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Shivaji Nagar', 4, 16.9913144, 73.3213231);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Salvi', 4, 16.9940142, 73.3273839);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('JK Files', 4, 16.9955833, 73.3309237);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude) VALUES ('Railway Station', 4, 16.9980804, 73.3578163);
-
-CREATE TABLE complaint (
+CREATE TABLE IF NOT EXISTS fuel_consumption (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    comp_text TEXT,
-    comp_time TIME,
-    comp_date DATE,
-    comp_status VARCHAR(50) DEFAULT 'Pending'
-);
-
-DROP TABLE IF EXISTS stops_info1;
-CREATE TABLE bus_info1 (
-	id INT AUTO_INCREMENT PRIMARY KEY,
-	bus_no VARCHAR(20) NOT NULL,
-    no_plate VARCHAR(20) NOT NULL,
-    route VARCHAR(100),
-    driver_name VARCHAR(100) DEFAULT '',
-	driver_phone VARCHAR(15) DEFAULT ''
-    
-   
+    total_liter DECIMAL(10,2) NOT NULL,
+    cost DECIMAL(10,2) DEFAULT NULL
 );

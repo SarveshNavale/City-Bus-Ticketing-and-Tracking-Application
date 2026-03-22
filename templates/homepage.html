@@ -7,6 +7,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
+    @keyframes shinePass {
+    0%   { left: -100%; }
+    50%  { left: 150%; }
+    100% { left: 150%; }
+}
+
 * { box-sizing: border-box; }
 
 body {
@@ -405,10 +411,21 @@ body {
             <p class="card-label" data-en="Chat With Tiko" data-mr="टिकोशी बोला">Chat With Tiko</p>
             <span class="tiko-badge" data-en="NEW" data-mr="नवीन">NEW</span>
         </div>
-
+        <div class="card-btn full-btn tiko-card" onclick="window.location.href='/women_safety'">
+            <div class="card-icon-wrap"><i class="fa-solid fa-female"></i></div>
+            <p class="card-label" data-en="Women<br>Safety" data-mr="महिला<br>सुरक्षा">Women<br>Safety</p>
+            <span class="tiko-badge" data-en="NEW" data-mr="नवीन">NEW</span>
+        </div>
     </div>
 </div>
-
+<div style="margin: -4px 16px 16px 16px; border-radius: 22px; overflow: hidden; position: relative; cursor: pointer;"
+     onclick="window.location.href='/tourist'">
+    <img src="{{ url_for('static', filename='Assets/images/tourism.png') }}"
+         style="width: 100%; height: auto; display: block; border-radius: 22px;">
+    <div style="position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+                background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%);
+                animation: shinePass 2.5s infinite;"></div>
+</div>
 <!-- NAV BAR -->
 <div class="navwrap">
 

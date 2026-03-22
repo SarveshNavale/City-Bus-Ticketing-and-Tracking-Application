@@ -3,16 +3,16 @@ from flask import Flask, render_template, send_from_directory, request, jsonify,
 from dotenv import load_dotenv
 from groq import Groq
 import json
+import requests
 
-from qr_utils import generate_pass_qr,  extract_pass_number_from_qr
+from qr_utils import generate_pass_qr,  extract_pass_number_from_qr, generate_ticket_qr
 
 import random
 import string
 import os
 import mysql.connector
-from datetime import datetime, date, timedelta
-import time
-import requests
+from datetime import datetime, date, time, timedelta
+import time  # This is the time module for sleep()
 import threading
 from math import radians, sin, cos, sqrt, atan2
 
@@ -25,7 +25,10 @@ def get_db():
         host="localhost",
         user="root",
 
+
         password="shreyash45",
+
+        password="hrishi@123",
 
         database="RotaryClub_Database"
     )
@@ -34,7 +37,7 @@ def get_db():
 # ---------- normal routes ----------
 @app.route('/')
 def home():
-    return render_template("Registration.html")
+    return render_template("registration.html")
 
 @app.route('/robo')
 def robo():
@@ -50,8 +53,8 @@ def view_c():
 def admin_dashboard():
     return render_template("tc_login.html")
 
-@app.route('/admin_dashboard_actual')
-def admin_dashboard_actual():
+@app.route('/adminspage')
+def adminspage():
     return render_template(admin_dashboard.html)
 
 @app.route('/select')
@@ -485,7 +488,7 @@ def get_buses():
     buses = cursor.fetchall()
     cursor.close()
     db.close()
-    return jsonify(buses)
+    return jsonify({"buses": buses})  
 
 
 @app.route('/update_bus_location', methods=['POST'])
@@ -1215,8 +1218,6 @@ def complaint():
     db.close()
     return render_template("Complaint page.html", complaint=data)
 
-
-
 @app.route('/save_ticket', methods=['POST'])
 def save_ticket():
     try:
@@ -1267,6 +1268,30 @@ def save_ticket():
         ))
 
         db.commit()
+        
+        ticket_id = cursor.lastrowid
+        
+        ticket_data = {
+            'ticket_number': ticket_number,
+            'ticket_holder': user['cust_name'],
+            'mobile_no': mobile_no,
+            'amount_paid': amount_paid,
+            'start_dest': start_dest,
+            'final_dest': final_dest,
+            'issue_date': str(current_datetime.date()),
+            'issue_time': str(current_datetime.time())
+        }
+        
+        qr_image = generate_ticket_qr(ticket_data)
+        
+        try:
+            cursor.execute("""
+                UPDATE tickets_info SET qr_code = %s WHERE id = %s
+            """, (qr_image, ticket_id))
+            db.commit()
+        except Exception as qr_error:
+            print(f"Could not store QR code: {qr_error}")
+        
         cursor.close()
         db.close()
 
@@ -1284,8 +1309,133 @@ def save_ticket():
         traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)})
 
+@app.route('/generate_ticket_qr/<ticket_number>')
+def generate_ticket_qr_route(ticket_number):
+    """Generate QR code for a specific ticket"""
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT ticket_number, ticket_holder, mobile_no, amount_paid, start_dest, final_dest, issue_date, issue_time 
+            FROM tickets_info 
+            WHERE ticket_number = %s
+        """, (ticket_number,))
+        
+        ticket_data = cursor.fetchone()
+        cursor.close()
+        db.close()
+        
+        if not ticket_data:
+            return jsonify({'success': False, 'error': 'Ticket not found'})
+        
+        ticket_data['amount_paid'] = float(ticket_data['amount_paid'])
+        ticket_data['issue_date'] = str(ticket_data['issue_date'])
+        ticket_data['issue_time'] = str(ticket_data['issue_time'])
+        
+        qr_image = generate_ticket_qr(ticket_data)
+        
+        return jsonify({
+            'success': True,
+            'qr_image': qr_image,
+            'ticket_data': ticket_data
+        })
+        
+    except Exception as e:
+        print(f"Ticket QR generation error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+    
+@app.route('/verify_ticket', methods=['POST'])
+def verify_ticket():
+    """Verify a ticket number"""
+    try:
+        data = request.get_json()
+        ticket_number = data.get('ticket_number', '').strip()
+        
+        if not ticket_number:
+            return jsonify({'success': False, 'error': 'Ticket number required'})
+        
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT * FROM tickets_info 
+            WHERE ticket_number = %s
+        """, (ticket_number,))
+        
+        ticket_data = cursor.fetchone()
+        cursor.close()
+        db.close()
+        
+        if ticket_data:
+            ticket_data['issue_date'] = str(ticket_data['issue_date'])
+            ticket_data['issue_time'] = str(ticket_data['issue_time'])
+            ticket_data['amount_paid'] = float(ticket_data['amount_paid'])
+            
+            return jsonify({
+                'success': True,
+                'found': True,
+                'ticket': ticket_data
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'found': False
+            })
+            
+    except Exception as e:
+        print(f"Verify ticket error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
 
-# ── Admin ─────────────────────────────────────────────────────────────────────
+
+@app.route('/verify_ticket_qr', methods=['POST'])
+def verify_ticket_qr():
+    """Verify ticket from QR code scan data"""
+    try:
+        data = request.get_json()
+        qr_data = data.get('qr_data', '')
+        
+        try:
+            qr_json = json.loads(qr_data)
+            ticket_number = qr_json.get('tn') or qr_json.get('ticket_number')
+        except:
+            ticket_number = qr_data
+        
+        if not ticket_number:
+            return jsonify({'success': False, 'error': 'Invalid QR code'})
+        
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT * FROM tickets_info 
+            WHERE ticket_number = %s
+        """, (ticket_number,))
+        
+        ticket_data = cursor.fetchone()
+        cursor.close()
+        db.close()
+        
+        if ticket_data:
+            ticket_data['issue_date'] = str(ticket_data['issue_date'])
+            ticket_data['issue_time'] = str(ticket_data['issue_time'])
+            ticket_data['amount_paid'] = float(ticket_data['amount_paid'])
+            
+            return jsonify({
+                'success': True,
+                'found': True,
+                'ticket': ticket_data
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'found': False
+            })
+            
+    except Exception as e:
+        print(f"Ticket QR verify error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+    
 @app.route('/admin_login', methods=['POST'])
 def admin_login():
     username = request.form.get('admin_id')
@@ -1308,21 +1458,10 @@ def admin_login():
 def admin_login_page():
     return render_template("admin_login.html")
 
-
-
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# VIEW TICKET — renders the page shell, JS calls /get_all_tickets
-# ─────────────────────────────────────────────────────────────────────────────
 @app.route('/view_ticket')
 def view_ticket():
     return render_template("view_ticket.html")
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# GET ALL TICKETS — returns every ticket for the logged-in user
-# ─────────────────────────────────────────────────────────────────────────────
 @app.route('/get_all_tickets')
 def get_all_tickets():
     """API: Returns ALL tickets of the currently logged-in user from tickets_info"""
@@ -1692,22 +1831,59 @@ def delete_complaint(id):
         print("Delete Error:", e)
         return jsonify({"success": False})
 
+@app.route('/update_profile_field', methods=['POST'])
+def update_profile_field():
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
 
+        cursor.execute("SELECT mobile_no FROM current_login LIMIT 1")
+        current_login = cursor.fetchone()
 
+        if not current_login:
+            return jsonify({'success': False, 'error': 'No user logged in'})
 
+        mobile_no = current_login['mobile_no']
 
+        data = request.get_json()
+        field = data.get('field', '').strip()
+        value = data.get('value', '').strip()
 
+        # Whitelist — only these fields are allowed to be updated
+        allowed_fields = {
+            'name':   'cust_name',
+            'age':    'cust_age',
+            'mobile': 'cust_number',
+            'email':  'cust_email'
+        }
 
+        if field not in allowed_fields:
+            return jsonify({'success': False, 'error': 'Invalid field'})
 
+        db_column = allowed_fields[field]
 
+        cursor.execute(
+            f"UPDATE cust_info SET {db_column} = %s WHERE cust_number = %s",
+            (value, mobile_no)
+        )
+        db.commit()
 
+        # If mobile number was changed, update current_login too
+        if field == 'mobile':
+            cursor.execute(
+                "UPDATE current_login SET mobile_no = %s WHERE mobile_no = %s",
+                (value, mobile_no)
+            )
+            db.commit()
 
+        cursor.close()
+        db.close()
 
+        return jsonify({'success': True})
 
-
-
-
-
+    except Exception as e:
+        print(f"update_profile_field error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
 
 
 
@@ -1727,7 +1903,7 @@ def fetch_location():
             db = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="#SAR1807",
+                password="hrishi@123",
                 database="RotaryClub_Database"
             )
 
@@ -1749,17 +1925,57 @@ def fetch_location():
 thread = threading.Thread(target=fetch_location)
 thread.daemon = True
 thread.start()
+@app.route("/tourist")
+def tourist():
+    return render_template("tourist.html")
 
+@app.route('/women_safety')
+def women_safety():
+    return render_template("women_safety.html")
 
+@app.route('/send_sos_alert', methods=['POST'])
+def send_sos_alert():
+    """Store SOS alert in complaints table"""
+    try:
+        data = request.get_json()
+        
+        now = datetime.now()
+        
+        sos_text = f"""
+SOS ALERT!
 
+User: {data.get('user_name', 'Unknown')}
+Mobile: {data.get('user_mobile', 'Unknown')}
+Time: {data.get('timestamp', now.strftime('%Y-%m-%d %H:%M:%S'))}
+Location: {data.get('latitude', 0)}, {data.get('longitude', 0)}
+Map Link: {data.get('location_url', '')}
 
-
+URGENT: This is an SOS alert from a passenger. Please take immediate action.
+        """.strip()
+        
+        db = get_db()
+        cursor = db.cursor()
+        
+        cursor.execute("""
+            INSERT INTO complaint (comp_text, comp_time, comp_date, comp_status)
+            VALUES (%s, %s, %s, %s)
+        """, (sos_text, now.strftime("%H:%M:%S"), now.strftime("%Y-%m-%d"), 'SOS_PENDING'))
+        
+        db.commit()
+        cursor.close()
+        db.close()
+        
+        print(f"SOS Alert saved for user: {data.get('user_name')} at {now}")
+        
+        return jsonify({'success': True, 'message': 'SOS alert sent to admin'})
+        
+    except Exception as e:
+        print(f"SOS error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 
 
-@app.route("/tourist")
-def tourist():
-    return render_template("tourist.html")
-#task completed

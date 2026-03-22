@@ -40,7 +40,7 @@ body {
 }
 
 .backbutton img {
-    width: 32px; height: 32px;
+    width: 72px; height: 72px;
     object-fit: contain;
     display: block;
 }
@@ -348,40 +348,32 @@ body {
     <div class="profile-card">
 
         <!-- NAME -->
-        <div class="field-row">
-            <div class="field-label">
-                <span data-en="Name" data-mr="नाव">Name</span>
-                <span class="edit-btn" data-en="✎ Edit" data-mr="✎ संपादित करा">✎ Edit</span>
-            </div>
-            <input class="field-input" id="inputName" type="text" value="Loading..." disabled>
-        </div>
+<div class="field-label">
+    <span data-en="Name" data-mr="नाव">Name</span>
+    <span class="edit-btn" data-field="name" onclick="toggleEdit(this)">✎ Edit</span>
+</div>
+<input class="field-input" id="inputName" type="text" value="Loading..." disabled>
 
-        <!-- AGE -->
-        <div class="field-row">
-            <div class="field-label">
-                <span data-en="Age" data-mr="वय">Age</span>
-                <span class="edit-btn" data-en="✎ Edit" data-mr="✎ संपादित करा">✎ Edit</span>
-            </div>
-            <input class="field-input" id="inputAge" type="number" value="0" disabled>
-        </div>
+<!-- AGE -->
+<div class="field-label">
+    <span data-en="Age" data-mr="वय">Age</span>
+    <span class="edit-btn" data-field="age" onclick="toggleEdit(this)">✎ Edit</span>
+</div>
+<input class="field-input" id="inputAge" type="number" value="0" disabled>
 
-        <!-- MOBILE -->
-        <div class="field-row">
-            <div class="field-label">
-                <span data-en="Mobile Number" data-mr="मोबाईल नंबर">Mobile Number</span>
-                <span class="edit-btn" data-en="✎ Edit" data-mr="✎ संपादित करा">✎ Edit</span>
-            </div>
-            <input class="field-input" id="inputMobile" type="text" value="Loading..." disabled>
-        </div>
+<!-- MOBILE -->
+<div class="field-label">
+    <span data-en="Mobile Number" data-mr="मोबाईल नंबर">Mobile Number</span>
+    <span class="edit-btn" data-field="mobile" onclick="toggleEdit(this)">✎ Edit</span>
+</div>
+<input class="field-input" id="inputMobile" type="text" value="Loading..." disabled>
 
-        <!-- EMAIL -->
-        <div class="field-row">
-            <div class="field-label">
-                <span data-en="Email" data-mr="ईमेल">Email</span>
-                <span class="edit-btn" data-en="✎ Edit" data-mr="✎ संपादित करा">✎ Edit</span>
-            </div>
-            <input class="field-input" id="inputEmail" type="text" value="Loading..." disabled>
-        </div>
+<!-- EMAIL -->
+<div class="field-label">
+    <span data-en="Email" data-mr="ईमेल">Email</span>
+    <span class="edit-btn" data-field="email" onclick="toggleEdit(this)">✎ Edit</span>
+</div>
+<input class="field-input" id="inputEmail" type="text" value="Loading..." disabled>
 
     </div>
 
@@ -415,20 +407,20 @@ body {
 
         <!-- About us -->
         <a href="/about_us" class="popup-item">
-            <div class="popup-item-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="popup-item-icon"><i class="fa-solid fa-circle-info"></i></div>
             <div>
-                <div class="popup-item-text">About us</div>
+                <div class="popup-item-text">About Us</div>
                 <div class="popup-item-sub">Learn more about our system</div>
             </div>
         </a>
 
         <div class="popup-divider"></div>
    
-         <!-- customer helpline -->
+        <!-- Customer Helpline -->
         <a href="/customer_helpline" class="popup-item">
-            <div class="popup-item-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="popup-item-icon"><i class="fa-solid fa-headset"></i></div>
             <div>
-                <div class="popup-item-text">customer helpline</div>
+                <div class="popup-item-text">Customer Helpline</div>
                 <div class="popup-item-sub">Get help and support</div>
             </div>
         </a>
@@ -437,7 +429,7 @@ body {
 
         <!-- Terms & Conditions -->
         <a href="/terms_conditions" class="popup-item">
-            <div class="popup-item-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="popup-item-icon"><i class="fa-solid fa-file-lines"></i></div>
             <div>
                 <div class="popup-item-text">Terms and Conditions</div>
                 <div class="popup-item-sub">Read our rules and policies</div>
@@ -446,16 +438,27 @@ body {
 
         <div class="popup-divider"></div>
 
-        <!-- Dev’s Corner -->
+        <!-- Dev's Corner -->
         <a href="/devs_corner" class="popup-item">
-            <div class="popup-item-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="popup-item-icon"><i class="fa-solid fa-code"></i></div>
             <div>
-                <div class="popup-item-text">Dev’s Corner</div>
+                <div class="popup-item-text">Dev's Corner</div>
                 <div class="popup-item-sub">App version and technical info</div>
             </div>
         </a>
 
         <div class="popup-divider"></div>
+
+        <!-- Log Out -->
+        <div class="popup-item" onclick="logOut()" style="background:#FFF0F0;">
+            <div class="popup-item-icon" style="background:#FFE0E0;">
+                <i class="fa-solid fa-right-from-bracket" style="color:#E05555;"></i>
+            </div>
+            <div>
+                <div class="popup-item-text" style="color:#E05555;">Log Out</div>
+                <div class="popup-item-sub">Sign out of your account</div>
+            </div>
+        </div>
 
     </div>
 </div>
@@ -565,6 +568,23 @@ function handleOverlayClick(e) {
         closeSettingsPopup();
     }
 }
+
+// ── LOG OUT ──
+function logOut() {
+    if (!confirm('Are you sure you want to log out?')) return;
+
+    fetch('/clear_login', { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+            console.log('Logout response:', data);
+            window.location.href = '/';
+        })
+        .catch(err => {
+            console.error('Logout error:', err);
+            // Redirect anyway even if the request fails
+            window.location.href = '/';
+        });
+}
 </script>
 
 <!-- ── BILINGUAL SCRIPT ── -->
@@ -582,6 +602,72 @@ function changeLang(lang) {
     const saved = localStorage.getItem("lang");
     if (saved && saved !== 'en') { changeLang(saved); }
 })();
+
+
+const fieldMap = {
+    'name':   'inputName',
+    'age':    'inputAge',
+    'mobile': 'inputMobile',
+    'email':  'inputEmail'
+};
+
+function toggleEdit(btn) {
+    const field = btn.getAttribute('data-field');
+    const inputId = fieldMap[field];
+    const input = document.getElementById(inputId);
+
+    if (input.disabled) {
+        // Enter edit mode
+        input.disabled = false;
+        input.focus();
+        input.style.boxShadow = '0 0 0 3px rgba(108,100,255,0.25)';
+        input.style.background = '#fff';
+        btn.textContent = '✔ Save';
+        btn.style.background = '#6C64FF';
+        btn.style.color = '#fff';
+    } else {
+        // Save mode
+        const newValue = input.value.trim();
+        if (!newValue) {
+            alert('Field cannot be empty!');
+            return;
+        }
+        saveField(field, newValue, btn, input);
+    }
+}
+
+function saveField(field, value, btn, input) {
+    btn.textContent = '...';
+
+    fetch('/update_profile_field', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ field: field, value: value })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            input.disabled = true;
+            input.style.boxShadow = '';
+            input.style.background = '#F0F2FF';
+            btn.textContent = '✎ Edit';
+            btn.style.background = '';
+            btn.style.color = '';
+
+            // Update the displayed name at top if name was changed
+            if (field === 'name') {
+                document.getElementById('profileUserName').textContent = value;
+            }
+        } else {
+            alert('Error: ' + (data.error || 'Could not save'));
+            btn.textContent = '✔ Save';
+        }
+    })
+    .catch(() => {
+        alert('Network error. Try again.');
+        btn.textContent = '✔ Save';
+    });
+}
 </script>
 
 </body>
