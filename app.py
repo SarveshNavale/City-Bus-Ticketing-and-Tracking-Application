@@ -25,7 +25,9 @@ def get_db():
         host="localhost",
         user="root",
 
+
         password="Parth@123",
+
 
         database="RotaryClub_Database"
     )

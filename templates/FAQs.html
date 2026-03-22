@@ -121,7 +121,43 @@
   }
 
   .faq-a.show { display: block; }
+  
+  /* ── LANGUAGE TOGGLE ── */
+.lang-toggle {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.18);
+    border-radius: 14px;
+    overflow: hidden;
+    height: 44px;
+    cursor: pointer;
+}
 
+.lang-btn {
+    padding: 0 13px;
+    height: 100%;
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.65);
+    background: transparent;
+    border: none;
+    font-family: "Nunito", sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    letter-spacing: 0.3px;
+}
+
+.lang-btn.active {
+    background: rgba(255,255,255,0.30);
+    color: #fff;
+}
+
+   /* ── TOP-RIGHT CONTROLS ── */
+.top-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
   /* ── NAV BAR ── */
   .navwrap {
     width: calc(100% - 32px);
@@ -174,12 +210,22 @@
   <div class="circle1"></div>
   <div class="circle2"></div>
 
-  <a href="/backtohome" style="text-decoration:none;color:inherit;outline:none;-webkit-tap-highlight-color:transparent;">
+  <a href="/backtohome" style="text-decoration:none;color:inherit;">
     <div class="backbutton">
       <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
       <p style="font-size:22px;font-weight:600;color:white;">FAQs</p>
     </div>
   </a>
+
+  <!-- ✅ PROFILE STYLE LANGUAGE TOGGLE -->
+   <div class="top-right">
+  <div class="top-right-controls" style="position:absolute; top:55px; right:30px; display:flex; align-items:center; gap:10px; z-index:20;">
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-en" onclick="changeLang('en')">EN</button>
+      <button class="lang-btn" id="btn-mr" onclick="changeLang('mr')">मर</button>
+    </div>
+  </div>
+</div>
 </div>
 
 <!-- CONTENT -->
@@ -219,87 +265,157 @@
 </div>
 
 <script>
+let currentLang = "en";
+
 const faqs = [
   {
-    q: "How do I register on the app?",
-    a: "Go to the Registration page, enter your name, age, phone number, email, and password. You can also sign in using Google."
+    q: {
+      en: "How do I register on the app?",
+      mr: "अॅपवर नोंदणी कशी करावी?"
+    },
+    a: {
+      en: "Go to the Registration page, enter your name, age, phone number, email, and password. You can also sign in using Google.",
+      mr: "नोंदणी पेजवर जा, तुमचे नाव, वय, मोबाईल नंबर, ईमेल आणि पासवर्ड भरा. तुम्ही Google वापरून साइन इन करू शकता."
+    }
   },
   {
-    q: "How do I login if I already have an account?",
-    a: "On the Registration page, tap 'Login' at the bottom and enter your registered phone number or email."
+    q: {
+      en: "How do I login if I already have an account?",
+      mr: "माझ्याकडे आधीच अकाउंट असल्यास लॉगिन कसे करावे?"
+    },
+    a: {
+      en: "On the Registration page, tap 'Login' at the bottom and enter your registered phone number or email and password.",
+      mr: "नोंदणी पानावर खाली 'लॉगिन' वर टॅप करा आणि तुमचा नोंदणीकृत मोबाईल क्रमांक किंवा ईमेल आणि पासवर्ड टाका."
+    }
   },
   {
-    q: "How do I track a bus location?",
-    a: "Tap 'Track Bus' from the Home Page, select your route, and the app will show live GPS movement of the bus on the map."
+    q: {
+      en: "How do I track a bus location?",
+      mr: "बस लोकेशन कशी ट्रॅक करावी?"
+    },
+    a: {
+      en: "Tap 'Track Bus' from the Home Page, select your route, and the app will show live GPS movement of the bus on the map.",
+      mr: "मुख्य पानावर 'बस ट्रॅक' वर टॅप करा, तुमचा मार्ग निवडा आणि अ‍ॅप तुम्हाला नकाशावर बसचे लाईव्ह GPS हालचाल दाखवेल."
+    }
   },
   {
-    q: "How do I buy a ticket?",
-    a: "From the Home Page, select 'Buy Ticket', choose your start stop and destination stop, enter number of tickets, and pay using UPI or card."
+    q: {
+      en: "How do I buy a ticket?",
+      mr: "तिकीट कसे खरेदी करावे?"
+    },
+    a: {
+      en: "From the Home Page, select 'Buy Ticket', choose your start stop and destination stop, enter number of tickets, and pay using UPI or card.",
+      mr: "मुख्य पानावरून 'तिकीट खरेदी करा' निवडा, तुमचा सुरूवातीचा थांबा निवडा, गंतव्य थांबा निवडा, तिकीटांची संख्या भरा आणि UPI किंवा कार्डद्वारे पेमेंट करा."
+    }
   },
-  {
-    q: "Where can I view my purchased tickets?",
-    a: "Go to 'View Ticket' from the Home Page bottom navigation bar. All valid tickets appear there."
+    {
+  q: {
+    en: "Where can I view my purchased tickets?",
+    mr: "मी खरेदी केलेली तिकिटे कुठे पाहू शकतो?"
   },
-  {
-    q: "What information is shown on a ticket?",
-    a: "Each ticket includes: From stop, To stop, Number of tickets, Ticket number, Amount paid, Issue date & time, and QR/Barcode for verification."
+  a: {
+    en: "On the Home Page, there is a 'View Ticket' option where you can see all your tickets.",
+    mr: "मुख्य पानावर 'तिकीट पाहा' हा पर्याय आहे, तिथे तुम्ही तुमची सर्व तिकिटे पाहू शकता."
+  }
+},
+{
+  q: {
+    en: "What information is shown on a ticket?",
+    mr: "तिकीटावर कोणती माहिती दर्शविली जाते?"
   },
-  {
-    q: "How do I buy a pass?",
-    a: "From the Home Page, select 'Buy Pass', choose pass type (Daily / Weekly / Monthly), enter number of members, confirm details, and pay."
+  a: {
+    en: "Each ticket includes: From stop, To stop, Number of tickets, Ticket number, Amount paid, Issue date & time, and QR/Barcode for verification.",
+    mr: "प्रत्येक तिकीटामध्ये पुढील माहिती असते: सुरूवातीचा थांबा, गंतव्य थांबा, तिकीटांची संख्या, तिकीट क्रमांक, भरलेली रक्कम, जारी तारीख व वेळ आणि पडताळणीसाठी QR/बारकोड."
+  }
+},
+{
+  q: {
+    en: "How do I buy a pass?",
+    mr: "पास कसा खरेदी करायचा?"
   },
-  {
-    q: "How do I view my pass after buying?",
-    a: "Go to 'View Pass' from the bottom menu. Your active pass will show with pass holder details, validity, and QR code."
+  a: {
+    en: "From the Home Page, select 'Buy Pass', enter number of members, confirm details, and pay.",
+    mr: "मुख्य पानावर 'पास खरेदी करा' निवडा, सदस्यांची संख्या टाका, तपशील तपासा आणि पेमेंट करा."
+  }
+},
+{
+  q: {
+    en: "How do I view my pass after buying?",
+    mr: "खरेदी केल्यानंतर पास कसा पाहायचा?"
   },
-  {
-    q: "Why is bus tracking delayed or inaccurate sometimes?",
-    a: "Tracking may be slow due to weak GPS on the bus or network issues. Refresh after 10–20 seconds or check signal strength."
+  a: {
+    en: "On the Home Page, select 'View Pass'. Your active pass will be displayed with pass holder details, validity, and QR code.",
+    mr: "मुख्य पानावर 'पास पाहा' हा पर्याय निवडा. तुमचा पास, पास धारकाची माहिती, वैधता आणि QR कोडसह दिसेल."
+  }
+},
+{
+  q: {
+    en: "What payment methods are supported?",
+    mr: "कोणते पेमेंट पद्धती उपलब्ध आहेत?"
   },
-  {
-    q: "How do I file a complaint?",
-    a: "Open Complaint page, enter your issue and submit. TC (Ticket Checker) can scan your ticket barcode and verify your complaint."
+  a: {
+    en: "UPI, Debit Card, Credit Card, Net Banking, and Wallets are supported.",
+    mr: "UPI, डेबिट कार्ड, क्रेडिट कार्ड, नेट बँकिंग आणि वॉलेट्स या पेमेंट पद्धती उपलब्ध आहेत."
+  }
+},
+{
+  q: {
+    en: "What if payment fails but money is deducted?",
+    mr: "पेमेंट फेल झालं पण पैसे कट झाले तर काय करावे?"
   },
-  {
-    q: "How do I check complaint status?",
-    a: "Go to 'Complaint View' to see complaint date, bus number, route, and status (Pending / In-progress / Closed)."
+  a: {
+    en: "Your ticket will auto-generate once payment confirms. If not, the amount will be refunded within 2–5 days.",
+    mr: "पेमेंट कन्फर्म झाल्यावर तुमचे तिकीट आपोआप तयार होईल. तसे न झाल्यास, रक्कम 2–5 दिवसांत परत केली जाईल."
+  }
+},
+{
+  q: {
+    en: "Do I need internet for this app?",
+    mr: "हे अ‍ॅप वापरण्यासाठी इंटरनेट आवश्यक आहे का?"
   },
+  a: {
+    en: "Internet is required for buying tickets, tracking buses, viewing complaints, and updating profile. Downloaded tickets and passes can be shown offline.",
+    mr: "तिकीट खरेदी, बस ट्रॅकिंग, तक्रारी पाहणे आणि प्रोफाइल अपडेट करण्यासाठी इंटरनेट आवश्यक आहे. डाउनलोड केलेली तिकिटे आणि पास ऑफलाइन दाखवता येतात."
+  }
+},
   {
-    q: "What payment methods are supported?",
-    a: "UPI, Debit Card, Credit Card, Net Banking, and Wallets are supported."
-  },
-  {
-    q: "What if payment fails but money is deducted?",
-    a: "Your ticket will auto-generate once payment confirms. If not, the amount will be refunded within 2–5 days."
-  },
-  {
-    q: "Do I need internet for this app?",
-    a: "Internet is required for buying tickets, tracking buses, viewing complaints, and updating profile. Downloaded tickets and passes can be shown offline."
-  },
-  {
-    q: "Is my data safe?",
-    a: "Yes. Your data is encrypted and securely stored. Only authorized transport staff can verify your QR ticket or pass."
+    q: {
+      en: "Is my data safe?",
+      mr: "माझा डेटा सुरक्षित आहे का?"
+    },
+    a: {
+      en: "Yes, your data is encrypted and securely stored.",
+      mr: "हो, तुमचा डेटा सुरक्षित आहे."
+    }
   }
 ];
 
 const faqList = document.getElementById("faqList");
 
-faqs.forEach((item, i) => {
-  const box = document.createElement("div");
-  box.className = "faq-item";
-  box.style.animationDelay = (i * 0.04) + "s";
+// ✅ render change (only this line change)
+function renderFAQs() {
+  faqList.innerHTML = "";
 
-  box.innerHTML = `
-    <div class="faq-q" data-i="${i}">
-      <span>${item.q}</span>
-      <span class="toggle-icon">+</span>
-    </div>
-    <div class="faq-a" id="ans-${i}">${item.a}</div>
-  `;
+  faqs.forEach((item, i) => {
+    const box = document.createElement("div");
+    box.className = "faq-item";
+    box.style.animationDelay = (i * 0.04) + "s";
 
-  faqList.appendChild(box);
-});
+    box.innerHTML = `
+      <div class="faq-q" data-i="${i}">
+        <span>${item.q[currentLang]}</span>
+        <span class="toggle-icon">+</span>
+      </div>
+      <div class="faq-a" id="ans-${i}">
+        ${item.a[currentLang]}
+      </div>
+    `;
 
+    faqList.appendChild(box);
+  });
+}
+
+// toggle same
 faqList.addEventListener("click", e => {
   const q = e.target.closest(".faq-q");
   if (!q) return;
@@ -312,7 +428,19 @@ faqList.addEventListener("click", e => {
   q.classList.toggle("open");
   icon.textContent = ans.classList.contains("show") ? "×" : "+";
 });
-</script>
 
+// ✅ same as profile logic
+function changeLang(lang) {
+  currentLang = lang;
+
+  document.getElementById("btn-en").classList.toggle("active", lang === "en");
+  document.getElementById("btn-mr").classList.toggle("active", lang === "mr");
+
+  renderFAQs();
+}
+
+// load
+renderFAQs();
+</script>
 </body>
 </html>
