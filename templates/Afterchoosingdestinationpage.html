@@ -511,6 +511,20 @@ body {
     color: #AAAACC;
     text-align: center;
 }
+
+.lang-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.lang-toggle button {
+    margin-left: 5px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
 </style>
 </head>
 
@@ -527,6 +541,12 @@ body {
       <p style="font-size:22px;font-weight:600;color:white;">Buy Ticket</p>
     </div>
   </a>
+
+ <!-- LANGUAGE SWITCH -->
+    <div class="lang-toggle">
+        <button onclick="changeLang('en')">EN</button>
+        <button onclick="changeLang('mr')">मर</button>
+    </div>
 </div>
 
 
@@ -535,15 +555,27 @@ body {
 
     <div class="main-card">
 
-        <p class="header-tagline">Confirm Your Journey</p>
-        <p class="section-label">Ticket Details</p>
+        <p class="header-tagline" 
+        data-en="Confirm Your Journey" 
+        data-mr="तुमचा प्रवास निश्चित करा">
+        Confirm Your Journey
+        </p>
+        <p class="section-label" 
+        data-en="Ticket Details" 
+        data-mr="तिकीट तपशील">
+        Ticket Details
+        </p>
 
         <!-- Route Section — now with search inputs -->
         <div class="card-section route-row">
 
             <!-- FROM stop -->
             <div class="location" style="flex:1;">
-                <span class="label">From</span>
+                <span class="label" 
+                data-en="From" 
+                data-mr="पासून">
+                From
+                overflow-x</span>
                 <div class="stop-search-wrap">
                     <i class="fa-solid fa-circle-dot stop-search-icon"></i>
                     <input
@@ -560,7 +592,11 @@ body {
 
             <!-- TO stop -->
             <div class="location" style="flex:1;">
-                <span class="label">To</span>
+                <span class="label" 
+                data-en="To" 
+                data-mr="पर्यंत">
+                To
+                </span>
                 <div class="stop-search-wrap">
                     <i class="fa-solid fa-location-dot stop-search-icon"></i>
                     <input
@@ -578,18 +614,24 @@ body {
         <!-- Fare Section -->
         <div class="card-section info-row">
             <div>
-                <span>Fare per ticket</span>
+                <span data-en="Fare per ticket" data-mr="प्रति तिकीट भाडे">
+                Fare per ticket
+                </span>
                 <strong id="farePerTicket">₹ —</strong>
             </div>
             <div>
-                <span>Stops away</span>
+                <span data-en="Stops away" data-mr="थांबे अंतर">
+                Stops away
+                </span>
                 <strong id="stopsCount">—</strong>
             </div>
         </div>
 
         <!-- Ticket Counter -->
         <div class="card-section counter-row">
-            <span>Number of Tickets</span>
+            <span data-en="Number of Tickets" data-mr="तिकीट संख्या">
+            Number of Tickets
+            </span>
             <div class="counter-box">
                 <button onclick="dec()">−</button>
                 <span id="ticketCount">1</span>
@@ -599,16 +641,19 @@ body {
 
         <!-- Total -->
         <div class="total-row">
-            <span>Total Amount</span>
+            <span data-en="Total Amount" data-mr="एकूण रक्कम">
+            Total Amount
+            </span>
             <h2 id="totalAmount">₹ 0.00</h2>
         </div>
 
         <!-- Pay Button -->
-        <button class="pay-btn" onclick="handlePay()">
+        <button class="pay-btn" onclick="handlePay()" data-en="Pay Now"
+        data-mr="आता पैसे भरा">
            Pay Now
         </button>
 
-    </div>
+    </div>  
 
 </div>
 
@@ -618,7 +663,11 @@ body {
 
         <div id="stateProcessing">
             <div class="spinner"></div>
-            <div class="overlay-title">Processing Payment…</div>
+            <div class="overlay-title"
+            data-en="Processing Payment…"
+            data-mr="पेमेंट सुरू आहे…">
+            Processing Payment…
+            </div>
             <div class="overlay-sub">Please wait, don't go back</div>
         </div>
 
@@ -628,8 +677,16 @@ body {
                     <polyline points="20 6 9 17 4 12"/>
                 </svg>
             </div>
-            <div class="overlay-title">Payment Successful! 🎉</div>
-            <div class="overlay-sub">Your ticket has been booked</div>
+            <div class="overlay-title"
+            data-en="Payment Successful! 🎉"
+            data-mr="पेमेंट यशस्वी! 🎉">
+            Payment Successful! 🎉
+            </div>
+            <div class="overlay-sub"
+            data-en="Your ticket has been booked"
+            data-mr="तुमचे तिकीट बुक झाले आहे">
+            Your ticket has been booked
+            </div>
             <div class="ticket-num-display" id="ticketNumDisplay">TC———</div>
         </div>
 
@@ -863,6 +920,22 @@ async function handlePay() {
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function changeLang(lang) {
+    document.querySelectorAll("[data-en]").forEach(el => {
+        el.innerHTML = el.getAttribute("data-" + lang);
+    });
+
+    localStorage.setItem("lang", lang);
+}
+
+// Auto apply saved language
+(function() {
+    const saved = localStorage.getItem("lang");
+    if (saved && saved !== 'en') {
+        changeLang(saved);
+    }
+})();
 </script>
 
 </body>
