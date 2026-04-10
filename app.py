@@ -26,7 +26,7 @@ def get_db():
         user="root",
 
 
-        password="Parth@123",
+        password="#SAR1807",
 
 
         database="RotaryClub_Database"
@@ -1681,12 +1681,12 @@ atexit.register(cleanup_on_shutdown)
 # ─────────────────────────────────────────────────────────────────────────────
 start_notification_service()
 
-# GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-# if not GROQ_API_KEY:
-#  raise ValueError("GROQ_API_KEY not found in .env file")
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+if not GROQ_API_KEY:
+ raise ValueError("GROQ_API_KEY not found in .env file")
 
 
-# groq_client = Groq(api_key=GROQ_API_KEY)
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 
 
@@ -1906,7 +1906,7 @@ def fetch_location():
             db = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="Parth@123",
+                password="#SAR1807",
                 database="RotaryClub_Database"
             )
 
@@ -2031,7 +2031,7 @@ def get_stops_between():
         conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="Parth@123",
+            password="#SAR1807",
             database="RotaryClub_Database"
         )
         cursor = conn.cursor(dictionary=True)

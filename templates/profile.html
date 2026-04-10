@@ -449,7 +449,17 @@ body {
 
         <div class="popup-divider"></div>
 
-        <!-- Log Out -->
+
+        <div class="popup-item" onclick="Scan()" style="background:#FFF0F0;">
+            <div class="popup-item-icon" style="background:#FFE0E0;">
+                <i class="fa-solid fa-right-from-bracket" style="color:#35ed63;"></i>
+            </div>
+            <div>
+                <div class="popup-item-text" style="color:z#62cb31;">Scan Ticket</div>
+                <div class="popup-item-sub">Verify tickets and passes</div>
+            </div>
+        </div>
+        
         <div class="popup-item" onclick="logOut()" style="background:#FFF0F0;">
             <div class="popup-item-icon" style="background:#FFE0E0;">
                 <i class="fa-solid fa-right-from-bracket" style="color:#E05555;"></i>
@@ -569,7 +579,15 @@ function handleOverlayClick(e) {
     }
 }
 
-// ── LOG OUT ──
+
+function Scan() {
+    if (!confirm('Do you want to access Admin Feature?')) return;
+
+
+            window.location.href = '/tc_login';
+       
+}
+
 function logOut() {
     if (!confirm('Are you sure you want to log out?')) return;
 
@@ -587,7 +605,7 @@ function logOut() {
 }
 </script>
 
-<!-- ── BILINGUAL SCRIPT ── -->
+
 <script>
 function changeLang(lang) {
     document.querySelectorAll("[data-en]").forEach(el => {

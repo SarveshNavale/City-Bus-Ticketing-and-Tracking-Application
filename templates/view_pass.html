@@ -239,7 +239,7 @@
                         </div>
                     </div>
                 </div>
-                {% if passes and passes|length > 0 %}
+
                 <div class="qr-section">
                     <div class="qr-title">
                         <i class="bi bi-qr-code"></i> PASS QR CODE
@@ -256,10 +256,10 @@
                         <i class="bi bi-info-circle"></i> Show this QR code to the Ticket Checker for verification
                     </div>
                 </div>
-                {% endif %}
             </div>
         {% endif %}
     </div>
+
     {% if actual_user %}
     <div id="pass-data" 
          data-actual-user="true"
@@ -271,40 +271,48 @@
          style="display:none;">
     </div>
     {% endif %}
-    {% if not no_pass and passes and passes|length > 0 %}
+
+    <!-- QR SCRIPT: always runs when passes exist, no nested Jinja condition -->
+    {% if not no_pass and passes %}
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const passNumber = "{{ passes[0].pass_number }}";
+        var passNumber = "{{ passes[0].pass_number }}";
         console.log("Loading QR for pass:", passNumber);
-        
-        const qrLoading = document.getElementById('qrLoading');
-        const qrImage = document.getElementById('qrCodeImage');
-        
+
+        var qrLoading = document.getElementById('qrLoading');
+        var qrImage   = document.getElementById('qrCodeImage');
+
         if (!qrLoading || !qrImage) {
-            console.error("QR elements not found");
+            console.error("QR elements not found in DOM");
             return;
         }
-        fetch(`/generate_pass_qr/${passNumber}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+
+        if (!passNumber || passNumber.trim() === '') {
+            qrLoading.innerHTML = '<i class="bi bi-exclamation-triangle"></i> No pass number found';
+            console.error("Pass number is empty");
+            return;
+        }
+
+        fetch('/generate_pass_qr/' + passNumber)
+            .then(function(response) {
+                if (!response.ok) throw new Error('HTTP error: ' + response.status);
                 return response.json();
             })
-            .then(data => {
-                if (data.success) {
+            .then(function(data) {
+                console.log("QR API response:", data);
+                if (data.success && data.qr_image) {
                     qrLoading.style.display = 'none';
                     qrImage.src = data.qr_image;
                     qrImage.style.display = 'block';
-                    console.log("QR code loaded successfully");
+                    console.log("QR loaded successfully");
                 } else {
-                    qrLoading.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Failed to load QR';
+                    qrLoading.innerHTML = '<i class="bi bi-exclamation-triangle"></i> QR load failed: ' + (data.error || 'Unknown error');
                     console.error("QR load failed:", data.error);
                 }
             })
-            .catch(error => {
-                console.error('Error loading QR:', error);
-                qrLoading.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Error loading QR';
+            .catch(function(err) {
+                qrLoading.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Error: ' + err.message;
+                console.error("Fetch error:", err);
             });
     });
     </script>
