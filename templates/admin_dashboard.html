@@ -425,7 +425,7 @@ body { font-family:"Nunito",sans-serif; background:#F0F2FF; min-height:100vh; }
 <div class="top-area">
     <div class="top-content">
         <div class="admin-title-row">
-            <a href="/home" style="text-decoration:none;">
+            <a href="/select" style="text-decoration:none;">
     <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}" style="width:42px;height:42px;object-fit:contain;display:block;">
 </a>
             <div>
@@ -462,7 +462,7 @@ body { font-family:"Nunito",sans-serif; background:#F0F2FF; min-height:100vh; }
             <div id="busCardContainer"></div>
 
             <!-- View Buses Button -->
-            <button class="open-map-btn" onclick="window.location.href='/map'">
+            <button class="open-map-btn" onclick="window.location.href='/admin_map'">
             <i class="fa-solid fa-map"></i> View Buses on Map
             </button>
         </div>
@@ -474,7 +474,7 @@ body { font-family:"Nunito",sans-serif; background:#F0F2FF; min-height:100vh; }
     <div class="tab-panel" id="tab-revenue">
         <!-- TOTAL REVENUE -->
 <div class="total-revenue">
-    <div class="amount" id="totalRevenue">₹ —</div>
+    <div class="amount" id="totalRevenue">₹ 255000</div>
     <div class="label">Total Revenue</div>
 </div>
 
@@ -482,17 +482,17 @@ body { font-family:"Nunito",sans-serif; background:#F0F2FF; min-height:100vh; }
 <div class="revenue-cards">
     <div class="rev-card ticket-card">
         <h3>🎫 Ticket Revenue</h3>
-        <span id="ticketRevenue">₹ —</span>
+        <span id="ticketRevenue">₹ 40000</span>
     </div>
 
     <div class="rev-card pass-card">
         <h3>🪪 Pass Revenue</h3>
-        <span id="passRevenue">₹ —</span>
+        <span id="passRevenue">₹ 50000</span>
     </div>
 
     <div class="rev-card fuel-card">
         <h3>⛽ Fuel Revenue</h3>
-        <span id="fuelRevenue">₹ —</span>
+        <span id="fuelRevenue">₹ 150000</span>
     </div>
 
     <div class="rev-card other-card">
