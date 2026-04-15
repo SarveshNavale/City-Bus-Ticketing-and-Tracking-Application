@@ -26,7 +26,7 @@ def get_db():
         user="root",
 
 
-        password="#SAR1807",
+        password="Parth@123",
 
 
         database="RotaryClub_Database"
@@ -1906,7 +1906,7 @@ def fetch_location():
             db = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="#SAR1807",
+                password="Parth@123",
                 database="RotaryClub_Database"
             )
 
@@ -2031,7 +2031,7 @@ def get_stops_between():
         conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="#SAR1807",
+            password="Parth@123",
             database="RotaryClub_Database"
         )
         cursor = conn.cursor(dictionary=True)
