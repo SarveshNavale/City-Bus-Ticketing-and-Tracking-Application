@@ -1,5 +1,5 @@
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude,stop_no) VALUES ('City Bus Stand', 1, 16.9914520, 73.2950390, 1);
-INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Malnaka', 1, 16.9906412, 73.3059455, 2);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude,stop_no) VALUES ('City Bus Stand', 0, 16.9914520, 73.2950390, 1);
+INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Malnaka', 0, 16.9906412, 73.3059455, 2);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Maruti Mandir', 0, 16.9914520, 73.2950390, 3);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Godbole', 1, 16.9950168, 73.3190417, 4);
 INSERT INTO stops_info (stop_name, track_no, latitude, longitude, stop_no) VALUES ('Charmalay', 1, 16.9964154, 73.3208352 , 5);

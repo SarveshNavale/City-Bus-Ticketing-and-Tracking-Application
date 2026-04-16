@@ -1089,24 +1089,54 @@ def test_add_notification():
 # ── Stops ─────────────────────────────────────────────────────────────────────
 @app.route('/search_stops')
 def search_stops():
-    query = request.args.get('q', '').strip()
+    q = request.args.get('q', '')
+    selected_track = request.args.get('track_no', None)
 
-    if not query:
-        return jsonify({"success": False, "stops": []})
+    conn = get_db()
+    cursor = conn.cursor(dictionary=True)
 
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute(
-        "SELECT stop_name FROM stops_info WHERE stop_name LIKE %s LIMIT 10",
-        ('%' + query + '%',)
-    )
-    results = cursor.fetchall()
+    if selected_track:
+        query = """
+            SELECT stop_name FROM stops_info
+            WHERE stop_name LIKE %s
+            AND (track_no = %s OR track_no = 0)
+            LIMIT 50
+        """
+        cursor.execute(query, (f"%{q}%", selected_track))
+    else:
+        query = """
+            SELECT stop_name, track_no FROM stops_info
+            WHERE stop_name LIKE %s
+            LIMIT 50
+        """
+        cursor.execute(query, (f"%{q}%",))
+
+    stops = cursor.fetchall()
     cursor.close()
-    db.close()
+    conn.close()
 
-    stops = [row[0] for row in results]
-    return jsonify({"success": True, "stops": stops})
+    return jsonify({
+        "success": True,
+        "stops": stops
+    })
 
+@app.route('/get_track_no')
+def get_track_no():
+    stop = request.args.get('stop')
+
+    conn = get_db()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT track_no FROM stops_info WHERE stop_name = %s", (stop,))
+    result = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if result:
+        return jsonify({"success": True, "track_no": result['track_no']})
+    else:
+        return jsonify({"success": False})
 
 @app.route('/choose_destination')
 def choose_destination():
@@ -2046,39 +2076,36 @@ def get_stops_between():
         )
         cursor = conn.cursor(dictionary=True)
 
-        # Get stop_no of source
-        cursor.execute("SELECT stop_no FROM stops_info WHERE stop_name = %s", (src,))
+        cursor.execute("SELECT stop_no, track_no FROM stops_info WHERE stop_name = %s", (src,))
         src_data = cursor.fetchone()
 
-        # Get stop_no of destination
-        cursor.execute("SELECT stop_no FROM stops_info WHERE stop_name = %s", (dest,))
+        cursor.execute("SELECT stop_no, track_no FROM stops_info WHERE stop_name = %s", (dest,))
         dest_data = cursor.fetchone()
 
         if not src_data or not dest_data:
-            return jsonify({'success': False})
+            return jsonify({'success': False, 'error': 'Stop not found'})
+
+        # Warn if stops are on different routes (track_no 0 is common/shared)
+        if src_data['track_no'] != dest_data['track_no'] and \
+           src_data['track_no'] != 0 and dest_data['track_no'] != 0:
+            return jsonify({'success': False, 'error': 'Stops are on different routes'})
 
         src_no = src_data['stop_no']
         dest_no = dest_data['stop_no']
-
         diff = abs(dest_no - src_no)
+        fare = max((diff / 2) * 5, 5)
 
-        quotient = diff / 2
-
-        fare = quotient * 5
-
-        # Apply minimum fare
-        if fare < 5:
-            fare = 5
+        cursor.close()
+        conn.close()
 
         return jsonify({
-        'success': True,
-        'fare': int(round(fare)),
-        'stops_diff': diff
+            'success': True,
+            'fare': int(round(fare)),
+            'stops_diff': diff
         })
 
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-
 
 
 
