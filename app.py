@@ -26,7 +26,7 @@ def get_db():
         user="root",
 
 
-        password="Parth@123",
+        password="#SAR1807",
 
 
         database="RotaryClub_Database"
@@ -83,6 +83,10 @@ def profile():
 @app.route('/map')
 def map():
     return render_template("map.html")
+
+@app.route('/admin_map')
+def admin_map():
+    return render_template("admin_map.html")
 
 @app.route('/routestime')
 def routestime():
@@ -1888,42 +1892,48 @@ def update_profile_field():
 
 
 
+
 def fetch_location():
 
     while True:
-
         try:
+            url = "https://driverlocation-3b548-default-rtdb.firebaseio.com/location.json"
 
-            url = "https://drivertracker-a4290-default-rtdb.firebaseio.com/location.json"
-
-            response = requests.get(url, timeout=5, verify=False) 
-
+            response = requests.get(url, timeout=5)
             data = response.json()
 
-            lat = data["latitude"]
-            lon = data["longitude"]
+            print("Firebase data:", data)  # DEBUG (important)
 
-            db = mysql.connector.connect(
-                host="localhost",
-                user="root",
-                password="Parth@123",
-                database="RotaryClub_Database"
-            )
+            if data and "latitude" in data and "longitude" in data:
+                lat = data["latitude"]
+                lon = data["longitude"]
 
-            cursor = db.cursor()
+                db = mysql.connector.connect(
+                    host="localhost",
+                    user="root",
+                    password="#SAR1807",
+                    database="RotaryClub_Database"
+                )
 
-            sql = "UPDATE driver_location SET latitude=%s, longitude=%s WHERE driver_id=1"
-            cursor.execute(sql,(lat,lon))
+                cursor = db.cursor()
 
-            db.commit()
+                sql = "UPDATE driver_location SET latitude=%s, longitude=%s WHERE driver_id=1"
+                cursor.execute(sql, (lat, lon))
 
-            cursor.close()
-            db.close()
+                db.commit()
+                cursor.close()
+                db.close()
+
+                print("Updated:", lat, lon)
+
+            else:
+                print("Invalid Firebase data format:", data)
 
         except Exception as e:
-            print(e)
+            print("Error:", e)
 
         time.sleep(5)
+
 
 thread = threading.Thread(target=fetch_location)
 thread.daemon = True
@@ -2031,7 +2041,7 @@ def get_stops_between():
         conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="Parth@123",
+            password="#SAR1807",
             database="RotaryClub_Database"
         )
         cursor = conn.cursor(dictionary=True)

@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+
+<!--- ssh -R 80:localhost:5000 serveo.net -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,464 +11,530 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+:root{
+--blue:#6C64FF;
+--white:#fff;
+--card-bg:#ffffff;
+--text:#1e1e2f;
+--radius:20px;
+--shadow:0 10px 30px rgba(108,100,255,0.12);
+}
 
-        body {
-            font-family: "Hind Guntur", sans-serif;
-            background: linear-gradient(to bottom, #6C64FF 25%, #ffffff 20%);
-            min-height: 100vh;
-            color: #636263;
-        }
+*{margin:0;padding:0;box-sizing:border-box}
 
-        .main-container {
-            max-width: 1080px;
-            margin: 0 auto;
-            padding: 0 0 30px 0;
-        }
+body{
+background:#F0F2FF;
+font-family:"Nunito",sans-serif;
+color:var(--text);
+}
 
-        .tc-header {
-            background: transparent;
-            color: white;
-            padding: 2rem 1.5rem 1.5rem;
-            position: relative;
-            text-align: center;
-        }
+.bluebg{
+background:linear-gradient(135deg,#6C64FF 0%,#8B84FF 100%);
+height:200px;
+width:100%;
+position:relative;
+overflow:hidden;
+border-radius:0 0 40px 40px;
+}
 
-        .header-corner-img {
-            position: absolute;
-            top: 35px;
-            right: 0;
-            width: 100px;
-            height: auto;
-        }
+.circle1{
+position:absolute;
+width:220px;
+height:220px;
+border-radius:50%;
+background:rgba(255,255,255,0.08);
+top:-65px;
+right:-55px;
+}
 
-        .header-corner-img-2 {
-            position: absolute;
-            top: 45px;
-            left: 20px;
-            width: 50px;
-            height: auto;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
+.circle2{
+position:absolute;
+width:130px;
+height:130px;
+border-radius:50%;
+background:rgba(255,255,255,0.05);
+top:50px;
+right:30px;
+}
 
-        .tc-badge {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 6px 18px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            backdrop-filter: blur(5px);
-        }
+.backbutton{
+position:absolute;
+top:50px;
+left:24px;
+display:flex;
+align-items:center;
+gap:12px;
+}
 
-        .tc-header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-            line-height: 1.2;
-        }
+.backbutton img{
+width:48px;
+height:48px;
+object-fit:contain;
+display:block;
+cursor:pointer;
+transition:transform 0.2s;
+}
 
-        .pass-card {
-            background: #EEEEEE;
-            border-radius: 40px 40px 30px 30px;
-            padding: 1.8rem 1.5rem;
-            box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
-            margin: 0.5rem 1rem 2rem;
-            border: none;
-        }
+.backbutton img:hover{
+transform:scale(1.05);
+}
 
-        .pass-header {
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-        }
+.backbutton p{
+font-size:20px;
+font-weight:800;
+color:white;
+line-height:1.2;
+letter-spacing:-0.3px;
+}
 
-        .pass-icon {
-            width: 52px;
-            height: 52px;
-            background: #FFFFFF;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6C64FF;
-            font-size: 1.6rem;
-            box-shadow: 0px 3px 8px rgba(0,0,0,0.15);
-            margin-right: 15px;
-        }
+.content{
+background:transparent;
+margin:-35px auto 0;
+border-radius:0;
+padding:0 18px 40px;
+max-width:440px;
+}
 
-        .pass-header h3 {
-            font-size: 1.4rem;
-            color: #636263;
-            margin-bottom: 0.2rem;
-        }
+.pass-card{
+background:var(--card-bg);
+border-radius:28px;
+padding:28px;
+box-shadow:var(--shadow);
+border:1px solid rgba(108,100,255,0.08);
+margin-bottom:0;
+}
 
-        .pass-header p {
-            font-size: 0.9rem;
-            color: #636263;
-            opacity: 0.8;
-        }
+.pass-header{
+margin-bottom:24px;
+display:flex;
+align-items:center;
+}
 
-        /* Verification Type Tabs */
-        .verification-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-radius: 50px;
-            background: #ffffff;
-            padding: 5px;
-            gap: 5px;
-        }
+.pass-icon{
+width:52px;
+height:52px;
+background:linear-gradient(135deg,#6C64FF 0%,#8B84FF 100%);
+border-radius:18px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:1.6rem;
+box-shadow:0 6px 14px rgba(108,100,255,0.25);
+margin-right:15px;
+}
 
-        .verification-tab {
-            flex: 1;
-            text-align: center;
-            padding: 12px 5px;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            user-select: none;
-        }
+.pass-header h3{
+font-size:1.4rem;
+color:#1e1e2f;
+margin-bottom:0.2rem;
+font-weight:800;
+}
 
-        .verification-tab.active {
-            background: #6C64FF;
-            color: white;
-        }
+.pass-header p{
+font-size:0.85rem;
+color:#6b7280;
+font-weight:600;
+}
 
-        .verification-tab i {
-            margin-right: 5px;
-        }
+/* Verification Type Tabs */
+.verification-tabs{
+display:flex;
+margin-bottom:20px;
+border-radius:60px;
+background:#f0f2ff;
+padding:5px;
+gap:5px;
+}
 
-        /* Method Tabs (Scan/Manual) */
-        .method-container {
-            margin-top: 15px;
-        }
+.verification-tab{
+flex:1;
+text-align:center;
+padding:12px 5px;
+border-radius:60px;
+font-weight:800;
+font-size:0.85rem;
+cursor:pointer;
+transition:all 0.2s;
+user-select:none;
+color:#6b7280;
+}
 
-        .tab-container {
-            display: flex;
-            margin-bottom: 20px;
-            border-radius: 50px;
-            background: #ffffff;
-            padding: 5px;
-        }
+.verification-tab.active{
+background:#6C64FF;
+color:white;
+box-shadow:0 4px 12px rgba(108,100,255,0.3);
+}
 
-        .tab {
-            flex: 1;
-            text-align: center;
-            padding: 12px 5px;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            user-select: none;
-        }
+.verification-tab i{
+margin-right:5px;
+}
 
-        .tab.active {
-            background: #6C64FF;
-            color: white;
-        }
+/* Method Tabs */
+.method-container{
+margin-top:15px;
+}
 
-        .tab i {
-            margin-right: 5px;
-        }
+.tab-container{
+display:flex;
+margin-bottom:20px;
+border-radius:60px;
+background:#f0f2ff;
+padding:5px;
+}
 
-        /* QR Scanner Styles */
-        .verification-content {
-            display: none;
-        }
+.tab{
+flex:1;
+text-align:center;
+padding:10px 5px;
+border-radius:60px;
+font-weight:800;
+font-size:0.8rem;
+cursor:pointer;
+transition:all 0.2s;
+user-select:none;
+color:#6b7280;
+}
 
-        .verification-content.active {
-            display: block;
-        }
+.tab.active{
+background:#6C64FF;
+color:white;
+box-shadow:0 4px 12px rgba(108,100,255,0.3);
+}
 
-        #qrScanner {
-            width: 100%;
-        }
+.tab i{
+margin-right:5px;
+}
 
-        .scanner-container {
-            position: relative;
-            width: 100%;
-            background: #000;
-            border-radius: 20px;
-            overflow: hidden;
-            margin-bottom: 15px;
-            aspect-ratio: 1/1;
-        }
+/* QR Scanner */
+.verification-content{
+display:none;
+}
 
-        #video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+.verification-content.active{
+display:block;
+}
 
-        .scanner-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+.scanner-container{
+position:relative;
+width:100%;
+background:#1a1a2e;
+border-radius:24px;
+overflow:hidden;
+margin-bottom:15px;
+aspect-ratio:1/1;
+}
 
-        .scanner-frame {
-            width: 250px;
-            height: 250px;
-            border: 3px solid #6C64FF;
-            border-radius: 20px;
-            box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
-        }
+#passVideo, #ticketVideo{
+width:100%;
+height:100%;
+object-fit:cover;
+}
 
-        .scanner-line {
-            position: absolute;
-            width: 220px;
-            height: 2px;
-            background: #6C64FF;
-            animation: scan 2s linear infinite;
-            box-shadow: 0 0 10px #6C64FF;
-        }
+.scanner-overlay{
+position:absolute;
+top:0;
+left:0;
+right:0;
+bottom:0;
+display:flex;
+align-items:center;
+justify-content:center;
+}
 
-        @keyframes scan {
-            0% { transform: translateY(-100px); }
-            50% { transform: translateY(100px); }
-            100% { transform: translateY(-100px); }
-        }
+.scanner-frame{
+width:250px;
+height:250px;
+border:3px solid #6C64FF;
+border-radius:24px;
+box-shadow:0 0 0 9999px rgba(0,0,0,0.5);
+}
 
-        .scanner-btn {
-            width: 100%;
-            height: 54px;
-            background: #6C64FF;
-            border-radius: 50px;
-            border: none;
-            color: white;
-            font-weight: 600;
-            font-size: 1.2rem;
-            font-family: "Hind Guntur", sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0px 4px 10px rgba(108, 100, 255, 0.3);
-            margin: 1rem 0;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+.scanner-line{
+position:absolute;
+width:220px;
+height:2px;
+background:#6C64FF;
+animation:scan 2s linear infinite;
+box-shadow:0 0 10px #6C64FF;
+border-radius:2px;
+}
 
-        .scanner-btn.stop {
-            background: #ff4757;
-            box-shadow: 0px 4px 10px rgba(255, 71, 87, 0.3);
-        }
+@keyframes scan{
+0%{transform:translateY(-100px);}
+50%{transform:translateY(100px);}
+100%{transform:translateY(-100px);}
+}
 
-        .scanner-btn:active {
-            transform: scale(0.98);
-        }
+.scanner-btn{
+width:100%;
+height:52px;
+background:linear-gradient(135deg,#6C64FF 0%,#8B84FF 100%);
+border-radius:60px;
+border:none;
+color:white;
+font-weight:800;
+font-size:0.95rem;
+font-family:'Nunito',sans-serif;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+box-shadow:0 6px 20px rgba(108,100,255,0.3);
+margin:1rem 0;
+cursor:pointer;
+transition:transform 0.2s;
+}
 
-        .scanner-btn i {
-            font-size: 1.1rem;
-        }
+.scanner-btn.stop{
+background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);
+box-shadow:0 6px 20px rgba(239,68,68,0.3);
+}
 
-        /* Manual Entry Section */
-        .search-container {
-            display: none;
-        }
+.scanner-btn:active{
+transform:scale(0.98);
+}
 
-        .search-container.active {
-            display: block;
-        }
+/* Manual Entry */
+.search-container{
+display:none;
+}
 
-        .input-wrapper {
-            background: #FFFFFF;
-            border-radius: 50px;
-            padding: 0.5rem 1rem;
-            box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.15);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-        }
+.search-container.active{
+display:block;
+}
 
-        .input-wrapper i {
-            color: #6C64FF;
-            font-size: 1.2rem;
-            margin-right: 10px;
-        }
+.input-wrapper{
+background:#f0f2ff;
+border-radius:60px;
+padding:0.5rem 1rem;
+margin-bottom:1rem;
+display:flex;
+align-items:center;
+border:2px solid transparent;
+transition:all 0.2s;
+}
 
-        #passNumberInput, #ticketNumberInput {
-            flex: 1;
-            height: 48px;
-            background: transparent;
-            font-size: 16px;
-            color: #333;
-            border: none;
-            font-family: "Hind Guntur", sans-serif;
-        }
+.input-wrapper:focus-within{
+border-color:#6C64FF;
+background:#ffffff;
+}
 
-        #passNumberInput:focus, #ticketNumberInput:focus {
-            outline: none;
-        }
+.input-wrapper i{
+color:#6C64FF;
+font-size:1.1rem;
+margin-right:10px;
+}
 
-        #searchBtn, #searchTicketBtn {
-            width: 100%;
-            height: 54px;
-            background: #6C64FF;
-            border-radius: 50px;
-            border: none;
-            color: white;
-            font-weight: 600;
-            font-size: 1.2rem;
-            font-family: "Hind Guntur", sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0px 4px 10px rgba(108, 100, 255, 0.3);
-            margin: 1rem 0;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+#passNumberInput, #ticketNumberInput{
+flex:1;
+height:46px;
+background:transparent;
+font-size:15px;
+color:#1e1e2f;
+border:none;
+font-family:'Nunito',sans-serif;
+font-weight:600;
+}
 
-        #searchBtn:active, #searchTicketBtn:active {
-            transform: scale(0.98);
-        }
+#passNumberInput:focus, #ticketNumberInput:focus{
+outline:none;
+}
 
-        /* Info Cards */
-        .info-card {
-            background: #FFFFFF;
-            border-radius: 40px;
-            padding: 1.8rem;
-            box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
-            margin-top: 1.5rem;
-            display: none;
-        }
+#passNumberInput::placeholder, #ticketNumberInput::placeholder{
+color:#9ca3af;
+font-weight:500;
+font-size:13px;
+}
 
-        .info-card.active {
-            display: block;
-            animation: fadeUp 0.3s ease;
-        }
+#searchPassBtn, #searchTicketBtn{
+width:100%;
+height:52px;
+background:linear-gradient(135deg,#6C64FF 0%,#8B84FF 100%);
+border-radius:60px;
+border:none;
+color:white;
+font-weight:800;
+font-size:0.95rem;
+font-family:'Nunito',sans-serif;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+box-shadow:0 6px 20px rgba(108,100,255,0.3);
+margin:1rem 0;
+cursor:pointer;
+transition:transform 0.2s;
+}
 
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+#searchPassBtn:active, #searchTicketBtn:active{
+transform:scale(0.98);
+}
 
-        .verify-badge {
-            background: #E8F5E9;
-            color: #4CAF50;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
+/* Info Cards */
+.info-card{
+background:#ffffff;
+border-radius:24px;
+padding:1.5rem;
+box-shadow:0 8px 24px rgba(108,100,255,0.12);
+margin-top:1.5rem;
+display:none;
+border:1px solid rgba(108,100,255,0.08);
+}
 
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 0;
-            border-bottom: 1px solid rgba(99, 98, 99, 0.1);
-        }
+.info-card.active{
+display:block;
+animation:fadeUp 0.3s ease;
+}
 
-        .detail-row:last-of-type {
-            border-bottom: none;
-        }
+@keyframes fadeUp{
+from{opacity:0;transform:translateY(15px);}
+to{opacity:1;transform:translateY(0);}
+}
 
-        .detail-label {
-            color: #636263;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
+.verify-badge{
+background:linear-gradient(135deg,#22C55E 0%,#16A34A 100%);
+color:white;
+padding:6px 16px;
+border-radius:60px;
+font-weight:800;
+font-size:0.75rem;
+display:inline-flex;
+align-items:center;
+gap:8px;
+margin-bottom:20px;
+letter-spacing:0.5px;
+}
 
-        .detail-value {
-            color: #6C64FF;
-            font-weight: 600;
-            font-size: 0.95rem;
-            text-align: right;
-            word-break: break-word;
-            max-width: 60%;
-        }
+.detail-row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:12px 0;
+border-bottom:1px solid rgba(108,100,255,0.08);
+}
 
-        .action-btn {
-            width: 100%;
-            height: 52px;
-            background: #FFFFFF;
-            border-radius: 50px;
-            border: 2px solid #6C64FF;
-            color: #6C64FF;
-            font-weight: 600;
-            font-size: 1.1rem;
-            font-family: "Hind Guntur", sans-serif;
-            margin-top: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+.detail-row:last-of-type{
+border-bottom:none;
+}
 
-        .action-btn:active {
-            background: #f0f0ff;
-        }
+.detail-label{
+color:#6b7280;
+font-weight:700;
+font-size:0.8rem;
+letter-spacing:0.3px;
+text-transform:uppercase;
+}
 
-        .action-btn.used {
-            background: #E8F5E9;
-            border-color: #4CAF50;
-            color: #4CAF50;
-        }
+.detail-value{
+color:#6C64FF;
+font-weight:800;
+font-size:0.85rem;
+text-align:right;
+word-break:break-word;
+max-width:60%;
+}
 
-        .no-result {
-            background: #FFFFFF;
-            border-radius: 40px;
-            padding: 2.5rem 2rem;
-            text-align: center;
-            box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
-            margin-top: 1.5rem;
-            display: none;
-        }
+.action-btn{
+width:100%;
+height:50px;
+background:transparent;
+border-radius:60px;
+border:2px solid #6C64FF;
+color:#6C64FF;
+font-weight:800;
+font-size:0.9rem;
+font-family:'Nunito',sans-serif;
+margin-top:1.5rem;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+cursor:pointer;
+transition:all 0.2s;
+}
 
-        .no-result.active {
-            display: block;
-            animation: fadeUp 0.3s ease;
-        }
+.action-btn:active{
+transform:scale(0.98);
+background:#f0f2ff;
+}
 
-        .camera-permission-msg {
-            text-align: center;
-            padding: 30px 20px;
-            color: #666;
-        }
+.no-result{
+background:#ffffff;
+border-radius:24px;
+padding:2rem;
+text-align:center;
+box-shadow:0 8px 24px rgba(108,100,255,0.12);
+margin-top:1.5rem;
+display:none;
+border:1px solid rgba(239,68,68,0.15);
+}
 
-        .camera-permission-msg i {
-            font-size: 48px;
-            color: #6C64FF;
-            margin-bottom: 15px;
-        }
+.no-result.active{
+display:block;
+animation:fadeUp 0.3s ease;
+}
 
-        .route-info {
-            font-size: 12px;
-            color: #888;
-            margin-top: 5px;
-        }
-    </style>
+.no-result i{
+color:#ef4444;
+font-size:40px;
+margin-bottom:12px;
+}
+
+.no-result h4{
+color:#1e1e2f;
+font-weight:800;
+margin-bottom:8px;
+font-size:1.1rem;
+}
+
+.no-result p{
+color:#6b7280;
+font-weight:500;
+font-size:0.8rem;
+}
+
+.camera-permission-msg{
+text-align:center;
+padding:30px 20px;
+color:#6b7280;
+background:#f0f2ff;
+border-radius:20px;
+margin-bottom:15px;
+}
+
+.camera-permission-msg i{
+font-size:42px;
+color:#6C64FF;
+margin-bottom:12px;
+}
+
+.camera-permission-msg h4{
+font-weight:800;
+margin-bottom:6px;
+color:#1e1e2f;
+font-size:1rem;
+}
+
+.camera-permission-msg p{
+font-size:0.75rem;
+}
+</style>
 </head>
 <body>
-    <div class="main-container">
-        <div class="tc-header">
-            <img src="{{ url_for('static', filename='Assets/images/Just-circles.png') }}" class="header-corner-img" alt="">
-            <a href="/select" style="text-decoration: none;">
-                <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}" class="header-corner-img-2" alt="">
+    <div class="main-container" style="max-width:1080px;margin:0 auto;">
+        <div class="bluebg">
+            <div class="circle1"></div>
+            <div class="circle2"></div>
+
+            <a href="/select" style="text-decoration:none;color:inherit;">
+                <div class="backbutton">
+                    <img src="{{ url_for('static', filename='Assets/images/back-button.png') }}">
+                    <p style="font-size:22px;font-weight:600;color:white;">
+                        TC <br> Login
+                    </p>
+                </div>
             </a>
-            <div class="tc-badge">TC LOGIN</div>
-            <h1 class="fw-bold">Ticket Checker Portal</h1>
         </div>
 
         <div class="pass-card">

@@ -57,7 +57,51 @@
     #map { width: 100%; height: calc(100vh - 180px - 86px); }
 
     /* bus rectangle */
-    .bus-div { background:#2ecc71; color:#fff; padding:3px 6px; border-radius:4px; font-weight:700; font-size:12px; text-align:center; border:1px solid rgba(0,0,0,0.15); }
+    .bus-div {
+      background: #2ecc71;
+      color: #fff;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 12px;
+      text-align: center;
+      border: 1px solid rgba(0,0,0,0.15);
+    }
+
+    /* ── USER LOCATION PULSE ANIMATION ── */
+    @keyframes pulse-ring {
+      0%   { transform: scale(0.5); opacity: 0.8; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    .user-location-wrapper {
+      position: relative;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-location-pulse {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(66, 133, 244, 0.4);
+      animation: pulse-ring 1.8s ease-out infinite;
+    }
+
+    .user-location-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #4285F4;
+      border: 2.5px solid #fff;
+      box-shadow: 0 2px 6px rgba(66,133,244,0.6);
+      position: relative;
+      z-index: 1;
+    }
 
     /* ── NAV BAR ── */
     .navwrap {
@@ -104,6 +148,27 @@
 
     /* driver bus icon red tint */
     .driver-bus-icon { filter: hue-rotate(320deg) saturate(2); }
+
+    /* ── LOCATE ME BUTTON ── */
+    .locate-btn {
+      position: absolute;
+      bottom: 100px;
+      right: 16px;
+      z-index: 998;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #fff;
+      border: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: box-shadow 0.2s;
+    }
+    .locate-btn:active { box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+    .locate-btn i { color: #4285F4; font-size: 20px; }
   </style>
 </head>
 <body>
@@ -121,6 +186,11 @@
 </div>
 
 <div id="map"></div>
+
+<!-- Locate Me Button -->
+<button class="locate-btn" onclick="centerOnUser()" title="Go to my location">
+  <i class="fa-solid fa-location-crosshairs"></i>
+</button>
 
 <!-- NAV BAR -->
 <div class="navwrap">
@@ -159,55 +229,55 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom:19 }
 /* --------------- route definitions (stop-by-stop) --------------- */
 /* Kokan Nagar Marg (101): City Bus Stand -> Jambhul Phata */
 var ROUTE_1 = [
-  [16.991452, 73.295039],        // City bus stand
-  [16.99064125770783,73.30594553525175], // Malnaka
-  [16.990800968717373,73.31206367358372], // Maruti Mandir (kokan)
-  [16.995016862941338,73.31904173559761], // Godbole
-  [16.99641543721497,73.32083529243269], // Charmalay
-  [17.001612134020696,73.32455084660955], // Kokan nagar
-  [17.00357182203808,73.32695598511572], // Radha Krishna nagar
-  [17.009984303061533,73.33012668733534], // Aadishti
-  [17.011694866524202,73.33537638177984], // Finolex
-  [17.01730152480268,73.33568635248713] // Jambhul Phata
+  [16.991452, 73.295039],
+  [16.99064125770783,73.30594553525175],
+  [16.990800968717373,73.31206367358372],
+  [16.995016862941338,73.31904173559761],
+  [16.99641543721497,73.32083529243269],
+  [17.001612134020696,73.32455084660955],
+  [17.00357182203808,73.32695598511572],
+  [17.009984303061533,73.33012668733534],
+  [17.011694866524202,73.33537638177984],
+  [17.01730152480268,73.33568635248713]
 ];
 
-/* Main Highway (102): City Bus Stand -> Hatkhamba (via Shivaji nagar etc) */
+/* Main Highway (102): City Bus Stand -> Hatkhamba */
 var ROUTE_2 = [
-  [16.991452,73.295039], // City bus stand
-  [16.99064125770783,73.30594553525175], // Malnaka
-  [16.990457493888606,73.31306246151857], // Maruti mandir (main highway)
-  [16.991314422881047,73.32132314364873], // Shivaji nagar
-  [16.994014235658177,73.32738397127208], // Salvi
-  [16.995583372835014,73.33092379872737], // JK Files
-  [16.9980804522789,73.35781632676266], // Railway station
-  [17.001526443623323,73.37203523938491], // Mahalakshmi
-  [17.013904561270415,73.39491337218843], // Khedshi
-  [17.015012744452644,73.40540621368129] // Hatkhamba (end)
+  [16.991452,73.295039],
+  [16.99064125770783,73.30594553525175],
+  [16.990457493888606,73.31306246151857],
+  [16.991314422881047,73.32132314364873],
+  [16.994014235658177,73.32738397127208],
+  [16.995583372835014,73.33092379872737],
+  [16.9980804522789,73.35781632676266],
+  [17.001526443623323,73.37203523938491],
+  [17.013904561270415,73.39491337218843],
+  [17.015012744452644,73.40540621368129]
 ];
 
 /* Nachane Marg (103) */
 var ROUTE_3 = [
-  [16.991452,73.295039], // City
-  [16.99064125770783,73.30594553525175], // Malnaka
-  [16.989781011997803,73.31284780065187], // Maruti mandir (nachane road)
-  [16.989762154491718,73.31456042409866], // Jogalekar
-  [16.988566009579785,73.31786801007729], // Power house
-  [16.986714135757698,73.3230856657965], // I.T.I
-  [16.985380333358734,73.32910877850728], // Nachane
-  [16.9865191811402,73.3334559201662], // Godown
-  [16.984572189029564,73.33964314925852], // Shantinagar
-  [16.9769149102026,73.36743802947721] // Kajarghati (end)
+  [16.991452,73.295039],
+  [16.99064125770783,73.30594553525175],
+  [16.989781011997803,73.31284780065187],
+  [16.989762154491718,73.31456042409866],
+  [16.988566009579785,73.31786801007729],
+  [16.986714135757698,73.3230856657965],
+  [16.985380333358734,73.32910877850728],
+  [16.9865191811402,73.3334559201662],
+  [16.984572189029564,73.33964314925852],
+  [16.9769149102026,73.36743802947721]
 ];
 
 /* Railway route (98): City Bus Stand -> Railway Station */
 var ROUTE_4 = [
-  [16.991452,73.295039], // City bus stand
-  [16.99064125770783,73.30594553525175], // Malnaka
-  [16.990457493888606,73.31306246151857], // Maruti mandir (main highway)
-  [16.991314422881047,73.32132314364873], // Shivaji nagar
-  [16.994014235658177,73.32738397127208], // Salvi
-  [16.995583372835014,73.33092379872737], // JK Files
-  [16.9980804522789,73.35781632676266] // Railway station (end)
+  [16.991452,73.295039],
+  [16.99064125770783,73.30594553525175],
+  [16.990457493888606,73.31306246151857],
+  [16.991314422881047,73.32132314364873],
+  [16.994014235658177,73.32738397127208],
+  [16.995583372835014,73.33092379872737],
+  [16.9980804522789,73.35781632676266]
 ];
 
 /* --------------- bus-stop icons: only shown at zoom >= 15 --------------- */
@@ -398,6 +468,7 @@ function postBusLocation(bus) {
   }).catch(()=>{ /* ignore network errors */ });
 }
 
+/* --------------- USER LOCATION (Blue pulsing dot) --------------- */
 function sendUserLocationToServer(lat, lon) {
     fetch('/update_user_location_from_map', {
         method: 'POST',
@@ -411,21 +482,114 @@ function sendUserLocationToServer(lat, lon) {
     .catch(error => { console.error('Error sending location:', error); });
 }
 
+/* Custom blue pulsing dot icon for user */
+function makeUserLocationIcon() {
+  return L.divIcon({
+    html: `
+      <div class="user-location-wrapper">
+        <div class="user-location-pulse"></div>
+        <div class="user-location-dot"></div>
+      </div>
+    `,
+    className: '',
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+    popupAnchor: [0, -12]
+  });
+}
+
+var userLocationFirstFix = true;
+
 if ("geolocation" in navigator) {
   navigator.geolocation.watchPosition(
     function(position) {
       var lat = position.coords.latitude;
       var lon = position.coords.longitude;
+
       if (!window.userMarker) {
-        window.userMarker = L.marker([lat, lon]).addTo(map).bindPopup('Your Location');
+        /* Create marker with pulsing blue dot */
+        window.userMarker = L.marker([lat, lon], {
+          icon: makeUserLocationIcon(),
+          zIndexOffset: 1000   /* always on top of bus markers */
+        })
+        .addTo(map)
+        .bindPopup('<b>📍 You are here</b>');
       }
+
       window.userMarker.setLatLng([lat, lon]);
+
+      /* Only zoom/pan to user on the very first GPS fix */
+      if (userLocationFirstFix) {
+        map.setView([lat, lon], 15);
+        userLocationFirstFix = false;
+      }
+
       sendUserLocationToServer(lat, lon);
     },
-    function(error) { console.log('Geolocation error:', error.message); },
+    function(error) {
+      var msg = "";
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          msg = "Location permission denied. Please allow location access and reload.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          msg = "Location information is unavailable.";
+          break;
+        case error.TIMEOUT:
+          msg = "Location request timed out.";
+          break;
+        default:
+          msg = "An unknown error occurred getting your location.";
+      }
+      console.warn('Geolocation error:', msg);
+      /* Show a small non-intrusive toast instead of alert */
+      showToast(msg);
+    },
     { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 }
   );
+} else {
+  showToast("Geolocation is not supported by your browser.");
 }
+
+/* Center map on user when "locate me" button is tapped */
+function centerOnUser() {
+  if (window.userMarker) {
+    map.setView(window.userMarker.getLatLng(), 16);
+    window.userMarker.openPopup();
+  } else {
+    showToast("Waiting for your location…");
+  }
+}
+
+/* ── simple toast helper ── */
+function showToast(msg) {
+  var existing = document.getElementById('map-toast');
+  if (existing) existing.remove();
+
+  var t = document.createElement('div');
+  t.id = 'map-toast';
+  t.textContent = msg;
+  Object.assign(t.style, {
+    position: 'fixed',
+    bottom: '100px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    background: 'rgba(0,0,0,0.75)',
+    color: '#fff',
+    padding: '10px 20px',
+    borderRadius: '20px',
+    fontSize: '13px',
+    fontFamily: "'Nunito', sans-serif",
+    fontWeight: '600',
+    zIndex: '9999',
+    maxWidth: '80vw',
+    textAlign: 'center',
+    pointerEvents: 'none'
+  });
+  document.body.appendChild(t);
+  setTimeout(()=>{ if(t.parentNode) t.remove(); }, 4000);
+}
+
 /* --------------- REAL TIME TRACKED DRIVER (from driver_location table) --------------- */
 var driverMarkers = {};
 
@@ -445,7 +609,6 @@ function fetchAndUpdateDrivers() {
     .then(function(drivers) {
       drivers.forEach(function(d) {
         var popupText = "Driver: " + d.driver_name +
-                        // + "<br>Plate: " + d.no_plate +   /* uncomment after ALTER TABLE ADD COLUMN no_plate */
                         "<br><small>Live Tracked</small>";
         if (driverMarkers[d.driver_id]) {
           driverMarkers[d.driver_id].setLatLng([d.latitude, d.longitude]);
