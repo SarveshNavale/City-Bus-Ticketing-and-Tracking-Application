@@ -512,22 +512,13 @@ body {
     text-align: center;
 }
 
+
+
+/* ── LANGUAGE TOGGLE (same as homepage) ── */
 .lang-toggle {
     position: absolute;
-    top: 20px;
+    top: 45px;
     right: 20px;
-}
-
-.lang-toggle button {
-    margin-left: 5px;
-    padding: 6px 10px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-}
-
-/* ── LANGUAGE TOGGLE ── */
-.lang-toggle {
     display: flex;
     align-items: center;
     background: rgba(255,255,255,0.18);
@@ -535,6 +526,7 @@ body {
     overflow: hidden;
     height: 44px;
     cursor: pointer;
+    z-index: 10;
 }
 
 .lang-btn {
@@ -574,7 +566,7 @@ body {
   </a>
 
  <!-- LANGUAGE SWITCH -->
-    <div class="lang-toggle">
+        <div class="lang-toggle">
         <button class="lang-btn active" id="btn-en" onclick="changeLang('en')">EN</button>
         <button class="lang-btn" id="btn-mr" onclick="changeLang('mr')">मर</button>
     </div>

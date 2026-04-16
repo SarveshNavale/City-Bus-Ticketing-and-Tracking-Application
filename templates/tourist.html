@@ -69,15 +69,45 @@ body {
     object-fit: contain; display: block;
 }
 
+/* ── LANGUAGE TOGGLE (same as homepage) ── */
+.lang-toggle {
+    position: absolute;
+    top: 45px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.18);
+    border-radius: 14px;
+    overflow: hidden;
+    height: 44px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.lang-btn {
+    padding: 0 13px;
+    height: 100%;
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.65);
+    background: transparent;
+    border: none;
+    font-family: "Nunito", sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    letter-spacing: 0.3px;
+}
+
+.lang-btn.active {
+    background: rgba(255,255,255,0.30);
+    color: #fff;
+}
+
 /* header hero text */
 .header-hero {
     position: absolute;
     bottom: 24px; left: 22px;
     z-index: 5;
-}
-.header-hero-title {
-    font-size: 24px; font-weight: 900; color: #fff;
-    display: flex; align-items: center; gap: 8px;
 }
 .header-hero-sub {
     font-size: 12px; font-weight: 700;
@@ -291,23 +321,44 @@ body {
 <div class="bluebg">
     <a href="/home" class="backbutton">
         <img src="static/Assets/images/back-button.png" alt="Back">
-        <p style="font-size:22px;font-weight:600;color:white;">Explore <br>Ratnagiri</p>
+        <p style="font-size:22px;font-weight:600;color:white;"
+           data-en="Explore <br>Ratnagiri"
+           data-mr="रत्नागिरी<br>एक्सप्लोर करा">Explore <br>Ratnagiri</p>
     </a>
-    <div class="header-hero">
-        <p class="header-hero-sub">🌊 Konkan Coast, Maharashtra</p>
+
+    <!-- LANGUAGE TOGGLE — same style as homepage -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" id="btn-en" onclick="changeLang('en')">EN</button>
+        <button class="lang-btn" id="btn-mr" onclick="changeLang('mr')">मर</button>
     </div>
-    <div class="place-count"><i class="fa-solid fa-location-dot"></i> 15 Places</div>
+
+    <div class="header-hero">
+        <p class="header-hero-sub"
+           data-en="🌊 Konkan Coast, Maharashtra"
+           data-mr="🌊 कोकण किनारा, महाराष्ट्र">🌊 Konkan Coast, Maharashtra</p>
+    </div>
+    <div class="place-count">
+        <i class="fa-solid fa-location-dot"></i>
+        <span data-en="15 Places" data-mr="१५ ठिकाणे">15 Places</span>
+    </div>
 </div>
 
 <!-- ── FILTER CHIPS ── -->
 <div class="filter-bar">
-    <div class="chip active" data-cat="all">🗺️ All Places</div>
-    <div class="chip" data-cat="beach">🏖️ Beaches</div>
-    <div class="chip" data-cat="fort">🏰 Forts</div>
-    <div class="chip" data-cat="temple">🛕 Temples</div>
-    <div class="chip" data-cat="nature">🌿 Nature</div>
-    <div class="chip" data-cat="heritage">🏛️ Heritage</div>
-    <div class="chip" data-cat="lighthouse">🔦 Lighthouse</div>
+    <div class="chip active" data-cat="all"
+         data-en="🗺️ All Places" data-mr="🗺️ सर्व ठिकाणे">🗺️ All Places</div>
+    <div class="chip" data-cat="beach"
+         data-en="🏖️ Beaches" data-mr="🏖️ समुद्रकिनारे">🏖️ Beaches</div>
+    <div class="chip" data-cat="fort"
+         data-en="🏰 Forts" data-mr="🏰 किल्ले">🏰 Forts</div>
+    <div class="chip" data-cat="temple"
+         data-en="🛕 Temples" data-mr="🛕 मंदिरे">🛕 Temples</div>
+    <div class="chip" data-cat="nature"
+         data-en="🌿 Nature" data-mr="🌿 निसर्ग">🌿 Nature</div>
+    <div class="chip" data-cat="heritage"
+         data-en="🏛️ Heritage" data-mr="🏛️ वारसा">🏛️ Heritage</div>
+    <div class="chip" data-cat="lighthouse"
+         data-en="🔦 Lighthouse" data-mr="🔦 दीपगृह">🔦 Lighthouse</div>
 </div>
 
 <!-- ── PLACES ── -->
@@ -317,20 +368,25 @@ body {
 
 <script>
 /* ───────────────────────────────────────────────
-   PLACE DATA
-   images: Wikimedia Commons / Unsplash (free-use URLs)
+   PLACE DATA — each entry has desc_mr, specs_mr, catLabel_mr
 ─────────────────────────────────────────────── */
 const PLACES = [
     {
         name: "Ganpatipule Beach & Temple",
+        name_mr: "गणपतीपुळे बीच आणि मंदिर",
         cat: "beach",
         catLabel: "🏖️ Beach + Temple",
+        catLabel_mr: "🏖️ समुद्रकिनारा + मंदिर",
         dist: "30 km",
         time: "45 min",
+        time_mr: "४५ मिनिटे",
         rating: "4.8",
         entry: "Free",
+        entry_mr: "मोफत",
         desc: "One of the most pristine beaches in Maharashtra, famous for the self-manifested Lord Ganesha temple right on the beach. The golden sand stretches for kilometres with clean azure water, making it a top pilgrimage and tourist destination.",
+        desc_mr: "महाराष्ट्रातील सर्वात स्वच्छ समुद्रकिनाऱ्यांपैकी एक, समुद्रकिनाऱ्यावरच असलेल्या स्वयंभू गणेश मंदिरासाठी प्रसिद्ध. सोनेरी वाळू किलोमीटरपर्यंत पसरलेली असून स्वच्छ निळे पाणी हे तीर्थक्षेत्र आणि पर्यटनाचे प्रमुख ठिकाण बनवते.",
         specs: ["Swayambhu Ganesh Temple","Konkan Food","Beachside Camping"],
+        specs_mr: ["स्वयंभू गणेश मंदिर","कोकणी जेवण","किनाऱ्यावर कॅम्पिंग"],
         location: "Ganpatipule, Ratnagiri",
         mapUrl: "https://maps.google.com/?q=Ganpatipule+Beach+Ratnagiri",
         images: [
@@ -340,14 +396,20 @@ const PLACES = [
     },
     {
         name: "Ratnadurg Fort",
+        name_mr: "रत्नदुर्ग किल्ला",
         cat: "fort",
         catLabel: "🏰 Fort",
+        catLabel_mr: "🏰 किल्ला",
         dist: "3 km",
         time: "10 min",
+        time_mr: "१० मिनिटे",
         rating: "4.5",
         entry: "Free",
+        entry_mr: "मोफत",
         desc: "A historic sea fort built by the Bijapur Sultanate and later controlled by the Marathas and Portuguese. Perched on a rocky peninsula, it offers breathtaking 360° views of the Arabian Sea and Ratnagiri city.",
+        desc_mr: "विजापूर सल्तनतीने बांधलेला ऐतिहासिक समुद्री किल्ला, नंतर मराठे आणि पोर्तुगीजांच्या ताब्यात होता. खडकाळ द्वीपकल्पावर वसलेल्या या किल्ल्यावरून अरबी समुद्र आणि रत्नागिरी शहराचे ३६०° विहंगम दृश्य दिसते.",
         specs: ["Bhagwati Temple","Sea Views","Maratha History"],
+        specs_mr: ["भगवती मंदिर","समुद्र दृश्य","मराठा इतिहास"],
         location: "Ratnagiri Fort Area",
         mapUrl: "https://maps.google.com/?q=Ratnadurg+Fort+Ratnagiri",
         images: [
@@ -357,14 +419,20 @@ const PLACES = [
     },
     {
         name: "Pawas — Swami Swaroopanand Ashram",
+        name_mr: "पावस — स्वामी स्वरूपानंद आश्रम",
         cat: "heritage",
         catLabel: "🏛️ Heritage",
+        catLabel_mr: "🏛️ वारसा",
         dist: "20 km",
         time: "30 min",
+        time_mr: "३० मिनिटे",
         rating: "4.7",
         entry: "Free",
+        entry_mr: "मोफत",
         desc: "A deeply spiritual village on the Ratnagiri coast, home to the ashram of the great saint Swami Swaroopanand. The serene Pawas Lake, lush greenery, and a peaceful atmosphere attract seekers and tourists alike.",
+        desc_mr: "रत्नागिरी किनाऱ्यावरील एक अत्यंत आध्यात्मिक गाव, थोर संत स्वामी स्वरूपानंद यांच्या आश्रमाचे घर. शांत पावस तलाव, हिरवळ आणि शांत वातावरण साधक व पर्यटक दोघांनाही आकर्षित करते.",
         specs: ["Spiritual Retreat","Peaceful Lake","Swami Ashram"],
+        specs_mr: ["आध्यात्मिक केंद्र","शांत तलाव","स्वामी आश्रम"],
         location: "Pawas, Ratnagiri",
         mapUrl: "https://maps.google.com/?q=Pawas+Ratnagiri",
         images: [
@@ -374,31 +442,43 @@ const PLACES = [
     },
     {
         name: "Jaigad Fort",
+        name_mr: "जयगड किल्ला",
         cat: "fort",
         catLabel: "🏰 Fort",
+        catLabel_mr: "🏰 किल्ला",
         dist: "55 km",
         time: "1 hr 15 min",
+        time_mr: "१ तास १५ मिनिटे",
         rating: "4.4",
         entry: "Free",
+        entry_mr: "मोफत",
         desc: "A spectacular Portuguese-era fort at the confluence of the Shastri River and the Arabian Sea. One of the best-preserved coastal forts in the Konkan, offering majestic sea views and stunning sunsets.",
+        desc_mr: "शास्त्री नदी आणि अरबी समुद्राच्या संगमावर वसलेला पोर्तुगीज काळातील भव्य किल्ला. कोकणातील सर्वोत्तम जतन केलेल्या किनारी किल्ल्यांपैकी एक, समुद्राची भव्य दृश्ये आणि मनमोहक सूर्यास्त येथून दिसतो.",
         specs: ["Portuguese Architecture","Confluence Views","Sunset Point"],
+        specs_mr: ["पोर्तुगीज वास्तुकला","संगम दृश्य","सूर्यास्त बिंदू"],
         location: "Jaigad, Ratnagiri District",
         mapUrl: "https://maps.google.com/?q=Jaigad+Fort+Ratnagiri",
         images: [
             "static/Assets/images/jaigad.jpg",
-            "static/Assets/images/jaigad1.jpg",
+            "static/Assets/images/jaigad1.jpg"
         ]
     },
     {
         name: "Ratnagiri Lighthouse",
+        name_mr: "रत्नागिरी दीपगृह",
         cat: "lighthouse",
         catLabel: "🔦 Lighthouse",
+        catLabel_mr: "🔦 दीपगृह",
         dist: "5 km",
         time: "12 min",
+        time_mr: "१२ मिनिटे",
         rating: "4.6",
         entry: "₹20",
+        entry_mr: "₹२०",
         desc: "The iconic Ratnagiri Lighthouse stands tall on a rocky cliff overlooking the Arabian Sea. Visitors can climb to the top for a panoramic view of the coastline, harbour, and on clear days, see ships far out at sea.",
+        desc_mr: "अरबी समुद्राकडे पाहणाऱ्या खडकाळ कड्यावर उभा असलेला प्रतिष्ठित रत्नागिरी दीपगृह. पर्यटक वरच्या मजल्यावर जाऊन किनारपट्टी, बंदर आणि स्वच्छ हवामानात दूरवर समुद्रातील जहाजे पाहू शकतात.",
         specs: ["Panoramic Sea View","Photography Spot","Colonial Era"],
+        specs_mr: ["विस्तृत समुद्र दृश्य","फोटोग्राफी स्पॉट","वसाहत काळातील"],
         location: "Ratnagiri Harbour",
         mapUrl: "https://maps.google.com/?q=Ratnagiri+Lighthouse",
         images: [
@@ -408,66 +488,89 @@ const PLACES = [
     },
     {
         name: "Bhatye Beach",
+        name_mr: "भाटये बीच",
         cat: "beach",
         catLabel: "🏖️ Beach",
+        catLabel_mr: "🏖️ समुद्रकिनारा",
         dist: "7 km",
         time: "15 min",
+        time_mr: "१५ मिनिटे",
         rating: "4.4",
         entry: "Free",
+        entry_mr: "मोफत",
         desc: "A calm, less-crowded beach just outside Ratnagiri city, popular with locals for evening walks and weekend picnics. The beach is known for its clean shoreline, gentle waves, and beautiful sunsets over the Arabian Sea.",
+        desc_mr: "रत्नागिरी शहराबाहेरील शांत, कमी गर्दीचा समुद्रकिनारा, सायंकाळच्या फेरफटक्यांसाठी आणि सुट्टीतील सहलींसाठी स्थानिकांमध्ये लोकप्रिय. स्वच्छ किनारा, सौम्य लाटा आणि अरबी समुद्रावरील सुंदर सूर्यास्तासाठी प्रसिद्ध.",
         specs: ["Sunset Views","Quiet & Clean","Family Friendly"],
+        specs_mr: ["सूर्यास्त दृश्य","शांत व स्वच्छ","कुटुंबासाठी अनुकूल"],
         location: "Bhatye, Ratnagiri",
         mapUrl: "https://maps.google.com/?q=Bhatye+Beach+Ratnagiri",
         images: [
             "static/Assets/images/bhatye2.jpg",
             "static/Assets/images/bhatye1.jpg"
-    ]
+        ]
     },
     {
         name: "Thibaw Palace Museum",
+        name_mr: "थिबॉ पॅलेस संग्रहालय",
         cat: "heritage",
         catLabel: "🏛️ Heritage",
+        catLabel_mr: "🏛️ वारसा",
         dist: "2 km",
         time: "8 min",
+        time_mr: "८ मिनिटे",
         rating: "4.3",
         entry: "₹10",
+        entry_mr: "₹१०",
         desc: "The palace where King Thibaw of Burma was exiled by the British in 1885. This colonial-era structure, now converted into a museum, holds artefacts, photos, and stories of the Burmese royals who spent their final days in Ratnagiri.",
+        desc_mr: "बर्माचा राजा थिबॉ याला ब्रिटिशांनी १८८५ मध्ये येथे निर्वासित केले होते. वसाहत काळातील हे वास्तू आता संग्रहालयात रूपांतरित झाले असून रत्नागिरीत अखेरचे दिवस घालवलेल्या ब्रम्हदेशी राजघराण्याच्या कलाकृती, छायाचित्रे आणि कथा येथे जतन केल्या आहेत.",
         specs: ["Burmese Royal History","Colonial Museum","Rare Artefacts"],
+        specs_mr: ["ब्रम्हदेशी राजघराण्याचा इतिहास","वसाहत संग्रहालय","दुर्मिळ वस्तू"],
         location: "Ratnagiri City Centre",
         mapUrl: "https://maps.google.com/?q=Thibaw+Palace+Ratnagiri",
         images: [
-             "static/Assets/images/thiba.jpg",
-              "static/Assets/images/thiba1.jpg"
+            "static/Assets/images/thiba.jpg",
+            "static/Assets/images/thiba1.jpg"
         ]
     },
     {
         name: "Prachibimb — Lokmanya Tilak Birthplace",
+        name_mr: "प्रतिबिंब — लोकमान्य टिळक जन्मस्थान",
         cat: "heritage",
         catLabel: "🏛️ Heritage",
+        catLabel_mr: "🏛️ वारसा",
         dist: "1 km",
         time: "5 min",
+        time_mr: "५ मिनिटे",
         rating: "4.7",
         entry: "Free",
+        entry_mr: "मोफत",
         desc: "The ancestral home of Bal Gangadhar Tilak (Lokmanya Tilak), one of India's foremost freedom fighters and father of the Indian independence movement. The memorial museum displays rare photographs, personal belongings and documents.",
+        desc_mr: "भारताच्या स्वातंत्र्य चळवळीचे जनक बाळ गंगाधर टिळक (लोकमान्य टिळक) यांचे पूर्वजांचे घर. स्मारक संग्रहालयात दुर्मिळ छायाचित्रे, वैयक्तिक वस्तू आणि दस्तावेज प्रदर्शित केले आहेत.",
         specs: ["Freedom Fighter","Historic Home","Museum"],
+        specs_mr: ["स्वातंत्र्यसेनानी","ऐतिहासिक घर","संग्रहालय"],
         location: "Ratnagiri City",
         mapUrl: "https://maps.google.com/?q=Lokmanya+Tilak+Birthplace+Ratnagiri",
         images: [
             "static/Assets/images/tilak.jpg",
             "static/Assets/images/tilak1.jpg"
-            
         ]
     },
     {
         name: "Aare-Ware Beach",
+        name_mr: "आरे-वारे बीच",
         cat: "beach",
         catLabel: "🏖️ Beach",
+        catLabel_mr: "🏖️ समुद्रकिनारा",
         dist: "10 km",
         time: "20 min",
+        time_mr: "२० मिनिटे",
         rating: "4.5",
         entry: "Free",
+        entry_mr: "मोफत",
         desc: "A scenic twin beach with a rocky divide creating two separate coves — Aare and Ware. Surrounded by casuarina trees and rocky outcrops, it's a favourite for photographers and nature lovers seeking a less touristy experience.",
+        desc_mr: "खडकाळ विभाजनामुळे दोन स्वतंत्र उपसागर तयार करणारा नयनरम्य जुळा समुद्रकिनारा — आरे आणि वारे. सारुंचे झाडे आणि खडकांनी वेढलेला हा किनारा छायाचित्रकार आणि निसर्गप्रेमींचा आवडता आहे.",
         specs: ["Twin Cove Beach","Photography","Casuarina Groves"],
+        specs_mr: ["जुळा उपसागर","छायाचित्रण","सारु बागा"],
         location: "Near Ratnagiri",
         mapUrl: "https://maps.google.com/?q=Aare+Ware+Beach+Ratnagiri",
         images: [
@@ -477,14 +580,20 @@ const PLACES = [
     },
     {
         name: "Hedvi — Gokarna Mahabaleshwar Temple",
+        name_mr: "हेदवी — गोकर्ण महाबळेश्वर मंदिर",
         cat: "temple",
         catLabel: "🛕 Temple",
+        catLabel_mr: "🛕 मंदिर",
         dist: "65 km",
         time: "1 hr 30 min",
+        time_mr: "१ तास ३० मिनिटे",
         rating: "4.8",
         entry: "Free",
+        entry_mr: "मोफत",
         desc: "An ancient, architecturally magnificent Shiva temple built in the Hemadpanthi style, said to be around 2000 years old. The Shivalinga here is considered one of the most sacred in the Konkan, attracting pilgrims from all over Maharashtra.",
+        desc_mr: "हेमाडपंथी शैलीत बांधलेले सुमारे २००० वर्षे जुने प्राचीन, वास्तुकलादृष्ट्या भव्य शिव मंदिर. येथील शिवलिंग कोकणातील सर्वात पवित्र मानले जाते आणि महाराष्ट्रभरातून भाविक येथे येतात.",
         specs: ["Ancient Shiva Temple","Hemadpanthi Style","Pilgrimage Site"],
+        specs_mr: ["प्राचीन शिव मंदिर","हेमाडपंथी शैली","तीर्थक्षेत्र"],
         location: "Hedvi, Guhagar Taluka",
         mapUrl: "https://maps.google.com/?q=Hedvi+Gokarna+Mahabaleshwar+Temple",
         images: [
@@ -494,14 +603,20 @@ const PLACES = [
     },
     {
         name: "Marleshwar Temple & Waterfall",
+        name_mr: "मार्लेश्वर मंदिर आणि धबधबा",
         cat: "nature",
         catLabel: "🌿 Nature + Temple",
+        catLabel_mr: "🌿 निसर्ग + मंदिर",
         dist: "85 km",
         time: "2 hrs",
+        time_mr: "२ तास",
         rating: "4.8",
         entry: "Free",
+        entry_mr: "मोफत",
         desc: "A hidden gem deep inside the Sahyadri forests — a Shiva temple inside a natural cave with a waterfall flowing right over the Shivalinga. The trek through dense jungle and multiple streams makes it an unforgettable adventure.",
+        desc_mr: "सह्याद्रीच्या जंगलात लपलेला एक अनमोल ठेवा — नैसर्गिक गुहेतील शिव मंदिर ज्यावर थेट शिवलिंगावर धबधबा पडतो. घनदाट जंगल आणि अनेक ओढ्यांमधून जाणारी ट्रेक एक अविस्मरणीय साहस आहे.",
         specs: ["Cave Temple","Forest Trek","Seasonal Waterfall"],
+        specs_mr: ["गुहा मंदिर","जंगल ट्रेक","हंगामी धबधबा"],
         location: "Marleshwar, Sangameshwar",
         mapUrl: "https://maps.google.com/?q=Marleshwar+Waterfall+Ratnagiri",
         images: [
@@ -511,14 +626,20 @@ const PLACES = [
     },
     {
         name: "Velneshwar Beach & Temple",
+        name_mr: "वेळणेश्वर बीच आणि मंदिर",
         cat: "beach",
         catLabel: "🏖️ Beach + Temple",
+        catLabel_mr: "🏖️ समुद्रकिनारा + मंदिर",
         dist: "70 km",
         time: "1 hr 40 min",
+        time_mr: "१ तास ४० मिनिटे",
         rating: "4.6",
         entry: "Free",
+        entry_mr: "मोफत",
         desc: "A pristine, remote beach with white sand and clear waters, backed by casuarina groves. The ancient Velneshwar Shiva temple right beside the beach is another draw. Famous for crystal-clear water ideal for swimming.",
+        desc_mr: "पांढऱ्या वाळूचा आणि स्वच्छ पाण्याचा एक दुर्गम, नितळ समुद्रकिनारा, मागे सारुंची बने आहेत. किनाऱ्याजवळील प्राचीन वेळणेश्वर शिव मंदिर हे आणखी एक आकर्षण आहे. पोहण्यासाठी योग्य स्फटिकस्वच्छ पाण्यासाठी प्रसिद्ध.",
         specs: ["White Sand","Crystal Water","Ancient Shiva Temple"],
+        specs_mr: ["पांढरी वाळू","स्वच्छ पाणी","प्राचीन शिव मंदिर"],
         location: "Velneshwar, Guhagar",
         mapUrl: "https://maps.google.com/?q=Velneshwar+Beach",
         images: [
@@ -528,31 +649,43 @@ const PLACES = [
     },
     {
         name: "Rajiwada — Alphonso Mango Orchards",
+        name_mr: "राजीवडा — अल्फान्सो आंबा बागा",
         cat: "nature",
         catLabel: "🌿 Nature",
+        catLabel_mr: "🌿 निसर्ग",
         dist: "25 km",
         time: "40 min",
+        time_mr: "४० मिनिटे",
         rating: "4.5",
         entry: "Seasonal",
+        entry_mr: "हंगामी",
         desc: "Ratnagiri is the world capital of the GI-tagged Alphonso (Hapus) mango. A visit to the mango orchards of Rajiwada during March–May lets you taste the king of mangoes fresh from the tree, and learn about traditional Konkan farming.",
+        desc_mr: "रत्नागिरी हे GI टॅग केलेल्या अल्फान्सो (हापूस) आंब्याची जागतिक राजधानी आहे. मार्च-मे दरम्यान राजीवड्याच्या आंबा बागांना भेट देऊन झाडावरून तोडलेला आंब्यांचा राजा चाखता येतो आणि पारंपरिक कोकणी शेतीबद्दल जाणून घेता येते.",
         specs: ["GI Tagged Hapus","Mango Orchards","March–May Season"],
+        specs_mr: ["GI टॅग हापूस","आंबा बागा","मार्च-मे हंगाम"],
         location: "Rajiwada, Ratnagiri",
         mapUrl: "https://maps.google.com/?q=Rajiwada+Ratnagiri",
         images: [
-             "static/Assets/images/rajiwda.webp",
+            "static/Assets/images/rajiwda.webp",
             "static/Assets/images/rajiwda2.jpg"
         ]
     },
     {
         name: "Gowalkot Fort",
+        name_mr: "गोवळकोट किल्ला",
         cat: "fort",
         catLabel: "🏰 Fort",
+        catLabel_mr: "🏰 किल्ला",
         dist: "65 km",
         time: "1 hr 30 min",
+        time_mr: "१ तास ३० मिनिटे",
         rating: "4.3",
         entry: "Free",
+        entry_mr: "मोफत",
         desc: "A lesser-known sea fort at Jaigad creek offering solitary exploration. The fort features ancient bastions, cannons and a small temple. The view from the ramparts across the Shastri estuary and mangroves is spectacular.",
+        desc_mr: "जयगड खाडीवरील कमी माहीत असलेला समुद्री किल्ला जो एकट्याने फिरण्यासाठी आदर्श आहे. किल्ल्यात प्राचीन बुरुज, तोफा आणि एक छोटे मंदिर आहे. तटबंदीवरून शास्त्री नदीमुख आणि खारफुटीचे विहंगम दृश्य दिसते.",
         specs: ["Secluded Fort","Estuary Views","Ancient Cannons"],
+        specs_mr: ["एकांत किल्ला","नदीमुख दृश्य","प्राचीन तोफा"],
         location: "Near Jaigad, Ratnagiri",
         mapUrl: "https://maps.google.com/?q=Gowalkot+Fort+Ratnagiri",
         images: [
@@ -562,22 +695,31 @@ const PLACES = [
     },
     {
         name: "Kasheli Beach",
+        name_mr: "काशेळी बीच",
         cat: "nature",
         catLabel: "🌿 Nature",
+        catLabel_mr: "🌿 निसर्ग",
         dist: "45 km",
         time: "1 hr",
+        time_mr: "१ तास",
         rating: "4.4",
         entry: "Free",
+        entry_mr: "मोफत",
         desc: "A spectacular seasonal waterfall hidden inside the Sahyadri hills near Ratnagiri. Best visited during and just after the monsoon (June–September), when the falls thunder down rocky cliffs into a clear natural pool.",
+        desc_mr: "रत्नागिरीजवळ सह्याद्रीच्या डोंगरात लपलेला एक अप्रतिम हंगामी धबधबा. पावसाळ्यात आणि लगेच नंतर (जून-सप्टेंबर) भेट देण्यासाठी सर्वोत्तम, जेव्हा धबधबा खडकाळ कड्यावरून स्वच्छ नैसर्गिक तलावात कोसळतो.",
         specs: ["Monsoon Waterfall","Natural Pool","Trekking Trail"],
+        specs_mr: ["पावसाळी धबधबा","नैसर्गिक तलाव","ट्रेकिंग मार्ग"],
         location: "Kasheli, Ratnagiri District",
         mapUrl: "https://maps.google.com/?q=Kasheli+Waterfall+Ratnagiri",
         images: [
-             "static/Assets/images/kasheli.jpg",
+            "static/Assets/images/kasheli.jpg",
             "static/Assets/images/kasheli2.jpg"
         ]
     }
 ];
+
+/* ── current language ── */
+let currentLang = localStorage.getItem("lang") || "en";
 
 /* ───────────────────────────────────────────────
    CATEGORY EMOJI MAP
@@ -591,16 +733,26 @@ const CAT_ICONS = {
     lighthouse:'fa-tower-observation'
 };
 
+/* ── i18n labels ── */
+const LABELS = {
+    distance:   { en: "Distance",    mr: "अंतर" },
+    traveltime: { en: "Travel Time", mr: "प्रवास वेळ" },
+    rating:     { en: "Rating",      mr: "रेटिंग" },
+    entry:      { en: "Entry",       mr: "प्रवेश" },
+    openmap:    { en: "Open in Maps",mr: "नकाशात उघडा" }
+};
+
 /* ───────────────────────────────────────────────
    BUILD CARDS
 ─────────────────────────────────────────────── */
 function buildCards(filter) {
+    const lang = currentLang;
     const container = document.getElementById('places-container');
     const filtered  = filter === 'all' ? PLACES : PLACES.filter(p => p.cat === filter);
     container.innerHTML = '';
 
     if (!filtered.length) {
-        container.innerHTML = `<div class="no-results"><i class="fa-solid fa-binoculars"></i>No places in this category</div>`;
+        container.innerHTML = `<div class="no-results"><i class="fa-solid fa-binoculars"></i>${lang === 'mr' ? 'या श्रेणीत ठिकाणे नाहीत' : 'No places in this category'}</div>`;
         return;
     }
 
@@ -609,6 +761,13 @@ function buildCards(filter) {
         card.className = 'place-card';
         card.style.animationDelay = (idx * 0.06) + 's';
         card.dataset.cat = place.cat;
+
+        const catLabelDisplay = lang === 'mr' ? place.catLabel_mr : place.catLabel;
+        const nameDisplay     = lang === 'mr' ? place.name_mr     : place.name;
+        const descDisplay     = lang === 'mr' ? place.desc_mr     : place.desc;
+        const specsDisplay    = lang === 'mr' ? place.specs_mr    : place.specs;
+        const timeDisplay     = lang === 'mr' ? place.time_mr     : place.time;
+        const entryDisplay    = lang === 'mr' ? place.entry_mr    : place.entry;
 
         /* ── SLIDESHOW ── */
         const hasImages = place.images && place.images.length > 0;
@@ -630,7 +789,7 @@ function buildCards(filter) {
             <div class="slideshow" data-current="0">
                 ${slides}
                 <div class="slide-overlay"></div>
-                <div class="cat-tag">${place.catLabel}</div>
+                <div class="cat-tag">${catLabelDisplay}</div>
                 ${dots}
                 ${arrows}
             </div>`;
@@ -639,14 +798,14 @@ function buildCards(filter) {
             <div class="slideshow">
                 <div class="no-image">
                     <i class="fa-solid ${CAT_ICONS[place.cat]||'fa-image'}"></i>
-                    <p>No photos available</p>
+                    <p>${lang === 'mr' ? 'छायाचित्रे उपलब्ध नाहीत' : 'No photos available'}</p>
                 </div>
-                <div class="cat-tag">${place.catLabel}</div>
+                <div class="cat-tag">${catLabelDisplay}</div>
             </div>`;
         }
 
         /* ── SPEC PILLS ── */
-        const specHtml = place.specs.map(s =>
+        const specHtml = specsDisplay.map(s =>
             `<span class="spec-pill"><i class="fa-solid fa-star"></i>${s}</span>`
         ).join('');
 
@@ -656,22 +815,22 @@ function buildCards(filter) {
             <div class="info-box">
                 <div class="info-box-icon"><i class="fa-solid fa-location-dot"></i></div>
                 <p class="info-box-val">${place.dist}</p>
-                <p class="info-box-lbl">Distance</p>
+                <p class="info-box-lbl">${LABELS.distance[lang]}</p>
             </div>
             <div class="info-box">
                 <div class="info-box-icon"><i class="fa-regular fa-clock"></i></div>
-                <p class="info-box-val">${place.time}</p>
-                <p class="info-box-lbl">Travel Time</p>
+                <p class="info-box-val">${timeDisplay}</p>
+                <p class="info-box-lbl">${LABELS.traveltime[lang]}</p>
             </div>
             <div class="info-box">
                 <div class="info-box-icon"><i class="fa-solid fa-star"></i></div>
                 <p class="info-box-val">${place.rating}★</p>
-                <p class="info-box-lbl">Rating</p>
+                <p class="info-box-lbl">${LABELS.rating[lang]}</p>
             </div>
             <div class="info-box">
                 <div class="info-box-icon"><i class="fa-solid fa-ticket"></i></div>
-                <p class="info-box-val">${place.entry}</p>
-                <p class="info-box-lbl">Entry</p>
+                <p class="info-box-val">${entryDisplay}</p>
+                <p class="info-box-lbl">${LABELS.entry[lang]}</p>
             </div>
         </div>`;
 
@@ -679,14 +838,14 @@ function buildCards(filter) {
             ${slideshowHtml}
             <div class="card-body">
                 <div class="card-title-row">
-                    <p class="place-name">${place.name}</p>
+                    <p class="place-name">${nameDisplay}</p>
                     <span class="place-dist"><i class="fa-solid fa-route" style="margin-right:4px;font-size:10px;"></i>${place.dist}</span>
                 </div>
                 <div class="spec-row">${specHtml}</div>
-                <p class="place-desc">${place.desc}</p>
+                <p class="place-desc">${descDisplay}</p>
                 ${infoHtml}
                 <a class="map-btn" href="${place.mapUrl}" target="_blank">
-                    <i class="fa-solid fa-map-location-dot"></i> Open in Maps
+                    <i class="fa-solid fa-map-location-dot"></i> ${LABELS.openmap[lang]}
                 </a>
             </div>`;
 
@@ -734,16 +893,57 @@ function slideNav(btn, dir) {
 /* ───────────────────────────────────────────────
    FILTER CHIPS
 ─────────────────────────────────────────────── */
+let activeFilter = 'all';
+
 document.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
         document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
-        buildCards(chip.dataset.cat);
+        activeFilter = chip.dataset.cat;
+        buildCards(activeFilter);
     });
 });
 
+/* ───────────────────────────────────────────────
+   LANGUAGE TOGGLE — same logic as homepage
+─────────────────────────────────────────────── */
+function changeLang(lang) {
+    currentLang = lang;
+
+    /* static data-en / data-mr elements */
+    document.querySelectorAll("[data-en]").forEach(el => {
+        el.innerHTML = el.getAttribute("data-" + lang);
+    });
+
+    /* update active chip text */
+    document.querySelectorAll(".chip").forEach(chip => {
+        chip.textContent = chip.getAttribute("data-" + lang);
+    });
+
+    /* toggle active button */
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-mr').classList.toggle('active', lang === 'mr');
+
+    /* save & rebuild cards in new language */
+    localStorage.setItem("lang", lang);
+    buildCards(activeFilter);
+}
+
 /* ── INIT ── */
-buildCards('all');
+(function () {
+    const saved = localStorage.getItem("lang") || "en";
+    currentLang = saved;
+    /* apply static translations */
+    document.querySelectorAll("[data-en]").forEach(el => {
+        el.innerHTML = el.getAttribute("data-" + saved);
+    });
+    document.querySelectorAll(".chip").forEach(chip => {
+        chip.textContent = chip.getAttribute("data-" + saved);
+    });
+    document.getElementById('btn-en').classList.toggle('active', saved === 'en');
+    document.getElementById('btn-mr').classList.toggle('active', saved === 'mr');
+    buildCards('all');
+})();
 </script>
 
 </body>
