@@ -615,10 +615,10 @@ searchInput.addEventListener('input', function() {
             dataList.innerHTML = "";
             if (data.success) {
                 data.stops.forEach(stop => {
-                    const option = document.createElement("option");
-                    option.value = stop;
-                    dataList.appendChild(option);
-                });
+                const option = document.createElement("option");
+                option.value = stop.stop_name; // ← add .stop_name
+                dataList.appendChild(option);
+});
             }
         })
         .catch(error => console.error(error));

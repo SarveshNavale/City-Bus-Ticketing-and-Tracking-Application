@@ -606,7 +606,7 @@ body {
                 data-en="From" 
                 data-mr="पासून">
                 From
-                overflow-x</span>
+                </span>
                 <div class="stop-search-wrap">
                     <i class="fa-solid fa-circle-dot stop-search-icon"></i>
                     <input
@@ -729,20 +729,26 @@ body {
 //  STOP SEARCH — reusable for both source & dest
 // ════════════════════════════════════════════════
 
-function makeStopSearch(inputId, dropdownId) {
+let sourceTrackNo = null;   // track_no of the chosen source stop
+let destTrackNo   = null;   // track_no of the chosen dest stop
+
+function makeStopSearch(inputId, dropdownId, role) {
+    // role = 'source' | 'dest'
     const input    = document.getElementById(inputId);
     const dropdown = document.getElementById(dropdownId);
-    let selectedStop = '';
-    let allStops = [];       // cache fetched results
-    let activeIndex = -1;    // keyboard nav
+    let allStopNames = [];
+    let activeIndex  = -1;
 
-    // Pre-fill from URL param if this is the dest field
-    if (inputId === 'destInput') {
+    // Pre-fill destination from URL param
+    if (role === 'dest') {
         const params = new URLSearchParams(window.location.search);
         const pre = params.get('destination');
         if (pre) {
             input.value = pre;
-            selectedStop = pre;
+            // fetch its track_no so filtering works immediately
+            fetch(`/get_track_no?stop=${encodeURIComponent(pre)}`)
+                .then(r => r.json())
+                .then(d => { if (d.success) destTrackNo = d.track_no; });
         }
     }
 
@@ -750,59 +756,101 @@ function makeStopSearch(inputId, dropdownId) {
         dropdown.innerHTML = '';
         activeIndex = -1;
 
-        if (stops.length === 0) {
+        if (!stops || stops.length === 0) {
             dropdown.innerHTML = '<div class="stop-no-result">No stops found</div>';
             dropdown.classList.add('open');
+            allStopNames = [];
             return;
         }
+
+        allStopNames = stops.map(s => s.stop_name);
 
         stops.forEach((stop, i) => {
             const item = document.createElement('div');
             item.className = 'stop-option';
-            item.innerHTML = `<i class="fa-solid fa-bus"></i> ${stop}`;
+            item.innerHTML = `<i class="fa-solid fa-bus"></i> ${stop.stop_name}`;
             item.addEventListener('mousedown', function(e) {
-                e.preventDefault(); // don't blur input before click fires
-                selectStop(stop);
+                e.preventDefault();
+                selectStop(stop.stop_name);
             });
             dropdown.appendChild(item);
         });
 
         dropdown.classList.add('open');
-        allStops = stops;
     }
 
-    function selectStop(stop) {
-        input.value = stop;
-        selectedStop = stop;
+    function selectStop(stopName) {
+        input.value = stopName;
         dropdown.classList.remove('open');
         dropdown.innerHTML = '';
-        recalcFare();   // recalculate fare whenever either stop changes
+
+        // Fetch & store this stop's track_no, then recalc fare
+        fetch(`/get_track_no?stop=${encodeURIComponent(stopName)}`)
+            .then(r => r.json())
+            .then(d => {
+                if (d.success) {
+                    if (role === 'source') {
+                        sourceTrackNo = d.track_no;
+                        // If dest already has a value, re-validate it
+                        revalidateOther('dest');
+                    } else {
+                        destTrackNo = d.track_no;
+                        revalidateOther('source');
+                    }
+                }
+                recalcFare();
+            });
+    }
+
+    // After one side is chosen, re-filter the other side's current typed value
+    function revalidateOther(otherRole) {
+        const otherId    = otherRole === 'source' ? 'sourceInput' : 'destInput';
+        const otherInput = document.getElementById(otherId);
+        const q = otherInput.value.trim();
+        if (q) {
+            fetchStops(q, otherRole === 'source' ? sourceSearch : destSearch, otherRole);
+        }
+    }
+
+    function fetchStops(q, searchObj, forRole) {
+        // Determine which track_no to filter by
+        let filterTrack = null;
+        if (forRole === 'source' && destTrackNo !== null && destTrackNo !== 0) {
+            filterTrack = destTrackNo;
+        } else if (forRole === 'dest' && sourceTrackNo !== null && sourceTrackNo !== 0) {
+            filterTrack = sourceTrackNo;
+        }
+
+        let url = `/search_stops?q=${encodeURIComponent(q)}`;
+        if (filterTrack !== null) url += `&track_no=${filterTrack}`;
+
+        fetch(url)
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) renderDropdown(data.stops);
+                else renderDropdown([]);
+            })
+            .catch(() => closeDropdown());
     }
 
     function closeDropdown() {
         dropdown.classList.remove('open');
     }
 
-    // Typing → fetch from /search_stops
+    // Typing handler
     input.addEventListener('input', function() {
         const q = this.value.trim();
-        selectedStop = '';   // clear until user picks from list
+        if (role === 'source') sourceTrackNo = null;
+        else destTrackNo = null;
 
-        if (q.length === 0) {
-            closeDropdown();
-            return;
-        }
+        if (q.length === 0) { closeDropdown(); recalcFare(); return; }
+        fetchStops(q, null, role);
+    });
 
-        fetch(`/search_stops?q=${encodeURIComponent(q)}`)
-            .then(r => r.json())
-            .then(data => {
-                if (data.success && data.stops.length > 0) {
-                    renderDropdown(data.stops);
-                } else {
-                    renderDropdown([]);
-                }
-            })
-            .catch(() => closeDropdown());
+    // Focus → show suggestions immediately
+    input.addEventListener('focus', function() {
+        const q = this.value.trim();
+        fetchStops(q, null, role);
     });
 
     // Keyboard navigation
@@ -818,16 +866,13 @@ function makeStopSearch(inputId, dropdownId) {
             activeIndex = Math.max(activeIndex - 1, 0);
         } else if (e.key === 'Enter' && activeIndex >= 0) {
             e.preventDefault();
-            selectStop(allStops[activeIndex]);
+            selectStop(allStopNames[activeIndex]);
             return;
         } else if (e.key === 'Escape') {
-            closeDropdown();
-            return;
+            closeDropdown(); return;
         }
 
-        items.forEach((it, i) => {
-            it.classList.toggle('highlighted', i === activeIndex);
-        });
+        items.forEach((it, i) => it.classList.toggle('highlighted', i === activeIndex));
     });
 
     // Close on outside click
@@ -837,23 +882,23 @@ function makeStopSearch(inputId, dropdownId) {
         }
     });
 
-    // Expose getter
     return {
-        getStop: () => input.value.trim()   // returns whatever is typed / selected
+        getStop: () => input.value.trim()
     };
 }
 
-// Initialise both search fields
-const sourceSearch = makeStopSearch('sourceInput', 'sourceDropdown');
-const destSearch   = makeStopSearch('destInput',   'destDropdown');
+// Initialise both fields
+const sourceSearch = makeStopSearch('sourceInput', 'sourceDropdown', 'source');
+const destSearch   = makeStopSearch('destInput',   'destDropdown',   'dest');
 
 
 // ════════════════════════════════════════════════
 //  FARE CALCULATION
 // ════════════════════════════════════════════════
 
-let pricePerTicket = 5.00;
+let pricePerTicket = 0;
 let stopsDiff = '—';
+
 async function recalcFare() {
     const src  = sourceSearch.getStop();
     const dest = destSearch.getStop();
@@ -867,38 +912,39 @@ async function recalcFare() {
     }
 
     try {
-        const res = await fetch(`/get_stops_between?src=${encodeURIComponent(src)}&dest=${encodeURIComponent(dest)}`);
+        const res  = await fetch(`/get_stops_between?src=${encodeURIComponent(src)}&dest=${encodeURIComponent(dest)}`);
         const data = await res.json();
 
         if (data.success) {
-            stopsDiff = data.stops_diff;
+            stopsDiff      = data.stops_diff;
             pricePerTicket = data.fare;
         } else {
-            stopsDiff = '—';
+            stopsDiff      = '—';
             pricePerTicket = 0;
+            alert(data.error || 'Could not calculate fare for these stops.');
         }
     } catch {
-        stopsDiff = '—';
+        stopsDiff      = '—';
         pricePerTicket = 0;
     }
 
     document.getElementById('farePerTicket').textContent = '₹ ' + Math.round(pricePerTicket);
-    document.getElementById('stopsCount').textContent = stopsDiff;
+    document.getElementById('stopsCount').textContent    = stopsDiff;
     updateTotal();
 }
+
 
 // ════════════════════════════════════════════════
 //  COUNTER
 // ════════════════════════════════════════════════
 
 let count = 1;
-
 function inc() { if (count < 5) { count++; updateTotal(); } }
 function dec() { if (count > 1) { count--; updateTotal(); } }
 
 function updateTotal() {
-    document.getElementById('ticketCount').textContent = count;
-    document.getElementById('totalAmount').textContent = '₹ ' + Math.round(count * pricePerTicket);
+    document.getElementById('ticketCount').textContent  = count;
+    document.getElementById('totalAmount').textContent  = '₹ ' + Math.round(count * pricePerTicket);
 }
 
 
@@ -918,6 +964,10 @@ async function handlePay() {
         alert('Source and destination cannot be the same stop.');
         return;
     }
+    if (pricePerTicket <= 0) {
+        alert('Please select valid stops on the same route.');
+        return;
+    }
 
     const overlay = document.getElementById('overlay');
     overlay.classList.add('show');
@@ -930,10 +980,10 @@ async function handlePay() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                start_dest: src,
-                final_dest: dest,
+                start_dest:    src,
+                final_dest:    dest,
                 no_of_tickets: count,
-                amount_paid: (count * pricePerTicket).toFixed(2)
+                amount_paid:   (count * pricePerTicket).toFixed(2)
             })
         });
         const result = await res.json();
@@ -943,8 +993,8 @@ async function handlePay() {
     }
 
     document.getElementById('stateProcessing').style.display = 'none';
-    document.getElementById('stateSuccess').style.display = 'block';
-    document.getElementById('ticketNumDisplay').textContent = ticketNumber;
+    document.getElementById('stateSuccess').style.display    = 'block';
+    document.getElementById('ticketNumDisplay').textContent  = ticketNumber;
 
     await sleep(2500);
     window.location.href = '/home';
@@ -952,22 +1002,24 @@ async function handlePay() {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+
+// ════════════════════════════════════════════════
+//  LANGUAGE TOGGLE
+// ════════════════════════════════════════════════
+
 function changeLang(lang) {
     document.querySelectorAll("[data-en]").forEach(el => {
         el.innerHTML = el.getAttribute("data-" + lang);
     });
-
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-mr').classList.toggle('active', lang === 'mr');
     localStorage.setItem("lang", lang);
 }
 
-// Auto apply saved language
 (function() {
-    const saved = localStorage.getItem("lang");
-    if (saved && saved !== 'en') {
-        changeLang(saved);
-    }
+    const saved = localStorage.getItem("lang") || "en";
+    changeLang(saved);
 })();
 </script>
-
 </body>
 </html>
